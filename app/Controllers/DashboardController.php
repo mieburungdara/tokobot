@@ -2,11 +2,24 @@
 
 namespace TokoBot\Controllers;
 
-class DashboardController
+use TokoBot\Helpers\Session;
+
+class DashboardController extends BaseController
 {
     public function index()
     {
-        $contentView = __DIR__ . '/../../views/dashboard.php';
-        require_once __DIR__ . '/../../views/templates/member_base.php';
+        // Ambil peran pengguna dari session, default ke 'member' jika tidak ada.
+        $userRole = Session::get('user_role', 'member');
+
+        // Arahkan ke controller yang sesuai berdasarkan peran.
+        if ($userRole === 'admin') {
+            // Panggil method dashboard dari AdminController
+            $adminController = new AdminController();
+            return $adminController->dashmixDashboard();
+        } else {
+            // Panggil method dashboard dari MemberController
+            $memberController = new MemberController();
+            return $memberController->dashmixDashboard();
+        }
     }
 }

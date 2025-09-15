@@ -2,7 +2,7 @@
 
 namespace TokoBot\Controllers;
 
-class AdminController extends BaseController
+class AdminController extends DashmixController
 {
     public function index()
     {
@@ -24,9 +24,60 @@ class AdminController extends BaseController
 
     public function dashboard()
     {
-        $pageTitle = "Admin Dashboard";
-        $contentView = __DIR__ . '/../../views/admin/dashboard_modernize.php';
-        $this->renderModernize($contentView, $pageTitle);
+        // Changed to use Dashmix dashboard
+        $this->dashmixDashboard();
+    }
+
+    // New method for Dashmix Admin Dashboard
+    public function dashmixDashboard()
+    {
+        $adminNav = [
+            [
+                'name' => 'Dashboard',
+                'icon' => 'fa fa-location-arrow',
+                'url' => '/admin/dashboard',
+                'active' => true
+            ],
+            [
+                'name' => 'Analytics',
+                'icon' => 'fa fa-chart-line',
+                'url' => '/admin/analytics' // Assuming an analytics page
+            ],
+            [
+                'heading' => 'Manage'
+            ],
+            [
+                'name' => 'Users',
+                'icon' => 'fa fa-users',
+                'submenu' => [
+                    [
+                        'name' => 'View Users',
+                        'url' => '/admin/users'
+                    ],
+                    [
+                        'name' => 'Add User',
+                        'url' => '/admin/users/add' // Assuming an add user page
+                    ]
+                ]
+            ],
+            [
+                'name' => 'Settings',
+                'icon' => 'fa fa-cog',
+                'url' => '/admin/settings'
+            ],
+            [
+                'name' => 'Reports',
+                'icon' => 'fa fa-file-alt',
+                'url' => '/admin/reports'
+            ]
+        ];
+
+        $this->renderDashmix(
+            __DIR__ . '/../../views/admin/dashboard.php',
+            'Admin Dashboard',
+            'Welcome to the admin dashboard.',
+            $adminNav
+        );
     }
 
     public function users()

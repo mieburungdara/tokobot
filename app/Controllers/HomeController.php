@@ -2,12 +2,34 @@
 
 namespace TokoBot\Controllers;
 
-class HomeController
+class HomeController extends DashmixController
 {
     public function index()
     {
-        require_once __DIR__ . '/../../views/templates/head.php';
-        require_once __DIR__ . '/../../views/home.php';
-        require_once __DIR__ . '/../../views/templates/foot.php';
+        $homeNav = [
+            [
+                'name' => 'Home',
+                'icon' => 'fa fa-home',
+                'url' => '/',
+                'active' => true
+            ],
+            [
+                'name' => 'Admin Panel',
+                'icon' => 'fa fa-user-shield',
+                'url' => '/admin/dashboard'
+            ],
+            [
+                'name' => 'Member Panel',
+                'icon' => 'fa fa-user',
+                'url' => '/dashboard'
+            ]
+        ];
+
+        $this->renderDashmix(
+            __DIR__ . '/../../views/home.php', // We need to create this view
+            'Welcome Home',
+            'This is the home page.',
+            $homeNav
+        );
     }
 }

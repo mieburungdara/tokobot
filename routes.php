@@ -7,17 +7,16 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/', ['TokoBot\\Controllers\\HomeController', 'index']);
     $r->addRoute('GET', '/home', ['TokoBot\\Controllers\\HomeController', 'index']);
 
-    // Admin routes
-    $r->addRoute('GET', '/admin', ['TokoBot\Controllers\AdminController', 'index']);
-    $r->addRoute('GET', '/admin/dashboard', ['TokoBot\Controllers\AdminController', 'dashboard']);
-    $r->addRoute('GET', '/admin/users', ['TokoBot\Controllers\AdminController', 'users']);
-    $r->addRoute('GET', '/admin/settings', ['TokoBot\Controllers\AdminController', 'settings']);
-    $r->addRoute('GET', '/admin/reports', ['TokoBot\Controllers\AdminController', 'reports']);
+    // Main Dashboard (handled by the new DashboardController)
+    $r->addRoute('GET', '/dashboard', ['TokoBot\Controllers\DashboardController', 'index']);
 
-    // Dashboard routes (assuming it's for members)
-    $r->addRoute('GET', '/dashboard', ['TokoBot\\Controllers\\DashboardController', 'index']);
+    // Other Admin routes (without '/admin' prefix)
+    $r->addRoute('GET', '/users', ['TokoBot\Controllers\AdminController', 'users']);
+    $r->addRoute('GET', '/settings', ['TokoBot\Controllers\AdminController', 'settings']);
+    $r->addRoute('GET', '/reports', ['TokoBot\Controllers\AdminController', 'reports']);
 
     // Member routes
-    $r->addRoute('GET', '/member', ['TokoBot\\Controllers\\MemberController', 'index']);
-    // Add more member routes here, e.g., $r->addRoute('GET', '/member/{id}', ['TokoBot\\Controllers\\MemberController', 'show']);
+    $r->addRoute('GET', '/member', ['TokoBot\Controllers\MemberController', 'index']);
+    
+    // Add more member routes here, e.g., $r->addRoute('GET', '/member/{id}', ['TokoBot\Controllers\MemberController', 'show']);
 });

@@ -4,18 +4,25 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once __DIR__ . '/../vendor/autoload.php';
+// Define global path constants
+define('ROOT_PATH', dirname(__DIR__));
+define('APP_PATH', ROOT_PATH . '/app');
+define('VIEWS_PATH', ROOT_PATH . '/views');
+define('CONFIG_PATH', ROOT_PATH . '/config');
+define('PUBLIC_PATH', ROOT_PATH . '/public');
+
+require_once ROOT_PATH . '/vendor/autoload.php';
 
 use TokoBot\Helpers\Session;
 
 Session::start();
 
 // Load environment variables
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv = Dotenv\Dotenv::createImmutable(ROOT_PATH);
 $dotenv->load();
 
 // Include routes
-require_once __DIR__ . '/../routes.php';
+require_once ROOT_PATH . '/routes.php';
 
 // Fetch method and URI from somewhere
 $httpMethod = $_SERVER['REQUEST_METHOD'];

@@ -1,32 +1,40 @@
-<h2>Admin Dashboard</h2>
-<p>Welcome to the admin dashboard. Here you can see an overview of your system.</p>
+<?php
+$page_title = "Admin Dashboard";
+$page_description = "Welcome to the admin dashboard.";
 
-<div class="row mt-4">
-    <div class="col-md-4">
-        <div class="card text-white bg-primary mb-3">
-            <div class="card-header">Users</div>
-            <div class="card-body">
-                <h5 class="card-title">Total Users: 120</h5>
-                <p class="card-text">Manage user accounts.</p>
-            </div>
-        </div>
+ob_start();
+?>
+<!-- Hero -->
+<div class="bg-body-light">
+  <div class="content content-full">
+    <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
+      <h1 class="flex-grow-1 fs-3 fw-semibold my-2 my-sm-3"><?php echo $page_title; ?></h1>
+      <nav class="flex-shrink-0 my-2 my-sm-0 ms-sm-3" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">Admin</li>
+          <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+        </ol>
+      </nav>
     </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-success mb-3">
-            <div class="card-header">Orders</div>
-            <div class="card-body">
-                <h5 class="card-title">New Orders: 5</h5>
-                <p class="card-text">View recent orders.</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-warning mb-3">
-            <div class="card-header">Settings</div>
-            <div class="card-body">
-                <h5 class="card-title">System Settings</h5>
-                <p class="card-text">Configure application settings.</p>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>
+<!-- END Hero -->
+
+<!-- Page Content -->
+<div class="content">
+  <div class="block block-rounded">
+    <div class="block-header block-header-default">
+      <h3 class="block-title">Overview</h3>
+    </div>
+    <div class="block-content">
+      <p>This is a sample admin dashboard page using Dashmix template.</p>
+      <p>You can add your widgets and content here.</p>
+    </div>
+  </div>
+</div>
+<!-- END Page Content -->
+<?php
+$page_content = ob_get_clean();
+
+require __DIR__ . '/../templates/dashmix_layout.php';
+?>
