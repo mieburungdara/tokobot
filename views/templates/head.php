@@ -1557,11 +1557,6 @@
                   <i class="ti ti-menu-2"></i>
                 </a>
               </li>
-              <li class="nav-item nav-icon-hover-bg rounded-circle d-none d-lg-flex">
-                <a class="nav-link" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                  <i class="ti ti-search"></i>
-                </a>
-              </li>
             </ul>
 
             <ul class="navbar-nav quick-links d-none d-lg-flex align-items-center">
@@ -2022,11 +2017,6 @@
                 <a href="../horizontal/index.html" class="text-nowrap nav-link">
                   <img src="../assets/images/logos/dark-logo.svg" class="dark-logo" width="180" alt="modernize-img" />
                   <img src="../assets/images/logos/light-logo.svg" class="light-logo" width="180" alt="modernize-img" />
-                </a>
-              </li>
-              <li class="nav-item nav-icon-hover-bg rounded-circle d-none d-xl-flex">
-                <a class="nav-link" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                  <i class="ti ti-search"></i>
                 </a>
               </li>
             </ul>
