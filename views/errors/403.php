@@ -20,7 +20,26 @@ require_once VIEWS_PATH . '/inc/_global/views/page_start.php';
           <a class="btn btn-lg btn-alt-danger" href="/"><i class="fa fa-arrow-left opacity-50 me-1"></i> Back to Home</a>
         </div>
       </div>
-      <div class="flex-grow-0 p-5"><p class="fs-sm fw-medium text-muted mb-0">Copyright &copy; <span data-toggle="year-copy"></span></p></div>
+      <div class="flex-grow-0 p-5">
+        <ul class="list-inline fs-sm fw-medium mb-4">
+          <li class="list-inline-item">
+            <?php if (\TokoBot\Helpers\Session::get('user_role', 'guest') !== 'guest'): ?>
+              <a class="text-muted" href="/dashboard">Dashboard</a>
+            <?php else: ?>
+              <a class="text-muted" href="/">Home</a>
+            <?php endif; ?>
+          </li>
+          <li class="list-inline-item">
+            <a class="text-muted" href="/support">Support</a>
+          </li>
+          <li class="list-inline-item">
+            <a class="text-muted" href="/contact">Contact</a>
+          </li>
+        </ul>
+        <p class="fs-sm fw-medium text-muted mb-0">
+          Copyright &copy; <span data-toggle="year-copy"></span>
+        </p>
+      </div>
     </div>
   </div>
 </div>

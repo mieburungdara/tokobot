@@ -24,4 +24,8 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/xoradmin', ['TokoBot\Controllers\AuthController', 'showLoginForm']);
     $r->addRoute('POST', '/xoradmin', ['TokoBot\Controllers\AuthController', 'handleLogin']);
     $r->addRoute('GET', '/logout', ['TokoBot\Controllers\AuthController', 'logout']);
+
+    // Static Pages
+    $r->addRoute('GET', '/support', ['TokoBot\Controllers\PageController', 'support']);
+    $r->addRoute('GET', '/contact', ['TokoBot\Controllers\PageController', 'contact']);
 });

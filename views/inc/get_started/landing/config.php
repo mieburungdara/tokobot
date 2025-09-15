@@ -12,9 +12,9 @@
 // INCLUDED VIEWS
 // **************************************************************************************************
 
-$dm->inc_header                 = 'inc/get_started/landing/views/inc_header.php';
-$dm->inc_sidebar                = 'inc/get_started/landing/views/inc_sidebar.php';
-$dm->inc_footer                 = 'inc/get_started/landing/views/inc_footer.php';
+$dm->inc_header                 = __DIR__ . '/views/inc_header.php';
+$dm->inc_sidebar                = __DIR__ . '/views/inc_sidebar.php';
+$dm->inc_footer                 = __DIR__ . '/views/inc_footer.php';
 
 
 // **************************************************************************************************
@@ -47,21 +47,21 @@ $dm->main_nav                   = array(
     array(
         'name'  => 'Home',
         'icon'  => 'fa fa-home',
-        'url'   => 'gs_landing.php'
+        'url'   => '/'
     ),
     array(
         'name'  => 'Features',
         'icon'  => 'fa fa-rocket',
-        'url'   => 'javascript:void(0)'
+        'url'   => '/#features'
     ),
     array(
         'name'  => 'Pricing',
         'icon'  => 'fab fa-paypal',
-        'url'   => 'javascript:void(0)'
+        'url'   => '/#pricing'
     ),
     array(
         'name'  => 'Contact',
         'icon'  => 'fa fa-envelope',
-        'url'   => 'javascript:void(0)'
+        'url'   => '/contact'
     )
 );

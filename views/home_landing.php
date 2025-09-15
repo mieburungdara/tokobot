@@ -47,65 +47,63 @@ require_once VIEWS_PATH . '/inc/_global/views/page_start.php';
 </div>
 <!-- END Hero -->
 
-<!-- Section 1 -->
-<div class="bg-body-light">
+<!-- Features Section -->
+<div id="features" class="bg-body-light">
   <div class="content content-full">
     <div class="py-5 push">
-      <h2 class="mb-2 text-center">
-        Feature 1
-      </h2>
-      <h3 class="text-muted mb-0 text-center">
-        Powerful Automation
-      </h3>
+      <h2 class="mb-2 text-center">Packed with Features</h2>
+      <h3 class="text-muted mb-0 text-center">Everything you need to get your work done.</h3>
     </div>
-    <div class="text-center">
-      <p>
-        Detailed description of the first amazing feature of your product.
-      </p>
+    <div class="row items-push">
+      <div class="col-md-4">
+        <div class="block block-rounded text-center h-100 mb-0">
+          <div class="block-content py-5"><i class="fa fa-2x fa-rocket text-primary"></i></div>
+          <div class="block-content block-content-full bg-body-light"><h4 class="fw-semibold mb-0">Powerful</h4></div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="block block-rounded text-center h-100 mb-0">
+          <div class="block-content py-5"><i class="fa fa-2x fa-cogs text-primary"></i></div>
+          <div class="block-content block-content-full bg-body-light"><h4 class="fw-semibold mb-0">Automated</h4></div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="block block-rounded text-center h-100 mb-0">
+          <div class="block-content py-5"><i class="fa fa-2x fa-heart text-primary"></i></div>
+          <div class="block-content block-content-full bg-body-light"><h4 class="fw-semibold mb-0">Easy to Use</h4></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-<!-- END Section 1 -->
+<!-- END Features Section -->
 
-<!-- Section 2 -->
-<div class="bg-body-extra-light">
+<!-- Pricing Section -->
+<div id="pricing" class="bg-body-extra-light">
   <div class="content content-full">
     <div class="py-5 push">
-      <h2 class="mb-2 text-center">
-        Feature 2
-      </h2>
-      <h3 class="text-muted mb-0 text-center">
-        Easy to Use
-      </h3>
+      <h2 class="mb-2 text-center">Simple Pricing</h2>
+      <h3 class="text-muted mb-0 text-center">Choose the plan that fits your needs.</h3>
     </div>
-    <div class="text-center">
-      <p>
-        Detailed description of the second amazing feature of your product.
-      </p>
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-xl-4">
+        <div class="block block-rounded">
+          <div class="block-header block-header-default text-center">
+            <h3 class="block-title">Pro Plan</h3>
+          </div>
+          <div class="block-content text-center p-4">
+            <div class="fs-1 fw-bold">$19</div>
+            <div class="text-muted">per month</div>
+          </div>
+          <div class="block-content block-content-full bg-body-light text-center">
+            <a href="#" class="btn btn-primary px-4">Sign Up</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-<!-- END Section 2 -->
-
-<!-- Section 3 -->
-<div class="bg-body-light">
-  <div class="content content-full">
-    <div class="py-5 push">
-      <h2 class="mb-2 text-center">
-        Feature 3
-      </h2>
-      <h3 class="text-muted mb-0 text-center">
-        24/7 Support
-      </h3>
-    </div>
-    <div class="text-center">
-      <p>
-        Detailed description of the third amazing feature of your product.
-      </p>
-    </div>
-  </div>
-</div>
-<!-- END Section 3 -->
+<!-- END Pricing Section -->
 
 <?php
 require_once VIEWS_PATH . '/inc/_global/views/page_end.php';
