@@ -46,10 +46,10 @@ document.addEventListener('DOMContentLoaded', function () {
         
         webhookBotName.textContent = botName;
         webhookInfoContent.innerHTML = `<div class="text-center py-4"><i class="fa fa-2x fa-spinner fa-spin"></i></div>`;
-        webhookUrlInput.value = `${window.location.origin}/bots/${currentBotId}.php`;
+        webhookUrlInput.value = `${window.location.origin}/tbot/${currentBotId}.php`;
 
         try {
-            const response = await fetch(`/api/bots/${currentBotId}/webhook`);
+            const response = await fetch(`/api/tbot/${currentBotId}/webhook`);
             const data = await response.json();
 
             let content = '<dl class="row'>';
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
         webhookInfoContent.innerHTML = `<div class="text-center py-4"><i class="fa fa-2x fa-spinner fa-spin"></i></div>`;
         
         try {
-            const response = await fetch(`/api/bots/${currentBotId}/webhook`, {
+            const response = await fetch(`/api/tbot/${currentBotId}/webhook`, {
                 method: 'POST',
                 body: new FormData(setWebhookForm)
             });
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
         webhookInfoContent.innerHTML = `<div class="text-center py-4"><i class="fa fa-2x fa-spinner fa-spin"></i></div>`;
 
         try {
-            const response = await fetch(`/api/bots/${currentBotId}/webhook`, {
+            const response = await fetch(`/api/tbot/${currentBotId}/webhook`, {
                 method: 'DELETE'
             });
             const data = await response.json();

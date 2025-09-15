@@ -66,7 +66,7 @@ $dm->main_nav                   = array(
             ),
             array(
                 'name'  => 'Bot Management',
-                'url'   => '/bots',
+                'url'   => '/tbot',
                 'roles' => ['admin']
             )
         )
