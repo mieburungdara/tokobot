@@ -1,19 +1,4 @@
-<!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
-    <!-- Bootstrap CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Custom layout styles -->
-    <link href="/public/css/custom_layout.css" rel="stylesheet">
-    <!-- Custom colors from demo -->
-    <link href="/public/css/custom_colors.css" rel="stylesheet">
-</head>
-<body>
+<?php $pageTitle = "Admin Panel"; require_once 'views/templates/shared_head.php'; ?>
     <header class="bg-dark text-white p-3">
         <div class="container-fluid">
             <nav class="navbar navbar-dark bg-dark">
@@ -50,13 +35,4 @@
         </main>
     </div>
 
-    <footer class="bg-light text-center p-3 mt-auto">
-        <div class="container-fluid">
-            <p class="mb-0">&copy; 2023 Admin Area</p>
-        </div>
-    </footer>
-
-    <!-- Bootstrap JS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <?php require_once 'views/templates/shared_foot.php'; ?>
