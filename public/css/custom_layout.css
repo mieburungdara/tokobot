@@ -1,0 +1,74 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+.wrapper {
+    display: flex;
+    flex: 1;
+}
+.sidebar {
+    width: 250px;
+    background-color: #343a40;
+    color: white;
+    padding: 15px;
+    position: fixed; /* Make sidebar fixed */
+    height: 100vh; /* Full height */
+    z-index: 1000; /* Ensure it's above other content */
+}
+.sidebar a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px 0;
+}
+.sidebar a:hover {
+    background-color: #495057;
+}
+.sidebar li.active a {
+    background-color: #007bff;
+    color: white;
+}
+.content {
+    flex: 1;
+    padding: 20px;
+    margin-left: 250px; /* Adjust content to make space for fixed sidebar */
+}
+
+/* Responsive adjustments for sidebar */
+@media (max-width: 991.98px) { /* Below large breakpoint */
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding-top: 0;
+    }
+    .wrapper {
+        flex-direction: column;
+    }
+    .content {
+        margin-left: 0; /* Remove margin when sidebar is collapsed */
+    }
+}
+
+/* Member base specific styles */
+.content-wrapper {
+    flex: 1;
+    padding: 20px;
+}
+
+/* Responsive adjustments for member base */
+@media (max-width: 576px) {
+    h1, h2 {
+        font-size: 1.5rem; /* Smaller font size for extra small screens */
+    }
+    .card-title {
+        font-size: 1rem;
+    }
+    .card-text.fs-3 {
+        font-size: 1.75rem !important;
+    }
+    .fa-3x {
+        font-size: 2em !important;
+    }
+}
