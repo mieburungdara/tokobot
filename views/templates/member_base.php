@@ -28,6 +28,22 @@
             text-align: center;
             border-top: 1px solid #e9ecef;
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            h1, h2 {
+                font-size: 1.5rem; /* Smaller font size for extra small screens */
+            }
+            .card-title {
+                font-size: 1rem;
+            }
+            .card-text.fs-3 {
+                font-size: 1.75rem !important;
+            }
+            .fa-3x {
+                font-size: 2em !important;
+            }
+        }
     </style>
 </head>
 <body>

@@ -67,5 +67,17 @@
         {"type": "list_item", "content": "Login dari perangkat baru (3 hari lalu)"}
       ]
     }
+  ],
+  "responsive_adjustments": [
+    {
+      "description": "Penyesuaian ukuran font untuk elemen judul dan kartu pada layar sangat kecil (max-width: 576px) untuk meningkatkan keterbacaan dan tata letak.",
+      "media_query": "@media (max-width: 576px)",
+      "styles": [
+        {"selector": "h1, h2", "property": "font-size", "value": "1.5rem"},
+        {"selector": ".card-title", "property": "font-size", "value": "1rem"},
+        {"selector": ".card-text.fs-3", "property": "font-size", "value": "1.75rem !important"},
+        {"selector": ".fa-3x", "property": "font-size", "value": "2em !important"}
+      ]
+    }
   ]
 }
