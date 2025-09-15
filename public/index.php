@@ -42,9 +42,8 @@ $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::NOT_FOUND:
-        // ... 404 Not Found
-        http_response_code(404);
-        echo "404 Not Found";
+        $errorController = new \TokoBot\Controllers\ErrorController();
+        $errorController->notFound();
         break;
     case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
         $allowedMethods = $routeInfo[1];

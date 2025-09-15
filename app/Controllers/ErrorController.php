@@ -12,4 +12,13 @@ class ErrorController extends DashmixController
             '403 Access Denied'
         );
     }
+
+    public function notFound()
+    {
+        http_response_code(404);
+        $this->renderDashmix(
+            VIEWS_PATH . '/errors/404.php',
+            '404 Not Found'
+        );
+    }
 }
