@@ -1,0 +1,58 @@
+{
+  "page": "Member Page",
+  "file": "views/member.php",
+  "description": "Halaman member yang diperbarui dengan tampilan dasbor untuk memberikan ringkasan cepat kepada pengguna.",
+  "sections": [
+    {
+      "name": "Dashboard Overview",
+      "description": "Bagian baru yang menampilkan statistik penting seperti total pesanan, total pengeluaran, dan notifikasi baru dalam format kartu yang menarik.",
+      "elements": [
+        {
+          "type": "card",
+          "title": "Total Pesanan",
+          "placeholder_value": "15",
+          "icon": "fas fa-shopping-cart"
+        },
+        {
+          "type": "card",
+          "title": "Total Pengeluaran",
+          "placeholder_value": "Rp 1.500.000",
+          "icon": "fas fa-wallet"
+        },
+        {
+          "type": "card",
+          "title": "Notifikasi Baru",
+          "placeholder_value": "3",
+          "icon": "fas fa-bell"
+        }
+      ]
+    },
+    {
+      "name": "Profil Anda",
+      "description": "Menampilkan informasi profil dasar pengguna dengan opsi untuk mengedit.",
+      "elements": [
+        {"type": "text", "content": "Nama: [Nama Pengguna]"},
+        {"type": "text", "content": "Email: [Email Pengguna]"},
+        {"type": "button", "text": "Edit Profil", "icon": "fas fa-edit"}
+      ]
+    },
+    {
+      "name": "Pesanan Terakhir",
+      "description": "Daftar pesanan terbaru pengguna dengan status.",
+      "elements": [
+        {"type": "list_item", "content": "Pesanan #12345 - Status: Diproses"},
+        {"type": "list_item", "content": "Pesanan #12344 - Status: Selesai"},
+        {"type": "button", "text": "Lihat Semua Pesanan", "icon": "fas fa-eye"}
+      ]
+    },
+    {
+      "name": "Aktivitas Terbaru",
+      "description": "Daftar aktivitas terbaru pengguna.",
+      "elements": [
+        {"type": "list_item", "content": "Pesanan #12346 - Diproses (2 jam lalu)"},
+        {"type": "list_item", "content": "Profil diperbarui (1 hari lalu)"},
+        {"type": "list_item", "content": "Login dari perangkat baru (3 hari lalu)"}
+      ]
+    }
+  ]
+}
