@@ -13,13 +13,20 @@ class AdminController extends BaseController
         $this->render($contentView, $pageTitle, $layoutStart, $layoutEnd);
     }
 
+    protected function renderModernize($contentView, $pageTitle)
+    {
+        // Define BASE_URL if it's not already defined (assuming it's defined globally)
+        if (!defined('BASE_URL')) {
+            define('BASE_URL', ''); // Adjust this if your BASE_URL is different
+        }
+        require_once __DIR__ . '/../../views/templates/admin_modernize_layout.php';
+    }
+
     public function dashboard()
     {
-        $pageTitle = "Admin Panel";
-        $contentView = __DIR__ . '/../../views/admin/dashboard.php';
-        $layoutStart = __DIR__ . '/../../views/templates/admin_layout_start.php';
-        $layoutEnd = __DIR__ . '/../../views/templates/admin_layout_end.php';
-        $this->render($contentView, $pageTitle, $layoutStart, $layoutEnd);
+        $pageTitle = "Admin Dashboard";
+        $contentView = __DIR__ . '/../../views/admin/dashboard_modernize.php';
+        $this->renderModernize($contentView, $pageTitle);
     }
 
     public function users()
