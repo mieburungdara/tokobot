@@ -120,19 +120,18 @@ class AdminController extends DashmixController
             $response = \TelegramBot\Request::getMe();
 
             if ($response->isOk()) {
-                $botInfo = $response->getResult();
-                $botId = $botInfo->getId();
+                $botInfo = $response->getResult(); // This is an array
+                $botId = $botInfo['id'];
 
                 // --- Save public info to DB ---
                 $pdo = \TokoBot\Helpers\Database::getInstance();
-                $sql = "INSERT INTO bots (id, username, first_name, is_bot) VALUES (?, ?, ?, ?)
-                        ON DUPLICATE KEY UPDATE username = VALUES(username), first_name = VALUES(first_name)";
+                $sql = "INSERT INTO bots (id, username, first_name, is_bot) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE username = VALUES(username), first_name = VALUES(first_name)";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
                     $botId,
-                    $botInfo->getUsername(),
-                    $botInfo->getFirstName(),
-                    $botInfo->getIsBot()
+                    $botInfo['username'],
+                    $botInfo['first_name'],
+                    $botInfo['is_bot']
                 ]);
 
                 // --- Save token to config file ---
@@ -141,9 +140,12 @@ class AdminController extends DashmixController
                 $botTokens[$botId] = $token;
 
                 $fileContent = "<?php\n\n// Bot token configuration file\n// Maps Bot ID to its secret token.\nreturn " . var_export($botTokens, true) . ";\n";
-                file_put_contents($botsFile, $fileContent);
+                
+                if (file_put_contents($botsFile, $fileContent) === false) {
+                    throw new \Exception('Failed to write to token config file. Please check file permissions for config/bots.php.');
+                }
 
-                \TokoBot\Helpers\Session::flash('success_message', 'Bot \"' . $botInfo->getFirstName() . '\" has been added/updated successfully!');
+                \TokoBot\Helpers\Session::flash('success_message', 'Bot "' . $botInfo['first_name'] . '" has been added/updated successfully!');
             } else {
                 throw new \Exception('Invalid token: ' . $response->getDescription());
             }
@@ -170,6 +172,9 @@ class AdminController extends DashmixController
                 unset($botTokens[$id]);
                 $fileContent = "<?php\n\n// Bot token configuration file\n// Maps Bot ID to its secret token.\nreturn " . var_export($botTokens, true) . ";\n";
                 file_put_contents($botsFile, $fileContent);
+                if (function_exists('opcache_invalidate')) {
+                    opcache_invalidate($botsFile);
+                }
             }
 
             // --- Delete webhook file ---

@@ -37,7 +37,7 @@ class BotApiController extends BaseController
                 throw new \Exception($response->getDescription());
             }
 
-            $this->sendJsonResponse($response->getResult()->getRawData());
+            $this->sendJsonResponse($response->getResult());
         } catch (\Exception $e) {
             $this->sendJsonResponse(['error' => $e->getMessage()], 500);
         }

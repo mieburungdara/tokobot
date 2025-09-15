@@ -1,6 +1,7 @@
 <?php
 
-// config/bots.php
-// Daftar bot yang akan dikelola oleh aplikasi.
-
-return [];
+// Bot token configuration file
+// Maps Bot ID to its secret token.
+return array (
+  8420704595 => '8420704595:AAGhpV0cW0-BHObjPsH7AS9yU0Ct5BJtZCs',
+);
