@@ -63,6 +63,11 @@ $dm->main_nav                   = array(
             array(
                 'name'  => 'Reports',
                 'url'   => '/reports' // Tanpa 'roles', jadi ikut parent
+            ),
+            array(
+                'name'  => 'Bot Management',
+                'url'   => '/bots',
+                'roles' => ['admin']
             )
         )
     ),

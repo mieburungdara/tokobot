@@ -14,6 +14,9 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/users', ['TokoBot\Controllers\AdminController', 'users']);
     $r->addRoute('GET', '/settings', ['TokoBot\Controllers\AdminController', 'settings']);
     $r->addRoute('GET', '/reports', ['TokoBot\Controllers\AdminController', 'reports']);
+    $r->addRoute('GET', '/bots', ['TokoBot\Controllers\AdminController', 'manageBots']);
+    $r->addRoute('POST', '/bots', ['TokoBot\Controllers\AdminController', 'addBot']);
+    $r->addRoute('POST', '/bots/{id:\d+}/delete', ['TokoBot\Controllers\AdminController', 'deleteBot']);
 
     // Member routes
     $r->addRoute('GET', '/member', ['TokoBot\Controllers\MemberController', 'index']);
@@ -24,8 +27,14 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/xoradmin', ['TokoBot\Controllers\AuthController', 'showLoginForm']);
     $r->addRoute('POST', '/xoradmin', ['TokoBot\Controllers\AuthController', 'handleLogin']);
     $r->addRoute('GET', '/logout', ['TokoBot\Controllers\AuthController', 'logout']);
+    $r->addRoute('GET', '/login/{token}', ['TokoBot\Controllers\AuthController', 'handleTokenLogin']);
 
     // Static Pages
     $r->addRoute('GET', '/support', ['TokoBot\Controllers\PageController', 'support']);
     $r->addRoute('GET', '/contact', ['TokoBot\Controllers\PageController', 'contact']);
+
+    // API routes
+    $r->addRoute('GET', '/api/bots/{id:\d+}/webhook', ['TokoBot\Controllers\BotApiController', 'getWebhookInfo']);
+    $r->addRoute('POST', '/api/bots/{id:\d+}/webhook', ['TokoBot\Controllers\BotApiController', 'setWebhook']);
+    $r->addRoute('DELETE', '/api/bots/{id:\d+}/webhook', ['TokoBot\Controllers\BotApiController', 'deleteWebhook']);
 });

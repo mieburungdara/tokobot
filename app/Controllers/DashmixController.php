@@ -4,7 +4,7 @@ namespace TokoBot\Controllers;
 
 class DashmixController extends BaseController
 {
-    protected function renderDashmix($viewPath, $pageTitle = 'Dashboard', $pageDescription = '', $mainNav = [], $breadcrumbs = [])
+    protected function renderDashmix($viewPath, $pageTitle = 'Dashboard', $pageDescription = '', $mainNav = [], $breadcrumbs = [], $data = [])
     {
         // Access the global $dm object, which is now created in public/index.php
         global $dm;
@@ -32,6 +32,9 @@ class DashmixController extends BaseController
         } else {
             $dm->main_nav = $filteredNav;
         }
+
+        // Make data available to the view file
+        extract($data);
 
         ob_start();
         require_once $viewPath;
