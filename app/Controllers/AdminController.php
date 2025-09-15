@@ -4,106 +4,74 @@ namespace TokoBot\Controllers;
 
 class AdminController extends DashmixController
 {
+    // Mengarahkan method index ke dashboard utama
     public function index()
     {
-        $pageTitle = "Admin Panel";
-        $contentView = __DIR__ . '/../../views/admin.php';
-        require_once __DIR__ . '/../../views/templates/head.php';
-        $this->render($contentView, $pageTitle);
-        require_once __DIR__ . '/../../views/templates/foot.php';
-    }
-
-    protected function renderModernize($contentView, $pageTitle)
-    {
-        // Define BASE_URL if it's not already defined (assuming it's defined globally)
-        if (!defined('BASE_URL')) {
-            define('BASE_URL', ''); // Adjust this if your BASE_URL is different
-        }
-        require_once __DIR__ . '/../../views/templates/admin_modernize_layout.php';
-    }
-
-    public function dashboard()
-    {
-        // Changed to use Dashmix dashboard
         $this->dashmixDashboard();
     }
 
-    // New method for Dashmix Admin Dashboard
     public function dashmixDashboard()
     {
-        $adminNav = [
-            [
-                'name' => 'Dashboard',
-                'icon' => 'fa fa-location-arrow',
-                'url' => '/admin/dashboard',
-                'active' => true
-            ],
-            [
-                'name' => 'Analytics',
-                'icon' => 'fa fa-chart-line',
-                'url' => '/admin/analytics' // Assuming an analytics page
-            ],
-            [
-                'heading' => 'Manage'
-            ],
-            [
-                'name' => 'Users',
-                'icon' => 'fa fa-users',
-                'submenu' => [
-                    [
-                        'name' => 'View Users',
-                        'url' => '/admin/users'
-                    ],
-                    [
-                        'name' => 'Add User',
-                        'url' => '/admin/users/add' // Assuming an add user page
-                    ]
-                ]
-            ],
-            [
-                'name' => 'Settings',
-                'icon' => 'fa fa-cog',
-                'url' => '/admin/settings'
-            ],
-            [
-                'name' => 'Reports',
-                'icon' => 'fa fa-file-alt',
-                'url' => '/admin/reports'
-            ]
+        // Breadcrumb untuk halaman dashboard
+        $breadcrumbs = [
+            ['name' => 'Dashboard']
         ];
 
+        // Menggunakan konstanta VIEWS_PATH untuk path yang lebih bersih
         $this->renderDashmix(
-            __DIR__ . '/../../views/admin/dashboard.php',
+            VIEWS_PATH . '/admin/dashboard.php',
             'Admin Dashboard',
             'Welcome to the admin dashboard.',
-            $adminNav
+            [], // Menggunakan navigasi default dari config
+            $breadcrumbs
         );
     }
 
     public function users()
     {
-        $pageTitle = "Admin Panel";
-        $contentView = __DIR__ . '/../../views/admin/users.php';
-        require_once __DIR__ . '/../../views/templates/head.php';
-        $this->render($contentView, $pageTitle);
-        require_once __DIR__ . '/../../views/templates/foot.php';
+        $breadcrumbs = [
+            ['name' => 'Dashboard', 'url' => '/dashboard'],
+            ['name' => 'Users']
+        ];
+
+        $this->renderDashmix(
+            VIEWS_PATH . '/admin/users.php',
+            'User Management',
+            'Manage all application users.',
+            [], // Menggunakan navigasi default dari config
+            $breadcrumbs
+        );
     }
 
     public function settings()
     {
-        $pageTitle = "Admin Panel";
-        $contentView = __DIR__ . '/../../views/admin/settings.php';
-        require_once __DIR__ . '/../../views/templates/head.php';
-        $this->render($contentView, $pageTitle);
-        require_once __DIR__ . '/../../views/templates/foot.php';
+        $breadcrumbs = [
+            ['name' => 'Dashboard', 'url' => '/dashboard'],
+            ['name' => 'Settings']
+        ];
+
+        $this->renderDashmix(
+            VIEWS_PATH . '/admin/settings.php',
+            'Application Settings',
+            'Configure application settings.',
+            [], // Menggunakan navigasi default dari config
+            $breadcrumbs
+        );
     }
 
     public function reports()
     {
-        $pageTitle = "Admin Panel";
-        $contentView = __DIR__ . '/../../views/admin/reports.php';
-        require_once __DIR__ . '/../../views/templates/head.php';
-        $this->render($contentView, $pageTitle);
-        require_once __DIR__ . '/../../views/templates/foot.php';
+        $breadcrumbs = [
+            ['name' => 'Dashboard', 'url' => '/dashboard'],
+            ['name' => 'Reports']
+        ];
+
+        $this->renderDashmix(
+            VIEWS_PATH . '/admin/reports.php',
+            'Reports',
+            'View application reports.',
+            [], // Menggunakan navigasi default dari config
+            $breadcrumbs
+        );
     }
 }

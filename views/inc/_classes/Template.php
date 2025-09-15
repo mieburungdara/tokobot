@@ -17,6 +17,7 @@ class Template {
           $robots = '',
           $title = '',
           $description = '',
+          $breadcrumbs = [],
           $og_url_site = '',
           $og_url_image = '',
           $assets_folder = '',

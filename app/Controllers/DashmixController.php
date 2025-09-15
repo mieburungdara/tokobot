@@ -4,7 +4,7 @@ namespace TokoBot\Controllers;
 
 class DashmixController extends BaseController
 {
-    protected function renderDashmix($viewPath, $pageTitle = 'Dashboard', $pageDescription = '', $mainNav = [])
+    protected function renderDashmix($viewPath, $pageTitle = 'Dashboard', $pageDescription = '', $mainNav = [], $breadcrumbs = [])
     {
         // Access the global $dm object, which is now created in public/index.php
         global $dm;
@@ -14,6 +14,7 @@ class DashmixController extends BaseController
 
         $dm->title = $pageTitle;
         $dm->description = $pageDescription;
+        $dm->breadcrumbs = $breadcrumbs;
 
         // --- START: Logika Filter Navigasi Berdasarkan Peran ---
 

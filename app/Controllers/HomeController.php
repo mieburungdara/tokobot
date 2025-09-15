@@ -25,11 +25,16 @@ class HomeController extends DashmixController
             ]
         ];
 
+        $breadcrumbs = [
+            ['name' => 'Home']
+        ];
+
         $this->renderDashmix(
             __DIR__ . '/../../views/home.php', // We need to create this view
             'Welcome Home',
             'This is the home page.',
-            $homeNav
+            $homeNav,
+            $breadcrumbs
         );
     }
 }
