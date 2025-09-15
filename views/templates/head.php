@@ -10,9 +10,19 @@ $pageTitle = isset($pageTitle) ? $pageTitle : 'Dashboard';
     
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Custom layout styles -->
-    <link href="/css/custom_layout.css" rel="stylesheet">
-    <!-- Custom colors from demo -->
-    <link href="/css/custom_colors.css" rel="stylesheet">
+    <?php
+    $cssFiles = glob(__DIR__ . '/../../public/build/styles.*.css');
+    foreach ($cssFiles as $cssFile) {
+        echo '<link href="/build/' . basename($cssFile) . '" rel="stylesheet">';
+    }
+    $jsFiles = glob(__DIR__ . '/../../public/build/main.*.js');
+    foreach ($jsFiles as $jsFile) {
+        echo '<script src="/build/' . basename($jsFile) . '"></script>';
+    }
+    $jsFiles = glob(__DIR__ . '/../../public/build/styles.*.js');
+    foreach ($jsFiles as $jsFile) {
+        echo '<script src="/build/' . basename($jsFile) . '"></script>';
+    }
+    ?>
 </head>
 <body>

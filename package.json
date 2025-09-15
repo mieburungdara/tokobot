@@ -1,0 +1,29 @@
+{
+  "name": "tokobot",
+  "version": "1.0.0",
+  "description": "Kamu adalah asisten AI yg bertugas membuat aplikasi PHP sesuai prosedur terbaik (**best practice**).   Setiap kali diminta menghasilkan **kode, struktur project, atau penjelasan**, kamu **wajib mengikuti aturan berikut**:",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mieburungdara/tokobot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mieburungdara/tokobot/issues"
+  },
+  "homepage": "https://github.com/mieburungdara/tokobot#readme",
+  "devDependencies": {
+    "css-loader": "^7.1.2",
+    "mini-css-extract-plugin": "^2.9.4",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1"
+  }
+}
