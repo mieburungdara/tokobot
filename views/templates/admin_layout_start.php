@@ -1,11 +1,10 @@
-<?php $pageTitle = "Admin Panel"; require_once 'views/templates/shared_head.php'; ?>
     <header class="bg-dark text-white p-3">
         <div class="container-fluid">
-            <nav class="navbar navbar-dark bg-dark">
+            <nav class="navbar navbar-dark bg-dark justify-content-center">
                 <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <a class="navbar-brand" href="#"><h3>Admin Dashboard</h3></a>
+                <a class="navbar-brand mx-auto" href="#"><h3>Admin Dashboard</h3></a>
             </nav>
         </div>
     </header>
@@ -31,8 +30,3 @@
             </div>
         </nav>
         <main class="content">
-            <?php require_once $contentView; ?>
-        </main>
-    </div>
-
-    <?php require_once 'views/templates/shared_foot.php'; ?>

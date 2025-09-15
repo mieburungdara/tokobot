@@ -1,4 +1,3 @@
-<?php $pageTitle = "Member Dashboard"; require_once 'views/templates/shared_head.php'; ?>
     <header class="bg-primary text-white p-3">
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -24,7 +23,3 @@
     </header>
 
     <div class="content-wrapper container">
-        <?php require_once $contentView; ?>
-    </div>
-
-    <?php require_once 'views/templates/shared_foot.php'; ?>
