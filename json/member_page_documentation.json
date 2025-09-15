@@ -2,6 +2,11 @@
   "page": "Member Page",
   "file": "views/member.php",
   "description": "Halaman member yang diperbarui dengan tampilan dasbor untuk memberikan ringkasan cepat kepada pengguna.",
+  "script_loading": [
+    {
+      "description": "Skrip jQuery dan Chart.js dipindahkan dari bagian <head> ke sebelum tag </body> penutup untuk memastikan pustaka dimuat sepenuhnya sebelum skrip kustom mencoba menggunakannya, mengatasi masalah 'Uncaught ReferenceError: Chart is not defined'."
+    }
+  ],
   "sections": [
     {
       "name": "Header Structure",
