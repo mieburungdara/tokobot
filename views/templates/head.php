@@ -11,8 +11,8 @@ $pageTitle = isset($pageTitle) ? $pageTitle : 'Dashboard';
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Custom layout styles -->
-    <link href="/public/css/custom_layout.css" rel="stylesheet">
+    <link href="/css/custom_layout.css" rel="stylesheet">
     <!-- Custom colors from demo -->
-    <link href="/public/css/custom_colors.css" rel="stylesheet">
+    <link href="/css/custom_colors.css" rel="stylesheet">
 </head>
 <body>
