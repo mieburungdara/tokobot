@@ -2,60 +2,50 @@
 
 namespace TokoBot\Controllers;
 
-class AdminController
+class AdminController extends BaseController
 {
     public function index()
     {
         $pageTitle = "Admin Panel";
-        require_once __DIR__ . '/../../views/templates/head.php';
-        require_once __DIR__ . '/../../views/templates/admin_layout_start.php';
         $contentView = __DIR__ . '/../../views/admin.php';
-        require_once $contentView;
-        require_once __DIR__ . '/../../views/templates/admin_layout_end.php';
-        require_once __DIR__ . '/../../views/templates/foot.php';
+        $layoutStart = __DIR__ . '/../../views/templates/admin_layout_start.php';
+        $layoutEnd = __DIR__ . '/../../views/templates/admin_layout_end.php';
+        $this->render($contentView, $pageTitle, $layoutStart, $layoutEnd);
     }
 
     public function dashboard()
     {
         $pageTitle = "Admin Panel";
-        require_once __DIR__ . '/../../views/templates/head.php';
-        require_once __DIR__ . '/../../views/templates/admin_layout_start.php';
         $contentView = __DIR__ . '/../../views/admin/dashboard.php';
-        require_once $contentView;
-        require_once __DIR__ . '/../../views/templates/admin_layout_end.php';
-        require_once __DIR__ . '/../../views/templates/foot.php';
+        $layoutStart = __DIR__ . '/../../views/templates/admin_layout_start.php';
+        $layoutEnd = __DIR__ . '/../../views/templates/admin_layout_end.php';
+        $this->render($contentView, $pageTitle, $layoutStart, $layoutEnd);
     }
 
     public function users()
     {
         $pageTitle = "Admin Panel";
-        require_once __DIR__ . '/../../views/templates/head.php';
-        require_once __DIR__ . '/../../views/templates/admin_layout_start.php';
         $contentView = __DIR__ . '/../../views/admin/users.php';
-        require_once $contentView;
-        require_once __DIR__ . '/../../views/templates/admin_layout_end.php';
-        require_once __DIR__ . '/../../views/templates/foot.php';
+        $layoutStart = __DIR__ . '/../../views/templates/admin_layout_start.php';
+        $layoutEnd = __DIR__ . '/../../views/templates/admin_layout_end.php';
+        $this->render($contentView, $pageTitle, $layoutStart, $layoutEnd);
     }
 
     public function settings()
     {
         $pageTitle = "Admin Panel";
-        require_once __DIR__ . '/../../views/templates/head.php';
-        require_once __DIR__ . '/../../views/templates/admin_layout_start.php';
         $contentView = __DIR__ . '/../../views/admin/settings.php';
-        require_once $contentView;
-        require_once __DIR__ . '/../../views/templates/admin_layout_end.php';
-        require_once __DIR__ . '/../../views/templates/foot.php';
+        $layoutStart = __DIR__ . '/../../views/templates/admin_layout_start.php';
+        $layoutEnd = __DIR__ . '/../../views/templates/admin_layout_end.php';
+        $this->render($contentView, $pageTitle, $layoutStart, $layoutEnd);
     }
 
     public function reports()
     {
         $pageTitle = "Admin Panel";
-        require_once __DIR__ . '/../../views/templates/head.php';
-        require_once __DIR__ . '/../../views/templates/admin_layout_start.php';
         $contentView = __DIR__ . '/../../views/admin/reports.php';
-        require_once $contentView;
-        require_once __DIR__ . '/../../views/templates/admin_layout_end.php';
-        require_once __DIR__ . '/../../views/templates/foot.php';
+        $layoutStart = __DIR__ . '/../../views/templates/admin_layout_start.php';
+        $layoutEnd = __DIR__ . '/../../views/templates/admin_layout_end.php';
+        $this->render($contentView, $pageTitle, $layoutStart, $layoutEnd);
     }
 }
