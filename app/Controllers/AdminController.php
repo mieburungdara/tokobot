@@ -1,6 +1,6 @@
 <?php
 
-namespace TokoBot\Controllers\Admin;
+namespace TokoBot\Controllers;
 
 class AdminController
 {
