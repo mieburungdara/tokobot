@@ -8,33 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        body {
-            display: flex;
-            min-height: 100vh;
-            flex-direction: column;
-        }
-        .content-wrapper {
-            flex: 1;
-            padding: 20px;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 576px) {
-            h1, h2 {
-                font-size: 1.5rem; /* Smaller font size for extra small screens */
-            }
-            .card-title {
-                font-size: 1rem;
-            }
-            .card-text.fs-3 {
-                font-size: 1.75rem !important;
-            }
-            .fa-3x {
-                font-size: 2em !important;
-            }
-        }
-    </style>
+    <!-- Custom styles from demo -->
+    <link href="/public/css/styles.css" rel="stylesheet">
 </head>
 <body>
     <header class="bg-primary text-white p-3">

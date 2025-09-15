@@ -6,77 +6,52 @@
     <title>Admin Panel</title>
     <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- jQuery CDN -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <style>
-        body {
-            display: flex;
-            min-height: 100vh;
-            flex-direction: column;
-        }
-        .wrapper {
-            display: flex;
-            flex: 1;
-        }
-        .sidebar {
-            width: 250px;
-            background-color: #343a40;
-            color: white;
-            padding: 15px;
-        }
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 10px 0;
-        }
-        .sidebar a:hover {
-            background-color: #495057;
-        }
-        .sidebar li.active a {
-            background-color: #007bff;
-            color: white;
-        }
-        .content {
-            flex: 1;
-            padding: 20px;
-        }
-        .footer {
-            background-color: #f8f9fa;
-            padding: 20px;
-            text-align: center;
-            border-top: 1px solid #e9ecef;
-        }
-    </style>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Custom styles from demo -->
+    <link href="/public/css/styles.css" rel="stylesheet">
 </head>
 <body>
     <header class="bg-dark text-white p-3">
         <div class="container-fluid">
-            <h3>Admin Dashboard</h3>
+            <nav class="navbar navbar-dark bg-dark">
+                <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <a class="navbar-brand" href="#"><h3>Admin Dashboard</h3></a>
+            </nav>
         </div>
     </header>
 
     <div class="wrapper">
-        <nav class="sidebar">
-            <h4>Menu</h4>
-            <ul class="list-unstyled">
-                <?php
-                $adminMenu = require __DIR__ . '/../../config/admin_menu.php';
-                $currentUri = $_SERVER['REQUEST_URI'];
-                foreach ($adminMenu as $menuItem) {
-                    $isActive = (strpos($currentUri, $menuItem['url']) === 0) ? 'active' : '';
-                    echo '<li class="' . $isActive . '"><a href="' . $menuItem['url'] . '">' . $menuItem['label'] . '</a></li>';
-                }
-                ?>
-            </ul>
+        <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-dark">
+            <div class="position-sticky">
+                <h5 class="mb-3">Menu</h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/admin/users"><i class="fas fa-users"></i> Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/admin/reports"><i class="fas fa-chart-line"></i> Reports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/admin/settings"><i class="fas fa-cog"></i> Settings</a>
+                    </li>
+                </ul>
+            </div>
         </nav>
         <main class="content">
             <?php require_once $contentView; ?>
         </main>
     </div>
 
-    <footer class="footer">
-        <p>&copy; 2023 Admin Panel</p>
+    <footer class="bg-light text-center p-3 mt-auto">
+        <div class="container-fluid">
+            <p class="mb-0">&copy; 2023 Admin Area</p>
+        </div>
     </footer>
 
     <!-- Bootstrap JS CDN -->
