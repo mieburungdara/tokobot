@@ -22,12 +22,6 @@
             flex: 1;
             padding: 20px;
         }
-        .footer {
-            background-color: #f8f9fa;
-            padding: 20px;
-            text-align: center;
-            border-top: 1px solid #e9ecef;
-        }
 
         /* Responsive adjustments */
         @media (max-width: 576px) {
@@ -49,11 +43,24 @@
 <body>
     <header class="bg-primary text-white p-3">
         <div class="container">
-            <h3>Member Dashboard</h3>
-            <nav>
-                <a href="/" class="text-white me-2">Home</a>
-                <a href="/member" class="text-white me-2">My Profile</a>
-                <a href="/dashboard" class="text-white">Dashboard</a>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+                <a class="navbar-brand" href="#"><h3>Member Dashboard</h3></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/member">My Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/dashboard">Dashboard</a>
+                        </li>
+                    </ul>
+                </div>
             </nav>
         </div>
     </header>
@@ -62,8 +69,10 @@
         <?php require_once $contentView; ?>
     </div>
 
-    <footer class="footer">
-        <p>&copy; 2023 Member Area</p>
+    <footer class="bg-light text-center p-3 mt-auto">
+        <div class="container">
+            <p class="mb-0">&copy; 2023 Member Area</p>
+        </div>
     </footer>
 
     <!-- Bootstrap JS CDN -->

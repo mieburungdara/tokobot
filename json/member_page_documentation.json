@@ -4,6 +4,20 @@
   "description": "Halaman member yang diperbarui dengan tampilan dasbor untuk memberikan ringkasan cepat kepada pengguna.",
   "sections": [
     {
+      "name": "Header Structure",
+      "description": "Header halaman member telah direfaktor untuk menggunakan struktur navbar Bootstrap 5 yang lengkap, termasuk navbar-brand, navbar-toggler, navbar-collapse, navbar-nav, dan nav-item untuk navigasi yang responsif.",
+      "elements": [
+        {"type": "navbar", "brand": "Member Dashboard", "links": ["Home", "My Profile", "Dashboard"]}
+      ]
+    },
+    {
+      "name": "Footer Structure",
+      "description": "Footer halaman member telah diperbarui untuk menggunakan kelas utilitas Bootstrap 5 (bg-light, text-center, p-3, mt-auto) untuk konsistensi styling dan penghapusan CSS kustom.",
+      "elements": [
+        {"type": "footer", "content": "© 2023 Member Area"}
+      ]
+    },
+    {
       "name": "Dashboard Overview",
       "description": "Bagian baru yang menampilkan statistik penting seperti total pesanan, total pengeluaran, dan notifikasi baru dalam format kartu yang menarik.",
       "elements": [
