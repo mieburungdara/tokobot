@@ -54,10 +54,12 @@
         <nav class="sidebar">
             <h4>Menu</h4>
             <ul class="list-unstyled">
-                <li><a href="/admin/dashboard">Dashboard</a></li>
-                <li><a href="/admin/users">User Management</a></li>
-                <li><a href="/admin/settings">Settings</a></li>
-                <li><a href="/admin/reports">Reports</a></li>
+                <?php
+                $adminMenu = require __DIR__ . '/../../config/admin_menu.php';
+                foreach ($adminMenu as $menuItem) {
+                    echo '<li><a href="' . $menuItem['url'] . '">' . $menuItem['label'] . '</a></li>';
+                }
+                ?>
             </ul>
         </nav>
         <main class="content">
