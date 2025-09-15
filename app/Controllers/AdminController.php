@@ -1,13 +1,12 @@
 <?php
 
-namespace TokoBot\Controllers;
+namespace TokoBot\Controllers\Admin;
 
 class AdminController
 {
     public function index()
     {
-        require_once __DIR__ . '/../../views/templates/header.php';
-        require_once __DIR__ . '/../../views/admin.php';
-        require_once __DIR__ . '/../../views/templates/footer.php';
+        $contentView = __DIR__ . '/../../views/admin.php';
+        require_once __DIR__ . '/../../views/templates/admin_base.php';
     }
 }
