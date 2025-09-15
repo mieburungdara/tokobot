@@ -6,6 +6,8 @@
     <title>Admin Panel</title>
     <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <style>
         body {
             display: flex;
@@ -30,6 +32,10 @@
         }
         .sidebar a:hover {
             background-color: #495057;
+        }
+        .sidebar li.active a {
+            background-color: #007bff;
+            color: white;
         }
         .content {
             flex: 1;
@@ -56,8 +62,10 @@
             <ul class="list-unstyled">
                 <?php
                 $adminMenu = require __DIR__ . '/../../config/admin_menu.php';
+                $currentUri = $_SERVER['REQUEST_URI'];
                 foreach ($adminMenu as $menuItem) {
-                    echo '<li><a href="' . $menuItem['url'] . '">' . $menuItem['label'] . '</a></li>';
+                    $isActive = (strpos($currentUri, $menuItem['url']) === 0) ? 'active' : '';
+                    echo '<li class="' . $isActive . '"><a href="' . $menuItem['url'] . '">' . $menuItem['label'] . '</a></li>';
                 }
                 ?>
             </ul>
