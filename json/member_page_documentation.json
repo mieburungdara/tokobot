@@ -28,6 +28,19 @@
       ]
     },
     {
+      "name": "Statistik Pesanan Bulanan",
+      "description": "Grafik batang yang menampilkan jumlah pesanan per bulan menggunakan Chart.js.",
+      "elements": [
+        {
+          "type": "chart",
+          "chart_type": "bar",
+          "id": "monthlyOrdersChart",
+          "data_labels": ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
+          "data_values": [12, 19, 3, 5, 2, 3, 7, 10, 15, 8, 11, 14]
+        }
+      ]
+    },
+    {
       "name": "Profil Anda",
       "description": "Menampilkan informasi profil dasar pengguna dengan opsi untuk mengedit.",
       "elements": [

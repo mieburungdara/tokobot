@@ -44,6 +44,17 @@
 </div>
 
 <div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card mb-3">
+            <div class="card-header"><i class="fas fa-chart-line"></i> Statistik Pesanan Bulanan</div>
+            <div class="card-body">
+                <canvas id="monthlyOrdersChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
     <div class="col-md-6">
         <div class="card mb-3">
             <div class="card-header"><i class="fas fa-id-card"></i> Profil Anda</div>
@@ -76,3 +87,30 @@
         <li class="list-group-item">Login dari perangkat baru (3 hari lalu)</li>
     </ul>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('monthlyOrdersChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+                datasets: [{
+                    label: 'Jumlah Pesanan',
+                    data: [12, 19, 3, 5, 2, 3, 7, 10, 15, 8, 11, 14],
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
