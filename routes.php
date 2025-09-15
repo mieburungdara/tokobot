@@ -9,6 +9,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
 
     // Admin routes
     $r->addRoute('GET', '/admin', ['TokoBot\Controllers\AdminController', 'index']);
+    $r->addRoute('GET', '/admin/dashboard', ['TokoBot\Controllers\AdminController', 'dashboard']);
     $r->addRoute('GET', '/admin/users', ['TokoBot\Controllers\AdminController', 'users']);
     $r->addRoute('GET', '/admin/settings', ['TokoBot\Controllers\AdminController', 'settings']);
     $r->addRoute('GET', '/admin/reports', ['TokoBot\Controllers\AdminController', 'reports']);

@@ -10,6 +10,12 @@ class AdminController
         require_once __DIR__ . '/../../views/templates/admin_base.php';
     }
 
+    public function dashboard()
+    {
+        $contentView = __DIR__ . '/../../views/admin/dashboard.php';
+        require_once __DIR__ . '/../../views/templates/admin_base.php';
+    }
+
     public function users()
     {
         $contentView = __DIR__ . '/../../views/admin/users.php';
