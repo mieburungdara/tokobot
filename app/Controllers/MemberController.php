@@ -10,9 +10,10 @@ class MemberController extends BaseController
         // Contoh: menampilkan daftar member, profil member, dll.
         $pageTitle = "Member Dashboard";
         $contentView = __DIR__ . '/../../views/member.php';
-        $layoutStart = __DIR__ . '/../../views/templates/member_layout_start.php';
-        $layoutEnd = __DIR__ . '/../../views/templates/member_layout_end.php';
-        $this->render($contentView, $pageTitle, $layoutStart, $layoutEnd);
+        
+        require_once __DIR__ . '/../../views/templates/head.php';
+        $this->render($contentView, $pageTitle);
+        require_once __DIR__ . '/../../views/templates/foot.php';
     }
 
     // Tambahkan metode lain yang relevan untuk fungsionalitas member di sini

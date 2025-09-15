@@ -8,9 +8,9 @@ class AdminController extends BaseController
     {
         $pageTitle = "Admin Panel";
         $contentView = __DIR__ . '/../../views/admin.php';
-        $layoutStart = __DIR__ . '/../../views/templates/admin_layout_start.php';
-        $layoutEnd = __DIR__ . '/../../views/templates/admin_layout_end.php';
-        $this->render($contentView, $pageTitle, $layoutStart, $layoutEnd);
+        require_once __DIR__ . '/../../views/templates/head.php';
+        $this->render($contentView, $pageTitle);
+        require_once __DIR__ . '/../../views/templates/foot.php';
     }
 
     protected function renderModernize($contentView, $pageTitle)
@@ -33,26 +33,26 @@ class AdminController extends BaseController
     {
         $pageTitle = "Admin Panel";
         $contentView = __DIR__ . '/../../views/admin/users.php';
-        $layoutStart = __DIR__ . '/../../views/templates/admin_layout_start.php';
-        $layoutEnd = __DIR__ . '/../../views/templates/admin_layout_end.php';
-        $this->render($contentView, $pageTitle, $layoutStart, $layoutEnd);
+        require_once __DIR__ . '/../../views/templates/head.php';
+        $this->render($contentView, $pageTitle);
+        require_once __DIR__ . '/../../views/templates/foot.php';
     }
 
     public function settings()
     {
         $pageTitle = "Admin Panel";
         $contentView = __DIR__ . '/../../views/admin/settings.php';
-        $layoutStart = __DIR__ . '/../../views/templates/admin_layout_start.php';
-        $layoutEnd = __DIR__ . '/../../views/templates/admin_layout_end.php';
-        $this->render($contentView, $pageTitle, $layoutStart, $layoutEnd);
+        require_once __DIR__ . '/../../views/templates/head.php';
+        $this->render($contentView, $pageTitle);
+        require_once __DIR__ . '/../../views/templates/foot.php';
     }
 
     public function reports()
     {
         $pageTitle = "Admin Panel";
         $contentView = __DIR__ . '/../../views/admin/reports.php';
-        $layoutStart = __DIR__ . '/../../views/templates/admin_layout_start.php';
-        $layoutEnd = __DIR__ . '/../../views/templates/admin_layout_end.php';
-        $this->render($contentView, $pageTitle, $layoutStart, $layoutEnd);
+        require_once __DIR__ . '/../../views/templates/head.php';
+        $this->render($contentView, $pageTitle);
+        require_once __DIR__ . '/../../views/templates/foot.php';
     }
 }
