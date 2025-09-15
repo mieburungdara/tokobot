@@ -69,9 +69,9 @@ switch ($routeInfo[0]) {
 
             // If the user's role is not in the list of allowed roles, deny access.
             if (!in_array($userRole, $allowedRoles)) {
-                http_response_code(403);
-                // You can render a nice 403 page here.
-                echo "403 Forbidden - Anda tidak punya hak akses ke halaman ini.";
+                // Panggil ErrorController untuk menampilkan halaman 403 yang sudah di-desain.
+                $errorController = new \TokoBot\Controllers\ErrorController();
+                $errorController->forbidden();
                 exit();
             }
         }
