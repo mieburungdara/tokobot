@@ -31,7 +31,7 @@ class AuthController extends BaseController
 
     public function logout()
     {
-        Session::destroy();
+        Session::clear();
         header('Location: /xoradmin');
         exit();
     }
