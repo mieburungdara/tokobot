@@ -8,9 +8,8 @@ class MemberController
     {
         // Logika untuk halaman member akan ditempatkan di sini
         // Contoh: menampilkan daftar member, profil member, dll.
-        require_once __DIR__ . '/../../views/templates/header.php';
-        require_once __DIR__ . '/../../views/member.php'; // Asumsi ada view member.php
-        require_once __DIR__ . '/../../views/templates/footer.php';
+        $contentView = __DIR__ . '/../../views/member.php';
+        require_once __DIR__ . '/../../views/templates/member_base.php';
     }
 
     // Tambahkan metode lain yang relevan untuk fungsionalitas member di sini
