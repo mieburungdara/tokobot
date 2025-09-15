@@ -4,7 +4,7 @@ require_once VIEWS_PATH . '/inc/_global/views/head_start.php';
 require_once VIEWS_PATH . '/inc/_global/views/head_end.php';
 require_once VIEWS_PATH . '/inc/_global/views/page_start.php';
 ?>
-<div class="bg-image" style="background-image: url('/assets/media/photos/photo18@2x.jpg');">
+<div class="bg-image" style="background-image: url('/assets/media/photos/photo10@2x.jpg');">
   <div class="row g-0 justify-content-end bg-xwork-op">
     <div class="hero-static col-md-5 d-flex flex-column bg-body-extra-light">
       <div class="flex-grow-0 p-5">
@@ -14,9 +14,9 @@ require_once VIEWS_PATH . '/inc/_global/views/page_start.php';
       </div>
       <div class="flex-grow-1 d-flex align-items-center p-5 bg-body-light">
         <div class="w-100">
-          <p class="text-danger fs-4 fw-bold text-uppercase mb-2">403 Error</p>
-          <h1 class="fw-bold mb-2">Forbidden</h1>
-          <p class="fs-4 fw-medium text-muted mb-5">You do not have permission to access this page.</p>
+          <p class="text-danger fs-4 fw-bold text-uppercase mb-2">400 Error</p>
+          <h1 class="fw-bold mb-2">Bad Request</h1>
+          <p class="fs-4 fw-medium text-muted mb-5">Your request contains bad syntax and cannot be fulfilled.</p>
           <a class="btn btn-lg btn-alt-danger" href="/"><i class="fa fa-arrow-left opacity-50 me-1"></i> Back to Home</a>
         </div>
       </div>

@@ -2,41 +2,41 @@
 
 namespace TokoBot\Controllers;
 
-class ErrorController extends DashmixController
+class ErrorController extends BaseController // Tidak perlu DashmixController lagi
 {
-    public function forbidden()
+    public function badRequest() // 400
     {
-        http_response_code(403);
-
-        $breadcrumbs = [
-            ['name' => 'Error'],
-            ['name' => '403']
-        ];
-
-        $this->renderDashmix(
-            VIEWS_PATH . '/errors/403.php',
-            'Access Denied', // Judul halaman
-            '',
-            [],
-            $breadcrumbs
-        );
+        http_response_code(400);
+        require_once VIEWS_PATH . '/errors/400.php';
     }
 
-    public function notFound()
+    public function unauthorized() // 401
+    {
+        http_response_code(401);
+        require_once VIEWS_PATH . '/errors/401.php';
+    }
+
+    public function forbidden() // 403
+    {
+        http_response_code(403);
+        require_once VIEWS_PATH . '/errors/403.php';
+    }
+
+    public function notFound() // 404
     {
         http_response_code(404);
+        require_once VIEWS_PATH . '/errors/404.php';
+    }
 
-        $breadcrumbs = [
-            ['name' => 'Error'],
-            ['name' => '404']
-        ];
+    public function internalError() // 500
+    {
+        http_response_code(500);
+        require_once VIEWS_PATH . '/errors/500.php';
+    }
 
-        $this->renderDashmix(
-            VIEWS_PATH . '/errors/404.php',
-            'Page Not Found', // Judul halaman
-            '',
-            [],
-            $breadcrumbs
-        );
+    public function serviceUnavailable() // 503
+    {
+        http_response_code(503);
+        require_once VIEWS_PATH . '/errors/503.php';
     }
 }
