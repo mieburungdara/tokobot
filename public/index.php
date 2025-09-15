@@ -11,6 +11,9 @@ define('VIEWS_PATH', ROOT_PATH . '/views');
 define('CONFIG_PATH', ROOT_PATH . '/config');
 define('PUBLIC_PATH', ROOT_PATH . '/public');
 
+// Load the template configuration globally so $dm is available everywhere
+require_once ROOT_PATH . '/views/inc/_global/config.php';
+
 require_once ROOT_PATH . '/vendor/autoload.php';
 
 use TokoBot\Helpers\Session;
@@ -21,8 +24,9 @@ Session::start();
 $dotenv = Dotenv\Dotenv::createImmutable(ROOT_PATH);
 $dotenv->load();
 
-// Include routes
+// Include routes and role definitions
 require_once ROOT_PATH . '/routes.php';
+$handlerRoles = require_once CONFIG_PATH . '/roles.php';
 
 // Fetch method and URI from somewhere
 $httpMethod = $_SERVER['REQUEST_METHOD'];
@@ -51,6 +55,27 @@ switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::FOUND:
         $handler = $routeInfo[1];
         $vars = $routeInfo[2];
+
+        // --- START: Route Protection Middleware ---
+        $handlerKey = null;
+        if (is_array($handler) && count($handler) === 2) {
+            $handlerKey = $handler[0] . '@' . $handler[1];
+        }
+
+        // Check if the current route's handler is in our roles map.
+        if (isset($handlerRoles[$handlerKey])) {
+            $allowedRoles = $handlerRoles[$handlerKey];
+            $userRole = \TokoBot\Helpers\Session::get('user_role', 'guest'); // Default to 'guest' if not logged in
+
+            // If the user's role is not in the list of allowed roles, deny access.
+            if (!in_array($userRole, $allowedRoles)) {
+                http_response_code(403);
+                // You can render a nice 403 page here.
+                echo "403 Forbidden - Anda tidak punya hak akses ke halaman ini.";
+                exit();
+            }
+        }
+        // --- END: Route Protection Middleware ---
 
         // Call the handler
         if (is_array($handler) && count($handler) === 2) {

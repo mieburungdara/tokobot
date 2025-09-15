@@ -1,0 +1,22 @@
+<?php
+
+// config/roles.php
+// Mendefinisikan peran mana yang dapat mengakses metode controller tertentu.
+
+return [
+    // Format: 'Namespace\\Controller@method' => [array_peran_yang_diizinkan]
+
+    // Dashboard bisa diakses admin dan member
+    'TokoBot\\Controllers\\DashboardController@index' => ['admin', 'member'],
+
+    // Metode khusus AdminController
+    'TokoBot\\Controllers\\AdminController@users' => ['admin'],
+    'TokoBot\\Controllers\\AdminController@reports' => ['admin', 'member'],
+    'TokoBot\\Controllers\\AdminController@settings' => ['admin', 'member'],
+
+    // Metode khusus MemberController
+    'TokoBot\\Controllers\\MemberController@index' => ['member'],
+
+    // Rute HomeController bersifat publik, jadi tidak perlu dimasukkan ke sini.
+    // Jika sebuah rute tidak ada di peta ini, kita anggap publik.
+];

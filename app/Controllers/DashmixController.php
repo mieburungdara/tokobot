@@ -6,15 +6,14 @@ class DashmixController extends BaseController
 {
     protected function renderDashmix($viewPath, $pageTitle = 'Dashboard', $pageDescription = '', $mainNav = [])
     {
-        // Memuat file konfigurasi template lebih awal untuk mendapatkan objek $dm
-        require_once ROOT_PATH . '/views/inc/_global/config.php';
+        // Access the global $dm object, which is now created in public/index.php
         global $dm;
 
         // Secara otomatis mengatur link aktif berdasarkan URL saat ini
         $dm->main_nav_active = strtok($_SERVER['REQUEST_URI'], '?');
 
-        $dm->page_title = $pageTitle;
-        $dm->page_description = $pageDescription;
+        $dm->title = $pageTitle;
+        $dm->description = $pageDescription;
 
         // --- START: Logika Filter Navigasi Berdasarkan Peran ---
 
