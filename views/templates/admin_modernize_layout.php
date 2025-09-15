@@ -2,19 +2,13 @@
 <html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="horizontal">
 
 <head>
-  <!-- Required meta tags -->
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Favicon icon-->
   <link rel="shortcut icon" type="image/png" href="<?php echo BASE_URL; ?>/public/assets/images/logos/favicon.png" />
-
-  <!-- Core Css -->
   <link rel="stylesheet" href="<?php echo BASE_URL; ?>/public/assets/css/styles.css" />
 
   <title>Modernize Bootstrap Admin</title>
-  <!-- Owl Carousel  -->
   <link rel="stylesheet" href="<?php echo BASE_URL; ?>/public/assets/libs/owl.carousel/dist/assets/owl.carousel.min.css" />
 </head>
 
@@ -29,16 +23,12 @@
       <button type="button" class="btn-close btn-close-white fs-2 m-0 ms-auto shadow-none" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
   </div>
-  <!-- Preloader -->
   <div class="preloader">
     <img src="<?php echo BASE_URL; ?>/public/assets/images/logos/favicon.png" alt="loader" class="lds-ripple img-fluid" />
   </div>
   <div id="main-wrapper">
-    <!-- Sidebar Start -->
     <aside class="left-sidebar with-vertical">
-      <div><!-- ---------------------------------- -->
-        <!-- Start Vertical Layout Sidebar -->
-        <!-- ---------------------------------- -->
+      <div>
         <div class="brand-logo d-flex align-items-center justify-content-between">
           <a href="<?php echo BASE_URL; ?>/admin/dashboard" class="text-nowrap logo-img">
             <img src="<?php echo BASE_URL; ?>/public/assets/images/logos/dark-logo.svg" class="dark-logo" alt="Logo-Dark" />
@@ -51,16 +41,10 @@
 
         <nav class="sidebar-nav scroll-sidebar" data-simplebar>
           <ul id="sidebarnav">
-            <!-- ---------------------------------- -->
-            <!-- Home -->
-            <!-- ---------------------------------- -->
             <li class="nav-small-cap">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
               <span class="hide-menu">Home</span>
             </li>
-            <!-- ---------------------------------- -->
-            <!-- Dashboard -->
-            <!-- ---------------------------------- -->
             <li class="sidebar-item">
               <a class="sidebar-link" href="<?php echo BASE_URL; ?>/admin/dashboard" id="get-url" aria-expanded="false">
                 <span>
@@ -93,7 +77,6 @@
                 <span class="hide-menu">Settings</span>
               </a>
             </li>
-            <!-- Add more menu items as needed -->
           </ul>
         </nav>
 
@@ -111,19 +94,11 @@
             </button>
           </div>
         </div>
-
-        <!-- ---------------------------------- -->
-        <!-- Start Vertical Layout Sidebar -->
-        <!-- ---------------------------------- -->
       </div>
     </aside>
-    <!--  Sidebar End -->
     <div class="page-wrapper">
-      <!--  Header Start -->
       <header class="topbar">
-        <div class="with-vertical"><!-- ---------------------------------- -->
-          <!-- Start Vertical Layout Header -->
-          <!-- ---------------------------------- -->
+        <div class="with-vertical">
           <nav class="navbar navbar-expand-lg p-0">
             <ul class="navbar-nav">
               <li class="nav-item nav-icon-hover-bg rounded-circle ms-n2">
@@ -139,9 +114,6 @@
             </ul>
 
             <ul class="navbar-nav quick-links d-none d-lg-flex align-items-center">
-              <!-- ------------------------------- -->
-              <!-- start apps Dropdown -->
-              <!-- ------------------------------- -->
               <li class="nav-item nav-icon-hover-bg rounded w-auto dropdown d-none d-lg-block mx-0">
                 <div class="hover-dd">
                   <a class="nav-link" href="javascript:void(0)">
@@ -296,9 +268,6 @@
                   </div>
                 </div>
               </li>
-              <!-- ------------------------------- -->
-              <!-- end apps Dropdown -->
-              <!-- ------------------------------- -->
               <li class="nav-item dropdown-hover d-none d-lg-block">
                 <a class="nav-link" href="<?php echo BASE_URL; ?>/admin/chat">Chat</a>
               </li>
@@ -325,9 +294,6 @@
                   <i class="ti ti-align-justified fs-7"></i>
                 </a>
                 <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-center">
-                  <!-- ------------------------------- -->
-                  <!-- start language Dropdown -->
-                  <!-- ------------------------------- -->
                   <li class="nav-item nav-icon-hover-bg rounded-circle">
                     <a class="nav-link moon dark-layout" href="javascript:void(0)">
                       <i class="ti ti-moon moon"></i>
@@ -369,26 +335,12 @@
                       </div>
                     </div>
                   </li>
-                  <!-- ------------------------------- -->
-                  <!-- end language Dropdown -->
-                  <!-- ------------------------------- -->
-
-                  <!-- ------------------------------- -->
-                  <!-- start shopping cart Dropdown -->
-                  <!-- ------------------------------- -->
                   <li class="nav-item nav-icon-hover-bg rounded-circle">
                     <a class="nav-link position-relative" href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
                       <i class="ti ti-basket"></i>
                       <span class="popup-badge rounded-pill bg-danger text-white fs-2">2</span>
                     </a>
                   </li>
-                  <!-- ------------------------------- -->
-                  <!-- end shopping cart Dropdown -->
-                  <!-- ------------------------------- -->
-
-                  <!-- ------------------------------- -->
-                  <!-- start notification Dropdown -->
-                  <!-- ------------------------------- -->
                   <li class="nav-item nav-icon-hover-bg rounded-circle dropdown">
                     <a class="nav-link position-relative" href="javascript:void(0)" id="drop2" aria-expanded="false">
                       <i class="ti ti-bell-ringing"></i>
@@ -460,13 +412,6 @@
                       </div>
                     </div>
                   </li>
-                  <!-- ------------------------------- -->
-                  <!-- end notification Dropdown -->
-                  <!-- ------------------------------- -->
-
-                  <!-- ------------------------------- -->
-                  <!-- start profile Dropdown -->
-                  <!-- ------------------------------- -->
                   <li class="nav-item dropdown">
                     <a class="nav-link pe-0" href="javascript:void(0)" id="drop1" aria-expanded="false">
                       <div class="d-flex align-items-center">
@@ -538,21 +483,10 @@
                       </div>
                     </div>
                   </li>
-                  <!-- ------------------------------- -->
-                  <!-- end profile Dropdown -->
-                  <!-- ------------------------------- -->
                 </ul>
               </div>
             </div>
           </nav>
-          <!-- ---------------------------------- -->
-          <!-- End Vertical Layout Header -->
-          <!-- ---------------------------------- -->
-
-          <!-- ------------------------------- -->
-          <!-- apps Dropdown in Small screen -->
-          <!-- ------------------------------- -->
-          <!--  Mobilenavbar -->
           <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="mobilenavbar" aria-labelledby="offcanvasWithBothOptionsLabel">
             <nav class="sidebar-nav scroll-sidebar">
               <div class="offcanvas-header justify-content-between">
@@ -561,16 +495,10 @@
               </div>
               <div class="offcanvas-body h-n80" data-simplebar="" data-simplebar>
                 <ul id="sidebarnav">
-                  <!-- ---------------------------------- -->
-                  <!-- Home -->
-                  <!-- ---------------------------------- -->
                   <li class="nav-small-cap">
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">Home</span>
                   </li>
-                  <!-- ---------------------------------- -->
-                  <!-- Dashboard -->
-                  <!-- ---------------------------------- -->
                   <li class="sidebar-item">
                     <a class="sidebar-link" href="<?php echo BASE_URL; ?>/admin/dashboard" id="get-url" aria-expanded="false">
                       <span>
@@ -603,17 +531,14 @@
                       <span class="hide-menu">Settings</span>
                     </a>
                   </li>
-                  <!-- Add more menu items as needed -->
                 </ul>
               </div>
             </nav>
           </div>
         </div>
       </header>
-      <!--  Header End -->
       <div class="body-wrapper">
         <div class="container-fluid">
-          <!-- Main content will be injected here -->
           <?php include $contentView; ?>
         </div>
       </div>
@@ -621,17 +546,14 @@
   </div>
   <div class="dark-transparent sidebartoggler"></div>
   <div class="dark-transparent sidebartoggler"></div>
-  <!-- Import Js Files -->
   <script src="<?php echo BASE_URL; ?>/public/assets/libs/jquery/dist/jquery.min.js"></script>
   <script src="<?php echo BASE_URL; ?>/public/assets/libs/simplebar/dist/simplebar.min.js"></script>
   <script src="<?php echo BASE_URL; ?>/public/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- core files -->
   <script src="<?php echo BASE_URL; ?>/public/assets/js/app.min.js"></script>
   <script src="<?php echo BASE_URL; ?>/public/assets/js/app.horizontal.init.js"></script>
   <script src="<?php echo BASE_URL; ?>/public/assets/js/app-style-switcher.js"></script>
   <script src="<?php echo BASE_URL; ?>/public/assets/js/sidebarmenu.js"></script>
   <script src="<?php echo BASE_URL; ?>/public/assets/js/custom.js"></script>
-  <!-- current page js files -->
   <script src="<?php echo BASE_URL; ?>/public/assets/libs/owl.carousel/dist/owl.carousel.min.js"></script>
   <script src="<?php echo BASE_URL; ?>/public/assets/libs/apexcharts/dist/apexcharts.min.js"></script>
   <script src="<?php echo BASE_URL; ?>/public/assets/js/dashboard.js"></script>

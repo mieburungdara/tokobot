@@ -153,7 +153,7 @@
       </div>
     </div>
 
-    <!--  Search Bar -->
+    
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content rounded-1">
@@ -243,7 +243,7 @@
         </div>
       </div>
     </div>
-    <!--  Shopping Cart -->
+    
     <div class="offcanvas offcanvas-end shopping-cart" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
       <div class="offcanvas-header justify-content-between py-4">
         <h5 class="offcanvas-title fs-5 fw-semibold" id="offcanvasRightLabel">
@@ -337,7 +337,7 @@
   </div>
   <div class="dark-transparent sidebartoggler"></div>
   <script src="../assets/js/vendor.min.js"></script>
-  <!-- Import Js Files -->
+  
   <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../assets/libs/simplebar/dist/simplebar.min.js"></script>
   <script src="../assets/js/theme/app.horizontal.init.js"></script>
@@ -345,10 +345,10 @@
   <script src="../assets/js/theme/app.min.js"></script>
   <script src="../assets/js/theme/sidebarmenu.js"></script>
 
-  <!-- solar icons -->
+  
   <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
 
-  <!-- highlight.js (code view) -->
+  
   <script src="../assets/js/highlights/highlight.min.js"></script>
   <script>
   hljs.initHighlightingOnLoad();
