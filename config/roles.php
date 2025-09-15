@@ -19,4 +19,9 @@ return [
 
     // Rute HomeController bersifat publik, jadi tidak perlu dimasukkan ke sini.
     // Jika sebuah rute tidak ada di peta ini, kita anggap publik.
+
+    // Auth routes
+    'TokoBot\Controllers\AuthController@showLoginForm' => ['guest'],
+    'TokoBot\Controllers\AuthController@handleLogin' => ['guest'],
+    'TokoBot\Controllers\AuthController@logout' => ['admin', 'member'],
 ];

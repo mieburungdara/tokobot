@@ -13,6 +13,7 @@ define('PUBLIC_PATH', ROOT_PATH . '/public');
 
 // Load the template configuration globally so $dm is available everywhere
 require_once ROOT_PATH . '/views/inc/_global/config.php';
+require_once ROOT_PATH . '/views/inc/backend/config.php';
 
 require_once ROOT_PATH . '/vendor/autoload.php';
 

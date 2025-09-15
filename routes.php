@@ -19,4 +19,9 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/member', ['TokoBot\Controllers\MemberController', 'index']);
     
     // Add more member routes here, e.g., $r->addRoute('GET', '/member/{id}', ['TokoBot\Controllers\MemberController', 'show']);
+
+    // Auth routes
+    $r->addRoute('GET', '/xoradmin', ['TokoBot\Controllers\AuthController', 'showLoginForm']);
+    $r->addRoute('POST', '/xoradmin', ['TokoBot\Controllers\AuthController', 'handleLogin']);
+    $r->addRoute('GET', '/logout', ['TokoBot\Controllers\AuthController', 'logout']);
 });

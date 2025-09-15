@@ -52,10 +52,25 @@ class DashmixController extends BaseController
     {
         $filtered = [];
         foreach ($nav as $item) {
-            // Tampilkan item jika tidak memiliki kunci 'roles' (publik),
-            // atau jika peran pengguna ada di dalam array 'roles'.
-            if (!isset($item['roles']) || in_array($userRole, $item['roles'])) {
-                // Jika item punya submenu, filter submenu tersebut secara rekursif.
+            $isAllowed = false;
+
+            // Jika item punya definisi 'roles'
+            if (isset($item['roles'])) {
+                // Cek apakah peran pengguna ada di dalam daftar yang diizinkan
+                if (in_array($userRole, $item['roles'])) {
+                    $isAllowed = true;
+                }
+            } else {
+                // Jika item TIDAK punya definisi 'roles'
+                // Anggap item ini bisa dilihat oleh semua pengguna YANG SUDAH LOGIN,
+                // tetapi tidak oleh 'guest'.
+                if ($userRole !== 'guest') {
+                    $isAllowed = true;
+                }
+            }
+
+            if ($isAllowed) {
+                // Jika item punya submenu, filter juga submenu tersebut
                 if (isset($item['sub']) && is_array($item['sub'])) {
                     $item['sub'] = $this->filterNavByRole($item['sub'], $userRole);
                 }

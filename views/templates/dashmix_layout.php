@@ -5,21 +5,10 @@
  * The main layout file for the Dashmix template.
  */
 
-// The controller should initialize the $dm object.
-// This provides fallback defaults.
+// The global $dm object is loaded in public/index.php
 global $dm;
-if (!is_object($dm)) {
-    $dm = new stdClass();
-}
 
-// Set layout variable for full-width content. The controller can override this.
-if (!isset($dm->l_m_content)) {
-    $dm->l_m_content = '';
-}
-
-// Include Dashmix framework files
-require_once __DIR__ . '/../inc/_global/config.php';
-require_once __DIR__ . '/../inc/backend/config.php';
+// Include Dashmix view files
 require_once __DIR__ . '/../inc/_global/views/head_start.php';
 require_once __DIR__ . '/../inc/_global/views/head_end.php';
 
