@@ -2,24 +2,27 @@
 
 namespace TokoBot\Controllers;
 
-use Telegram\Bot\Api;
+use TelegramBot\Telegram;
+use TelegramBot\Request; // Add this
 
 class BotController
 {
-    protected Api $telegram;
-
     public function __construct(string $token)
     {
-        $this->telegram = new Api($token);
+        // The constructor is still needed to set the token globally for the library
+        new Telegram($token);
     }
 
     public function handle()
     {
-        $updates = $this->telegram->getUpdates();
+        // API calls are made statically via the Request class
+        $response = Request::getUpdates([]);
+        $updates = $response->getResult();
+
         // Simple echo bot for now
         foreach ($updates as $update) {
             if ($update->getMessage()) {
-                $this->telegram->sendMessage([
+                Request::sendMessage([
                     'chat_id' => $update->getMessage()->getChat()->getId(),
                     'text' => 'Echo: ' . $update->getMessage()->getText(),
                 ]);
