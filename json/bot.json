@@ -1,0 +1,12 @@
+{
+  "name": "bot.php",
+  "description": "Handles Telegram bot logic and updates.",
+  "dependencies": [
+    "vendor/autoload.php",
+    "telegram-bot-php/core"
+  ],
+  "variables": {
+    "$telegram": "The main Telegram Bot API object.",
+    "$updates": "An array of incoming updates."
+  }
+}

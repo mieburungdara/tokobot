@@ -1,0 +1,13 @@
+{
+    "name": "tokobot/tokobot",
+    "description": "A Telegram bot for Toko.",
+    "authors": [
+        {
+            "name": "Gemini",
+            "email": "gemini@google.com"
+        }
+    ],
+    "require": {
+        "telegram-bot-php/core": "^1.1"
+    }
+}
