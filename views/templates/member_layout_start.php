@@ -1,4 +1,4 @@
-    <header class="bg-primary text-white p-3">
+<header class="bg-primary text-white p-3">
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
                 <a class="navbar-brand" href="#"><h3>Member Dashboard</h3></a>
