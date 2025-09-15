@@ -8,6 +8,12 @@
         }
     ],
     "require": {
-        "telegram-bot-php/core": "^1.1"
+        "telegram-bot-php/core": "^1.1",
+        "vlucas/phpdotenv": "^5.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "TokoBot\\": "app/"
+        }
     }
 }
