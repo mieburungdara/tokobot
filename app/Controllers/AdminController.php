@@ -4,7 +4,6 @@ namespace TokoBot\Controllers;
 
 class AdminController extends DashmixController
 {
-    // Mengarahkan method index ke dashboard utama
     public function index()
     {
         $this->dashmixDashboard();
@@ -111,7 +110,7 @@ class AdminController extends DashmixController
 
         if (empty($token)) {
             \TokoBot\Helpers\Session::flash('error_message', 'Token cannot be empty.');
-            header('Location: /bots');
+            header('Location: /tbot');
             exit();
         }
 
@@ -152,7 +151,7 @@ class AdminController extends DashmixController
             \TokoBot\Helpers\Session::flash('error_message', 'Failed to add bot: ' . $e->getMessage());
         }
 
-        header('Location: /bots');
+        header('Location: /tbot');
         exit();
     }
 
@@ -184,7 +183,7 @@ class AdminController extends DashmixController
             \TokoBot\Helpers\Session::flash('error_message', 'Failed to delete bot: ' . $e->getMessage());
         }
 
-        header('Location: /bots');
+        header('Location: /tbot');
         exit();
     }
 }
