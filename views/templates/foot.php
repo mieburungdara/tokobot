@@ -1,5 +1,4 @@
 </div>
-        </div>
       </div>
       <script>
   function handleColorTheme(e) {
