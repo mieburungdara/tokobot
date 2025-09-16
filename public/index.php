@@ -11,26 +11,78 @@ define('VIEWS_PATH', ROOT_PATH . '/views');
 define('CONFIG_PATH', ROOT_PATH . '/config');
 define('PUBLIC_PATH', ROOT_PATH . '/public');
 
-// Load the template configuration globally so $dm is available everywhere
-require_once ROOT_PATH . '/views/inc/_global/config.php';
-require_once ROOT_PATH . '/views/inc/backend/config.php';
-
 require_once ROOT_PATH . '/vendor/autoload.php';
 
+use TokoBot\Core\Container;
 use TokoBot\Helpers\Session;
 use TokoBot\Helpers\Logger;
+
+// --- Start DI Container Setup ---
+
+// Require the Template class since it's not namespaced and autoloaded
+require_once VIEWS_PATH . '/inc/_classes/Template.php';
+
+$container = new Container();
+
+// Create and configure the template object
+$dm = new Template('Dashmix', '5.10', 'assets');
+
+// --- Start Configuration from _global/config.php ---
+$dm->author                     = 'pixelcave';
+$dm->robots                     = 'index, follow';
+$dm->title                      = 'Dashmix - Bootstrap 5 Admin Template &amp; UI Framework';
+$dm->description                = 'Dashmix - Bootstrap 5 Admin Template &amp; UI Framework created by pixelcave';
+$dm->og_url_site                = '';
+$dm->og_url_image               = '';
+$dm->theme                      = '';
+$dm->page_loader                = false;
+$dm->remember_theme             = true;
+$dm->inc_side_overlay           = '';
+$dm->inc_sidebar                = '';
+$dm->inc_header                 = '';
+$dm->inc_footer                 = '';
+$dm->l_sidebar_left             = true;
+$dm->l_sidebar_mini             = false;
+$dm->l_sidebar_visible_desktop  = true;
+$dm->l_sidebar_visible_mobile   = false;
+$dm->l_sidebar_dark             = false;
+$dm->l_side_overlay_hoverable   = false;
+$dm->l_side_overlay_visible     = false;
+$dm->l_page_overlay             = true;
+$dm->l_side_scroll              = true;
+$dm->l_header_fixed             = true;
+$dm->l_header_style             = 'dark';
+$dm->l_footer_fixed             = false;
+$dm->l_m_content                = '';
+$dm->main_nav_active            = basename($_SERVER['PHP_SELF']);
+$dm->main_nav                   = array();
+// --- End Configuration from _global/config.php ---
+
+// --- Start Configuration from backend/config.php ---
+$dm->inc_side_overlay           = VIEWS_PATH . '/inc/backend/views/inc_side_overlay.php';
+$dm->inc_sidebar                = VIEWS_PATH . '/inc/backend/views/inc_sidebar.php';
+$dm->inc_header                 = VIEWS_PATH . '/inc/backend/views/inc_header.php';
+$dm->inc_footer                 = VIEWS_PATH . '/inc/backend/views/inc_footer.php';
+$dm->l_sidebar_dark             = true;
+$dm->l_header_style             = 'light';
+$dm->l_m_content                = '';
+$dm->main_nav                   = require_once(CONFIG_PATH . '/admin_menu.php');
+
+// Store the configured template object in the container
+$container->set('template', $dm);
+
+// --- End DI Container Setup ---
+
 
 // Set global error and exception handlers
 set_error_handler(function ($severity, $message, $file, $line) {
     if (!(error_reporting() & $severity)) {
-        // This error code is not included in error_reporting
         return;
     }
     throw new \ErrorException($message, 0, $severity, $file, $line);
 });
 
 set_exception_handler(function ($exception) {
-    // Log the exception to its own channel
     Logger::channel('critical')->critical(
         $exception->getMessage(),
         [
@@ -41,9 +93,9 @@ set_exception_handler(function ($exception) {
         ]
     );
 
-    // Show a generic error page to the user
-    // Avoid showing raw errors in production
     if (!headers_sent()) {
+        // We can't easily get the container here, so we new up the controller.
+        // This part can be improved later.
         $errorController = new \TokoBot\Controllers\ErrorController();
         $errorController->internalError();
     }
@@ -60,11 +112,10 @@ $dotenv->load();
 require_once ROOT_PATH . '/routes.php';
 $handlerRoles = require_once CONFIG_PATH . '/roles.php';
 
-// Fetch method and URI from somewhere
+// Fetch method and URI
 $httpMethod = $_SERVER['REQUEST_METHOD'];
 $uri = $_SERVER['REQUEST_URI'];
 
-// Strip query string (?foo=bar) and decode URI
 if (false !== $pos = strpos($uri, '?')) {
     $uri = substr($uri, 0, $pos);
 }
@@ -74,12 +125,11 @@ $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::NOT_FOUND:
+        // We can't easily get the container here, so we new up the controller.
         $errorController = new \TokoBot\Controllers\ErrorController();
         $errorController->notFound();
         break;
     case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
-        $allowedMethods = $routeInfo[1];
-        // ... 405 Method Not Allowed
         http_response_code(405);
         echo "405 Method Not Allowed";
         break;
@@ -87,37 +137,33 @@ switch ($routeInfo[0]) {
         $handler = $routeInfo[1];
         $vars = $routeInfo[2];
 
-        // --- START: Route Protection Middleware ---
-        $handlerKey = null;
-        if (is_array($handler) && count($handler) === 2) {
-            $handlerKey = $handler[0] . '@' . $handler[1];
-        }
-
-        // Check if the current route's handler is in our roles map.
+        // Route Protection Middleware
+        $handlerKey = is_array($handler) ? $handler[0] . '@' . $handler[1] : null;
         if (isset($handlerRoles[$handlerKey])) {
             $allowedRoles = $handlerRoles[$handlerKey];
-            $userRole = \TokoBot\Helpers\Session::get('user_role', 'guest'); // Default to 'guest' if not logged in
-
-            // If the user's role is not in the list of allowed roles, deny access.
+            $userRole = \TokoBot\Helpers\Session::get('user_role', 'guest');
             if (!in_array($userRole, $allowedRoles)) {
-                // Panggil ErrorController untuk menampilkan halaman 403 yang sudah di-desain.
+                // We can't easily get the container here, so we new up the controller.
                 $errorController = new \TokoBot\Controllers\ErrorController();
                 $errorController->forbidden();
                 exit();
             }
         }
-        // --- END: Route Protection Middleware ---
 
         // Call the handler
         if (is_array($handler) && count($handler) === 2) {
             $controllerClass = $handler[0];
             $method = $handler[1];
-            $controller = new $controllerClass();
+            
+            // *** Pass the container to the controller constructor ***
+            $controller = new $controllerClass($container);
+            
             call_user_func_array([$controller, $method], $vars);
         } else {
             // Handle closure or other callable
+            // Closures won't have access to the container unless we bind it.
+            // For now, we assume all routes use controllers.
             call_user_func_array($handler, $vars);
         }
         break;
 }
-

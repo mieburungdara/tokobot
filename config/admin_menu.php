@@ -3,10 +3,48 @@
 // config/admin_menu.php
 
 return [
-    ['label' => 'Dashboard', 'url' => '/admin/dashboard', 'icon' => 'fa fa-tachometer-alt'],
-    ['label' => 'User Management', 'url' => '/admin/users', 'icon' => 'fa fa-users'],
-    ['label' => 'Settings', 'url' => '/admin/settings', 'icon' => 'fa fa-cogs'],
-    ['label' => 'Reports', 'url' => '/admin/reports', 'icon' => 'fa fa-chart-line'],
-    ['label' => 'Log Viewer', 'url' => '/logs', 'icon' => 'fa fa-clipboard-list'],
-    // Add more menu items here
+    [
+        'name'  => 'Admin Dashboard',
+        'icon'  => 'si si-speedometer',
+        'url'   => '/dashboard',
+        'roles' => ['admin']
+    ],
+    [
+        'name'  => 'Management',
+        'icon'  => 'si si-puzzle',
+        'roles' => ['admin', 'member'], // Diperbarui
+        'sub'   => [
+            [
+                'name'  => 'Users',
+                'url'   => '/users',
+                'roles' => ['admin'] // Dibuat spesifik untuk admin
+            ],
+            [
+                'name'  => 'Reports',
+                'url'   => '/reports' // Tanpa 'roles', jadi ikut parent
+            ],
+            [
+                'name'  => 'Bot Management',
+                'url'   => '/tbot',
+                'roles' => ['admin']
+            ],
+            [
+                'name'  => 'Log Viewer',
+                'url'   => '/logs',
+                'roles' => ['admin']
+            ]
+        ]
+    ],
+    [
+        'name'  => 'Settings',
+        'icon'  => 'si si-settings',
+        'url'   => '/settings',
+        'roles' => ['admin', 'member'] // Diperbarui
+    ],
+    [
+        'name'  => 'Member Dashboard',
+        'icon'  => 'si si-user',
+        'url'   => '/dashboard',
+        'roles' => ['member']
+    ]
 ];

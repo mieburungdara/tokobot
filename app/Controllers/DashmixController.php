@@ -6,8 +6,7 @@ class DashmixController extends BaseController
 {
     protected function renderDashmix($viewPath, $pageTitle = 'Dashboard', $pageDescription = '', $mainNav = [], $breadcrumbs = [], $data = [])
     {
-        // Access the global $dm object, which is now created in public/index.php
-        global $dm;
+        $dm = $this->container->get('template');
 
         // Secara otomatis mengatur link aktif berdasarkan URL saat ini
         $dm->main_nav_active = strtok($_SERVER['REQUEST_URI'], '?');

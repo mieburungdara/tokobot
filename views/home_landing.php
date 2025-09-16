@@ -1,6 +1,5 @@
 <?php
-// The global $dm object is already loaded from public/index.php
-global $dm;
+// The $dm object is now passed from the controller
 
 // Muat konfigurasi spesifik untuk halaman landing
 require_once ROOT_PATH . '/views/inc/get_started/landing/config.php';
