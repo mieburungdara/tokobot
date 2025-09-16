@@ -55,6 +55,7 @@ class BotApiController extends BaseController
 
     public function setWebhook($id)
     {
+        Logger::channel('app')->info('setWebhook called for bot ID: ' . $id);
         $webhookUrl = $_POST['url'] ?? '';
         if (empty($webhookUrl) || !filter_var($webhookUrl, FILTER_VALIDATE_URL)) {
             $this->sendJsonResponse(['error' => 'Invalid or empty URL provided.'], 400);
@@ -80,9 +81,14 @@ class BotApiController extends BaseController
             $handlerClass = '\TokoBot\BotHandlers\GenericBotHandler'; // Example handler
             $webhookFileContent = "<?php\nrequire_once __DIR__ . '/../../vendor/autoload.php';\n\n// Entry point for bot ID: $id\n$botConfig = [\'id\' => $id];\n\n(new {$handlerClass}($botConfig))->handle();\n";
 
+            Logger::channel('app')->info('Writing webhook file to: ' . $webhookFilePath);
+            Logger::channel('app')->info('Webhook file content: ' . $webhookFileContent);
+
             if (!file_put_contents($webhookFilePath, $webhookFileContent)) {
                 throw new \Exception('Could not write webhook file. Check permissions.');
             }
+
+            Logger::channel('app')->info('Successfully wrote webhook file.');
 
             new Telegram($token);
             $response = Request::setWebhook(['url' => $webhookUrl]);
