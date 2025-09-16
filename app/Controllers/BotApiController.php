@@ -55,17 +55,17 @@ class BotApiController extends BaseController
         try {
             $token = $this->getBotToken($id);
             if (!$token) {
-                throw new Exception('Bot token not found.');
+                throw new \Exception('Bot token not found.');
             }
 
             // Create the bot's webhook entry file
-            $webhookFilePath = PUBLIC_PATH . '/bots/' . $id . '.php';
+            $webhookFilePath = PUBLIC_PATH . '/tbot/' . $id . '.php';
             $webhookFileDir = dirname($webhookFilePath);
 
             // Create the directory if it doesn't exist
             if (!is_dir($webhookFileDir)) {
                 if (!mkdir($webhookFileDir, 0775, true)) {
-                    throw new Exception('Could not create webhook directory. Check permissions.');
+                    throw new \Exception('Could not create webhook directory. Check permissions.');
                 }
             }
 
@@ -73,7 +73,7 @@ class BotApiController extends BaseController
             $webhookFileContent = "<?php\nrequire_once __DIR__ . '/../../vendor/autoload.php';\n\n// Entry point for bot ID: $id\n\$botConfig = [\'id\' => $id];\n\n(new {$handlerClass}(\$botConfig))->handle();\n";
             
             if (!file_put_contents($webhookFilePath, $webhookFileContent)){
-                throw new Exception('Could not write webhook file. Check permissions.');
+                throw new \Exception('Could not write webhook file. Check permissions.');
             }
 
             new Telegram($token);
@@ -83,11 +83,11 @@ class BotApiController extends BaseController
                 if (file_exists($webhookFilePath)) {
                     unlink($webhookFilePath);
                 }
-                throw new Exception($response->getDescription());
+                throw new \Exception($response->getDescription());
             }
 
             $this->sendJsonResponse(['success' => true, 'message' => 'Webhook set successfully!']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Logger::channel('telegram')->error('Set webhook failed', ['bot_id' => $id, 'url' => $webhookUrl, 'error' => $e->getMessage()]);
             $this->sendJsonResponse(['error' => $e->getMessage()], 500);
         }
