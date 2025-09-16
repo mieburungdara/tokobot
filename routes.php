@@ -2,7 +2,7 @@
 
 // routes.php
 
-$dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
+return FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
     // Home route
     $r->addRoute('GET', '/', ['TokoBot\\Controllers\\HomeController', 'index']);
     $r->addRoute('GET', '/home', ['TokoBot\\Controllers\\HomeController', 'index']);
