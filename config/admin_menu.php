@@ -25,7 +25,7 @@ return [
             ],
             [
                 'name'  => 'Bot Management',
-                'url'   => '/tbot',
+                'url'   => '/bot-management',
                 'roles' => ['admin']
             ],
             [

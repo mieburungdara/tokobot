@@ -226,7 +226,7 @@ class AdminController extends DashmixController
 
         if (empty($token)) {
             \TokoBot\Helpers\Session::flash('error_message', 'Token cannot be empty.');
-            header('Location: /tbot');
+            header('Location: /bot-management');
             exit();
         }
 
@@ -279,7 +279,7 @@ class AdminController extends DashmixController
             \TokoBot\Helpers\Session::flash('error_message', 'An unexpected error occurred.');
         }
 
-        header('Location: /tbot');
+        header('Location: /bot-management');
         exit();
     }
 
@@ -327,7 +327,7 @@ class AdminController extends DashmixController
             \TokoBot\Helpers\Session::flash('error_message', 'An unexpected error occurred.');
         }
 
-        header('Location: /tbot');
+        header('Location: /bot-management');
         exit();
     }
 }

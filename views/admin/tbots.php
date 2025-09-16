@@ -60,7 +60,7 @@
                   <button type="button" class="btn btn-sm btn-alt-secondary" data-bs-toggle="tooltip" title="Edit">
                     <i class="fa fa-pencil-alt"></i>
                   </button>
-                  <form action="/tbot/<?php echo $bot['id']; ?>/delete" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this bot?');">
+                  <form action="/bot-management/<?php echo $bot['id']; ?>/delete" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this bot?');">
                     <button type="submit" class="btn btn-sm btn-alt-secondary" data-bs-toggle="tooltip" title="Delete">
                       <i class="fa fa-times"></i>
                     </button>
@@ -92,7 +92,7 @@
           </div>
         </div>
         <div class="block-content">
-          <form action="/tbot" method="POST">
+          <form action="/bot-management" method="POST">
             <div class="mb-4">
               <label class="form-label" for="bot-token">Bot Token</label>
               <input type="text" class="form-control" id="bot-token" name="token" placeholder="Enter bot's API token...">
