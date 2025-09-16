@@ -216,8 +216,8 @@ class AdminController extends DashmixController
                 $botTokens = file_exists($botsFile) ? require $botsFile : [];
                 $botTokens[$botId] = $token;
 
-                $fileContent = "<?php\n\n// Bot token configuration file\n" \
-                             . "// Maps Bot ID to its secret token.\nreturn " \
+                $fileContent = "<?php\n\n// Bot token configuration file\n"
+                             . "// Maps Bot ID to its secret token.\nreturn "
                              . var_export($botTokens, true) . ";\n";
 
                 if (file_put_contents($botsFile, $fileContent) === false) {
@@ -260,8 +260,8 @@ class AdminController extends DashmixController
             $botTokens = file_exists($botsFile) ? require $botsFile : [];
             if (isset($botTokens[$id])) {
                 unset($botTokens[$id]);
-                $fileContent = "<?php\n\n// Bot token configuration file\n" \
-                             . "// Maps Bot ID to its secret token.\nreturn " \
+                $fileContent = "<?php\n\n// Bot token configuration file\n"
+                             . "// Maps Bot ID to its secret token.\nreturn "
                              . var_export($botTokens, true) . ";\n";
                 if (file_put_contents($botsFile, $fileContent) === false) {
                     // Log this but don't throw, as the main DB operation succeeded
