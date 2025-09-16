@@ -2,6 +2,8 @@
 
 namespace TokoBot\Controllers;
 
+use TokoBot\Helpers\Logger;
+
 class AdminController extends DashmixController
 {
     public function index()
@@ -217,6 +219,7 @@ class AdminController extends DashmixController
                 throw new \Exception('Invalid token: ' . $response->getDescription());
             }
         } catch (\Exception $e) {
+            Logger::channel('telegram')->error('Failed to add bot', ['error' => $e->getMessage()]);
             \TokoBot\Helpers\Session::flash('error_message', 'Failed to add bot: ' . $e->getMessage());
         }
 
@@ -252,6 +255,7 @@ class AdminController extends DashmixController
 
             \TokoBot\Helpers\Session::flash('success_message', 'Bot has been deleted successfully!');
         } catch (\Exception $e) {
+            Logger::channel('database')->error('Failed to delete bot', ['bot_id' => $id, 'error' => $e->getMessage()]);
             \TokoBot\Helpers\Session::flash('error_message', 'Failed to delete bot: ' . $e->getMessage());
         }
 

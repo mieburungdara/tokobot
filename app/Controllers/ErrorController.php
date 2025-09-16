@@ -2,14 +2,14 @@
 
 namespace TokoBot\Controllers;
 
-class ErrorController extends BaseController
+class ErrorController
 {
     /**
      * Menonaktifkan sidebar dan header utama.
      */
     private function disableMainLayout()
     {
-        global $dm;
+        $dm = $this->container->get('template');
         $dm->inc_sidebar = '';
         $dm->inc_header = '';
     }

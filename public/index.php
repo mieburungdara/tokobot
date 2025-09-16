@@ -94,9 +94,12 @@ set_exception_handler(function ($exception) {
     );
 
     if (!headers_sent()) {
-        // We can't easily get the container here, so we new up the controller.
-        // This part can be improved later.
-        $errorController = new \TokoBot\Controllers\ErrorController();
+        // Create a new container and template for the error page
+        $errorContainer = new \TokoBot\Core\Container();
+        $dm_error = new \Template('Dashmix', '5.10', 'assets');
+        $errorContainer->set('template', $dm_error);
+
+        $errorController = new \TokoBot\Controllers\ErrorController($errorContainer);
         $errorController->internalError();
     }
 });
@@ -125,8 +128,7 @@ $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::NOT_FOUND:
-        // We can't easily get the container here, so we new up the controller.
-        $errorController = new \TokoBot\Controllers\ErrorController();
+        $errorController = new \TokoBot\Controllers\ErrorController($container);
         $errorController->notFound();
         break;
     case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
@@ -143,8 +145,7 @@ switch ($routeInfo[0]) {
             $allowedRoles = $handlerRoles[$handlerKey];
             $userRole = \TokoBot\Helpers\Session::get('user_role', 'guest');
             if (!in_array($userRole, $allowedRoles)) {
-                // We can't easily get the container here, so we new up the controller.
-                $errorController = new \TokoBot\Controllers\ErrorController();
+                $errorController = new \TokoBot\Controllers\ErrorController($container);
                 $errorController->forbidden();
                 exit();
             }

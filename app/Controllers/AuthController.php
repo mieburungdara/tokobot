@@ -3,6 +3,7 @@
 namespace TokoBot\Controllers;
 
 use TokoBot\Helpers\Session;
+use TokoBot\Helpers\Logger;
 
 class AuthController extends BaseController
 {
@@ -23,7 +24,10 @@ class AuthController extends BaseController
             header('Location: /dashboard');
             exit();
         } else {
-            // Password salah, tampilkan lagi form login dengan pesan error
+            // Password salah, log percobaan dan tampilkan form lagi
+            Logger::channel('auth')->warning('Failed admin login attempt', [
+                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
             $error = 'Password yang Anda masukkan salah.';
             $this->showLoginForm($error);
         }
@@ -53,6 +57,11 @@ class AuthController extends BaseController
             Session::set('user_id', $user['telegram_id']);
             Session::set('user_role', $user['role']);
 
+            Logger::channel('auth')->info('Successful token login', [
+                'user_id' => $user['telegram_id'],
+                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
+
             // Hapus token agar tidak bisa digunakan lagi (single-use)
             $sql = "UPDATE users SET login_token = NULL, token_expires_at = NULL WHERE telegram_id = ?";
             $stmt = $pdo->prepare($sql);
@@ -62,7 +71,12 @@ class AuthController extends BaseController
             exit();
         } else {
             // Token tidak valid atau sudah kedaluwarsa
-            $errorController = new ErrorController();
+            Logger::channel('auth')->warning('Failed token login attempt', [
+                'token' => $token,
+                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
+
+            $errorController = new ErrorController($this->container);
             $errorController->unauthorized(); // Tampilkan halaman error 401
             exit();
         }
