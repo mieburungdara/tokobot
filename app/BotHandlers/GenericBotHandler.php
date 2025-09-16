@@ -31,8 +31,7 @@ class GenericBotHandler
             $text = $message->getText();
 
             // 1. Sinkronisasi Pengguna
-            $sql = "INSERT INTO users (telegram_id, username, first_name, last_name) VALUES (?, ?, ?, ?)
-                    ON DUPLICATE KEY UPDATE username = VALUES(username), first_name = VALUES(first_name), last_name = VALUES(last_name)";
+            $sql = "INSERT INTO users (telegram_id, username, first_name, last_name) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE username = VALUES(username), first_name = VALUES(first_name), last_name = VALUES(last_name)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 $user->getId(),
@@ -62,7 +61,7 @@ class GenericBotHandler
 
         } catch (\Exception $e) {
             // Log error menggunakan Monolog
-            Logger::error("Bot Handler Error for Bot ID {$this->botId}", [
+            Logger::channel('app')->error("Bot Handler Error for Bot ID {$this->botId}", [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -101,11 +100,6 @@ class GenericBotHandler
             Request::sendMessage([
                 'chat_id' => $userId,
                 'text' => $text
-            ]);
-        }
-    }
-}
-t
             ]);
         }
     }
