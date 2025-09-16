@@ -2,6 +2,8 @@
 
 // config/template.php
 
+$adminMenu = require_once CONFIG_PATH . '/admin_menu.php';
+
 return [
     // Meta and Open Graph
     'author' => 'pixelcave',
@@ -39,5 +41,5 @@ return [
 
     // Navigation
     'main_nav_active' => basename($_SERVER['PHP_SELF']),
-    'main_nav' => require_once(CONFIG_PATH . '/admin_menu.php'),
+    'main_nav' => $adminMenu,
 ];
