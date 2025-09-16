@@ -216,7 +216,7 @@ class AdminController extends DashmixController
             'Manage your Telegram bots.',
             [],
             $breadcrumbs,
-            ['tbots' => $tbots] // Pass bots data to the view
+            ['bots' => $tbots] // Pass bots data to the view
         );
     }
 
