@@ -200,6 +200,9 @@ class AdminController extends DashmixController
         $stmt = $pdo->query("SELECT * FROM tbots ORDER BY first_name ASC");
         $tbotsFromDb = $stmt->fetchAll();
 
+        var_dump($tbotsFromDb);
+        die();
+
         // Load tokens from the config file
         $botsFile = CONFIG_PATH . '/tbots.php';
         $botTokens = file_exists($botsFile) ? require $botsFile : [];
