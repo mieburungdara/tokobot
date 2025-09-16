@@ -79,12 +79,14 @@ class BotApiController extends BaseController
             }
 
             $handlerClass = '\TokoBot\BotHandlers\GenericBotHandler'; // Example handler
-            $webhookFileContent = "<?php
+            $webhookFileContent = <<<PHP
+<?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-// Entry point for bot ID: $id
-new {$handlerClass}(\$botConfig))->handle();
-";
+// Entry point for bot ID: {$id}
+(new {$handlerClass}(\$botConfig))->handle();
+PHP;
+
 
             Logger::channel('app')->info('Writing webhook file to: ' . $webhookFilePath);
             Logger::channel('app')->info('Webhook file content: ' . $webhookFileContent);
