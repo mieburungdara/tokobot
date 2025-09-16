@@ -1,8 +1,5 @@
 <?php
-global $dm;
-require_once VIEWS_PATH . '/inc/_global/views/head_start.php';
-require_once VIEWS_PATH . '/inc/_global/views/head_end.php';
-require_once VIEWS_PATH . '/inc/_global/views/page_start.php';
+// This view is now rendered inside 'views/templates/error_layout.php'
 ?>
 <div class="bg-image" style="background-image: url('/assets/media/photos/photo10@2x.jpg');">
   <div class="row g-0 justify-content-end bg-xwork-op">
@@ -43,8 +40,3 @@ require_once VIEWS_PATH . '/inc/_global/views/page_start.php';
     </div>
   </div>
 </div>
-<?php
-require_once VIEWS_PATH . '/inc/_global/views/page_end.php';
-require_once VIEWS_PATH . '/inc/_global/views/footer_start.php';
-require_once VIEWS_PATH . '/inc/_global/views/footer_end.php';
-?>

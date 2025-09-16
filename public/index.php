@@ -94,12 +94,7 @@ set_exception_handler(function ($exception) {
     );
 
     if (!headers_sent()) {
-        // Create a new container and template for the error page
-        $errorContainer = new \TokoBot\Core\Container();
-        $dm_error = new \Template('Dashmix', '5.10', 'assets');
-        $errorContainer->set('template', $dm_error);
-
-        $errorController = new \TokoBot\Controllers\ErrorController($errorContainer);
+        $errorController = new \TokoBot\Controllers\ErrorController();
         $errorController->internalError();
     }
 });
@@ -128,7 +123,7 @@ $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::NOT_FOUND:
-        $errorController = new \TokoBot\Controllers\ErrorController($container);
+        $errorController = new \TokoBot\Controllers\ErrorController();
         $errorController->notFound();
         break;
     case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
@@ -145,7 +140,7 @@ switch ($routeInfo[0]) {
             $allowedRoles = $handlerRoles[$handlerKey];
             $userRole = \TokoBot\Helpers\Session::get('user_role', 'guest');
             if (!in_array($userRole, $allowedRoles)) {
-                $errorController = new \TokoBot\Controllers\ErrorController($container);
+                $errorController = new \TokoBot\Controllers\ErrorController();
                 $errorController->forbidden();
                 exit();
             }
@@ -155,10 +150,10 @@ switch ($routeInfo[0]) {
         if (is_array($handler) && count($handler) === 2) {
             $controllerClass = $handler[0];
             $method = $handler[1];
-            
+
             // *** Pass the container to the controller constructor ***
             $controller = new $controllerClass($container);
-            
+
             call_user_func_array([$controller, $method], $vars);
         } else {
             // Handle closure or other callable

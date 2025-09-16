@@ -77,7 +77,7 @@ class AuthController extends BaseController
                 'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
             ]);
 
-            $errorController = new ErrorController($this->container);
+            $errorController = new ErrorController();
             $errorController->unauthorized(); // Tampilkan halaman error 401
             exit();
         }
