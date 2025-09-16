@@ -3,6 +3,8 @@
 namespace TokoBot\Controllers;
 
 use TokoBot\Helpers\Logger;
+use TokoBot\Exceptions\TelegramApiException;
+use TokoBot\Exceptions\DatabaseException;
 
 class AdminController extends DashmixController
 {
@@ -222,11 +224,14 @@ class AdminController extends DashmixController
                 $successMessage = 'Bot "' . $botInfo['first_name'] . '" has been added/updated successfully!';
                 \TokoBot\Helpers\Session::flash('success_message', $successMessage);
             } else {
-                throw new \Exception('Invalid token: ' . $response->getDescription());
+                throw new TelegramApiException('Invalid token: ' . $response->getDescription());
             }
-        } catch (\Exception $e) {
+        } catch (TelegramApiException $e) {
             Logger::channel('telegram')->error('Failed to add bot', ['error' => $e->getMessage()]);
             \TokoBot\Helpers\Session::flash('error_message', 'Failed to add bot: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            Logger::channel('app')->error('An unexpected error occurred in addBot', ['error' => $e->getMessage()]);
+            \TokoBot\Helpers\Session::flash('error_message', 'An unexpected error occurred.');
         }
 
         header('Location: /tbot');
@@ -237,9 +242,13 @@ class AdminController extends DashmixController
     {
         try {
             // --- Delete from DB ---
-            $pdo = \TokoBot\Helpers\Database::getInstance();
-            $stmt = $pdo->prepare("DELETE FROM bots WHERE id = ?");
-            $stmt->execute([$id]);
+            try {
+                $pdo = \TokoBot\Helpers\Database::getInstance();
+                $stmt = $pdo->prepare("DELETE FROM bots WHERE id = ?");
+                $stmt->execute([$id]);
+            } catch (\PDOException $e) {
+                throw new DatabaseException('Failed to delete bot from database.', (int)$e->getCode(), $e);
+            }
 
             // --- Delete token from config file ---
             $botsFile = CONFIG_PATH . '/bots.php';
@@ -249,7 +258,10 @@ class AdminController extends DashmixController
                 $fileContent = "<?php\n\n// Bot token configuration file\n" \
                              . "// Maps Bot ID to its secret token.\nreturn " \
                              . var_export($botTokens, true) . ";\n";
-                file_put_contents($botsFile, $fileContent);
+                if (file_put_contents($botsFile, $fileContent) === false) {
+                    // Log this but don't throw, as the main DB operation succeeded
+                    Logger::channel('app')->error('Failed to write to token config file during bot deletion.', ['bot_id' => $id]);
+                }
                 if (function_exists('opcache_invalidate')) {
                     opcache_invalidate($botsFile);
                 }
@@ -262,9 +274,12 @@ class AdminController extends DashmixController
             }
 
             \TokoBot\Helpers\Session::flash('success_message', 'Bot has been deleted successfully!');
-        } catch (\Exception $e) {
+        } catch (DatabaseException $e) {
             Logger::channel('database')->error('Failed to delete bot', ['bot_id' => $id, 'error' => $e->getMessage()]);
-            \TokoBot\Helpers\Session::flash('error_message', 'Failed to delete bot: ' . $e->getMessage());
+            \TokoBot\Helpers\Session::flash('error_message', 'Failed to delete bot.');
+        } catch (\Exception $e) {
+            Logger::channel('app')->error('An unexpected error occurred in deleteBot', ['bot_id' => $id, 'error' => $e->getMessage()]);
+            \TokoBot\Helpers\Session::flash('error_message', 'An unexpected error occurred.');
         }
 
         header('Location: /tbot');

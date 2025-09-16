@@ -2,6 +2,8 @@
 
 namespace TokoBot\Helpers;
 
+use TokoBot\Exceptions\DatabaseException;
+
 class Database
 {
     /**
@@ -38,8 +40,7 @@ class Database
                 self::$instance->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
                 self::$instance->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
             } catch (\PDOException $e) {
-                // Sebaiknya error ini di-log, untuk sekarang kita hentikan saja
-                die("Koneksi database gagal: " . $e->getMessage());
+                throw new DatabaseException("Koneksi database gagal: " . $e->getMessage(), (int)$e->getCode(), $e);
             }
         }
 
