@@ -313,7 +313,7 @@ class AdminController extends DashmixController
             }
 
             // --- Delete webhook file ---
-            $webhookFile = PUBLIC_PATH . '/bots/' . $id . '.php';
+            $webhookFile = PUBLIC_PATH . '/tbot/' . $id . '.php';
             if (file_exists($webhookFile)) {
                 unlink($webhookFile);
             }

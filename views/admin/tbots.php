@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
         webhookBotName.textContent = botName;
         webhookInfoContent.innerHTML = `<div class="text-center py-4"><i class="fa fa-2x fa-spinner fa-spin"></i></div>`;
-        webhookUrlInput.value = `${window.location.origin}/bots/${currentBotId}.php`;
+        webhookUrlInput.value = `${window.location.origin}/tbot/${currentBotId}.php`;
 
         try {
             const response = await fetch(`/api/tbot/${currentBotId}/webhook`);
