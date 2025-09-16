@@ -24,49 +24,16 @@ require_once VIEWS_PATH . '/inc/_classes/Template.php';
 
 $container = new Container();
 
-// Create and configure the template object
+// Create the template object
 $dm = new Template('Dashmix', '5.10', 'assets');
 
-// --- Start Configuration from _global/config.php ---
-$dm->author                     = 'pixelcave';
-$dm->robots                     = 'index, follow';
-$dm->title                      = 'Dashmix - Bootstrap 5 Admin Template &amp; UI Framework';
-$dm->description                = 'Dashmix - Bootstrap 5 Admin Template &amp; UI Framework created by pixelcave';
-$dm->og_url_site                = '';
-$dm->og_url_image               = '';
-$dm->theme                      = '';
-$dm->page_loader                = false;
-$dm->remember_theme             = true;
-$dm->inc_side_overlay           = '';
-$dm->inc_sidebar                = '';
-$dm->inc_header                 = '';
-$dm->inc_footer                 = '';
-$dm->l_sidebar_left             = true;
-$dm->l_sidebar_mini             = false;
-$dm->l_sidebar_visible_desktop  = true;
-$dm->l_sidebar_visible_mobile   = false;
-$dm->l_sidebar_dark             = false;
-$dm->l_side_overlay_hoverable   = false;
-$dm->l_side_overlay_visible     = false;
-$dm->l_page_overlay             = true;
-$dm->l_side_scroll              = true;
-$dm->l_header_fixed             = true;
-$dm->l_header_style             = 'dark';
-$dm->l_footer_fixed             = false;
-$dm->l_m_content                = '';
-$dm->main_nav_active            = basename($_SERVER['PHP_SELF']);
-$dm->main_nav                   = array();
-// --- End Configuration from _global/config.php ---
+// Load template configuration
+$templateConfig = require_once CONFIG_PATH . '/template.php';
 
-// --- Start Configuration from backend/config.php ---
-$dm->inc_side_overlay           = VIEWS_PATH . '/inc/backend/views/inc_side_overlay.php';
-$dm->inc_sidebar                = VIEWS_PATH . '/inc/backend/views/inc_sidebar.php';
-$dm->inc_header                 = VIEWS_PATH . '/inc/backend/views/inc_header.php';
-$dm->inc_footer                 = VIEWS_PATH . '/inc/backend/views/inc_footer.php';
-$dm->l_sidebar_dark             = true;
-$dm->l_header_style             = 'light';
-$dm->l_m_content                = '';
-$dm->main_nav                   = require_once(CONFIG_PATH . '/admin_menu.php');
+// Apply configuration to the template object
+foreach ($templateConfig as $key => $value) {
+    $dm->$key = $value;
+}
 
 // Store the configured template object in the container
 $container->set('template', $dm);
