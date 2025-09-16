@@ -78,7 +78,7 @@ class BotApiController extends BaseController
             }
 
             $handlerClass = '\TokoBot\BotHandlers\GenericBotHandler'; // Example handler
-            $webhookFileContent = "<?php\nrequire_once __DIR__ . '/../../vendor/autoload.php';\n\n// Entry point for bot ID: $id\n\$botConfig = [\'id\' => $id];\n\n(new {$handlerClass}(\$botConfig))->handle();\n";
+            $webhookFileContent = "<?php\nrequire_once __DIR__ . '/../../vendor/autoload.php';\n\n// Entry point for bot ID: $id\n$botConfig = [\'id\' => $id];\n\n(new {$handlerClass}($botConfig))->handle();\n";
 
             if (!file_put_contents($webhookFilePath, $webhookFileContent)) {
                 throw new \Exception('Could not write webhook file. Check permissions.');
