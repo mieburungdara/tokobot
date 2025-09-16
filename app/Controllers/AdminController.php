@@ -17,10 +17,10 @@ class AdminController extends DashmixController
     {
         // Widget Data: Bot Status
         $pdo = \TokoBot\Helpers\Database::getInstance();
-        $stmt = $pdo->query("SELECT count(*) FROM bots");
+        $stmt = $pdo->query("SELECT count(*) FROM tbots");
         $totalBots = $stmt->fetchColumn();
 
-        $botsFile = CONFIG_PATH . '/bots.php';
+        $botsFile = CONFIG_PATH . '/tbots.php';
         $botTokens = file_exists($botsFile) ? require $botsFile : [];
         $botsWithToken = count($botTokens);
 
@@ -157,26 +157,26 @@ class AdminController extends DashmixController
 
         // Load bots from the database
         $pdo = \TokoBot\Helpers\Database::getInstance();
-        $stmt = $pdo->query("SELECT * FROM bots ORDER BY first_name ASC");
-        $botsFromDb = $stmt->fetchAll();
+        $stmt = $pdo->query("SELECT * FROM tbots ORDER BY first_name ASC");
+        $tbotsFromDb = $stmt->fetchAll();
 
         // Load tokens from the config file
-        $botsFile = CONFIG_PATH . '/bots.php';
+        $botsFile = CONFIG_PATH . '/tbots.php';
         $botTokens = file_exists($botsFile) ? require $botsFile : [];
 
         // Check token status for each bot
-        $bots = array_map(function ($bot) use ($botTokens) {
-            $bot['has_token'] = isset($botTokens[$bot['id']]);
-            return $bot;
-        }, $botsFromDb);
+        $tbots = array_map(function ($tbot) use ($botTokens) {
+            $tbot['has_token'] = isset($botTokens[$tbot['id']]);
+            return $tbot;
+        }, $tbotsFromDb);
 
         $this->renderDashmix(
-            VIEWS_PATH . '/admin/bots.php',
+            VIEWS_PATH . '/admin/ttbots.php',
             'Bot Management',
             'Manage your Telegram bots.',
             [],
             $breadcrumbs,
-            ['bots' => $bots] // Pass bots data to the view
+            ['tbots' => $tbots] // Pass bots data to the view
         );
     }
 
@@ -201,7 +201,7 @@ class AdminController extends DashmixController
 
                 // --- Save public info to DB ---
                 $pdo = \TokoBot\Helpers\Database::getInstance();
-                $sql = "INSERT INTO bots (id, username, first_name, is_bot) VALUES (?, ?, ?, ?) "
+                $sql = "INSERT INTO tbots (id, username, first_name, is_bot) VALUES (?, ?, ?, ?) "
                      . "ON DUPLICATE KEY UPDATE username = VALUES(username), first_name = VALUES(first_name)";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
@@ -212,7 +212,7 @@ class AdminController extends DashmixController
                 ]);
 
                 // --- Save token to config file ---
-                $botsFile = CONFIG_PATH . '/bots.php';
+                $botsFile = CONFIG_PATH . '/tbots.php';
                 $botTokens = file_exists($botsFile) ? require $botsFile : [];
                 $botTokens[$botId] = $token;
 
@@ -222,7 +222,7 @@ class AdminController extends DashmixController
 
                 if (file_put_contents($botsFile, $fileContent) === false) {
                     throw new \Exception(
-                        'Failed to write to token config file. Please check file permissions for config/bots.php.'
+                        'Failed to write to token config file. Please check file permissions for config/tbots.php.'
                     );
                 }
 
@@ -249,14 +249,14 @@ class AdminController extends DashmixController
             // --- Delete from DB ---
             try {
                 $pdo = \TokoBot\Helpers\Database::getInstance();
-                $stmt = $pdo->prepare("DELETE FROM bots WHERE id = ?");
+                $stmt = $pdo->prepare("DELETE FROM tbots WHERE id = ?");
                 $stmt->execute([$id]);
             } catch (\PDOException $e) {
                 throw new DatabaseException('Failed to delete bot from database.', (int)$e->getCode(), $e);
             }
 
             // --- Delete token from config file ---
-            $botsFile = CONFIG_PATH . '/bots.php';
+            $botsFile = CONFIG_PATH . '/tbots.php';
             $botTokens = file_exists($botsFile) ? require $botsFile : [];
             if (isset($botTokens[$id])) {
                 unset($botTokens[$id]);

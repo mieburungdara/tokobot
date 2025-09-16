@@ -3,4 +3,4 @@ node_modules/
 .phpunit.result.cache
 logs/*.log
 !logs/.gitignore
-config/bots.php
+config/tbots.php

@@ -12,7 +12,7 @@ class BotApiController extends BaseController
 {
     private function getBotToken(int $botId): ?string
     {
-        $botsFile = CONFIG_PATH . '/bots.php';
+        $botsFile = CONFIG_PATH . '/tbots.php';
         $botTokens = file_exists($botsFile) ? require $botsFile : [];
         return $botTokens[$botId] ?? null;
     }
@@ -123,7 +123,7 @@ class BotApiController extends BaseController
             }
 
             // Delete the bot's webhook entry file
-            $webhookFilePath = PUBLIC_PATH . '/bots/' . $id . '.php';
+            $webhookFilePath = PUBLIC_PATH . '/tbot/' . $id . '.php';
             if (file_exists($webhookFilePath)) {
                 unlink($webhookFilePath);
             }

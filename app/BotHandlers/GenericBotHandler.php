@@ -89,7 +89,7 @@ class GenericBotHandler
         $stmt->execute([$tokenHash, $expiresAt, $userId]);
 
         // Ambil token bot dari file config untuk mengirim balasan
-        $botsFile = CONFIG_PATH . '/bots.php';
+        $botsFile = CONFIG_PATH . '/tbots.php';
         $botTokens = file_exists($botsFile) ? require $botsFile : [];
         $botToken = $botTokens[$this->botId] ?? null;
 
