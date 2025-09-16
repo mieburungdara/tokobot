@@ -31,15 +31,17 @@ class GenericBotHandler
             $text = $message->getText();
 
             // 1. Sinkronisasi Pengguna
-            $sql = "INSERT INTO users (telegram_id, username, first_name, last_name) VALUES (?, ?, ?, ?) "
+            $sql = "INSERT INTO users (telegram_id, username, first_name, last_name, last_activity_at) "
+                 . "VALUES (?, ?, ?, ?, NOW()) "
                  . "ON DUPLICATE KEY UPDATE username = VALUES(username), "
-                 . "first_name = VALUES(first_name), last_name = VALUES(last_name)";
+                 . "first_name = VALUES(first_name), last_name = VALUES(last_name), "
+                 . "last_activity_at = NOW()";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 $user->getId(),
                 $user->getUsername(),
                 $user->getFirstName(),
-                $user->getLastName()
+                $user->getLastName(),
             ]);
             Logger::channel('app')->info("User {$user->getId()} ({$user->getUsername()}) synced.");
 

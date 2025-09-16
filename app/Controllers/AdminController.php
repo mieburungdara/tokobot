@@ -106,6 +106,46 @@ class AdminController extends DashmixController
         );
     }
 
+    public function botAnalytics()
+    {
+        $breadcrumbs = [
+            ['name' => 'Dashboard', 'url' => '/dashboard'],
+            ['name' => 'Bot Analytics']
+        ];
+
+        $pdo = \TokoBot\Helpers\Database::getInstance();
+
+        // Command Usage
+        $commandUsageStmt = $pdo->query("SELECT text, count(*) as command_count FROM messages WHERE text LIKE '/%' GROUP BY text ORDER BY command_count DESC LIMIT 10");
+        $commandUsage = $commandUsageStmt->fetchAll();
+
+        // Active Users
+        $activeUsersStmt = $pdo->query("SELECT username, first_name, last_activity_at FROM users WHERE last_activity_at IS NOT NULL ORDER BY last_activity_at DESC LIMIT 10");
+        $activeUsers = $activeUsersStmt->fetchAll();
+
+        // Bot Errors
+        $appLogFile = ROOT_PATH . '/logs/app.log';
+        $telegramLogFile = ROOT_PATH . '/logs/telegram.log';
+        $appLogs = file_exists($appLogFile) ? array_slice(array_reverse(explode("\n", trim(file_get_contents($appLogFile)))), 0, 5) : [];
+        $telegramLogs = file_exists($telegramLogFile) ? array_slice(array_reverse(explode("\n", trim(file_get_contents($telegramLogFile)))), 0, 5) : [];
+
+        $viewData = [
+            'commandUsage' => $commandUsage,
+            'activeUsers' => $activeUsers,
+            'appLogs' => $appLogs,
+            'telegramLogs' => $telegramLogs,
+        ];
+
+        $this->renderDashmix(
+            VIEWS_PATH . '/admin/analytics.php',
+            'Bot Analytics',
+            'Analyze bot usage and activity.',
+            [],
+            $breadcrumbs,
+            $viewData
+        );
+    }
+
     public function viewLogs()
     {
         $logChannel = $_GET['log'] ?? 'app';
