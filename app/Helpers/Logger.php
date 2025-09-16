@@ -33,4 +33,3 @@ class Logger
         return self::$instances[$name];
     }
 }
-

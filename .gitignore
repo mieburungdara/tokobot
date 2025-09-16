@@ -1,2 +1,7 @@
+vendor/
+node_modules/
 .env
-config/bots.php.phpunit.result.cache
+.phpunit.result.cache
+logs/*.log
+!logs/.gitignore
+config/bots.php
