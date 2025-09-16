@@ -39,6 +39,7 @@ class Database
                 self::$instance->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                 self::$instance->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
                 self::$instance->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+                self::$instance->exec("SET NAMES 'utf8mb4'");
             } catch (\PDOException $e) {
                 throw new DatabaseException("Koneksi database gagal: " . $e->getMessage(), (int)$e->getCode(), $e);
             }
