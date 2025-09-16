@@ -40,7 +40,10 @@ class BotApiController extends BaseController
 
             $this->sendJsonResponse($response->getResult());
         } catch (\Exception $e) {
-            Logger::channel('telegram')->error('Get webhook info failed', ['bot_id' => $id, 'error' => $e->getMessage()]);
+            Logger::channel('telegram')->error(
+                'Get webhook info failed',
+                ['bot_id' => $id, 'error' => $e->getMessage()]
+            );
             $this->sendJsonResponse(['error' => $e->getMessage()], 500);
         }
     }
@@ -70,9 +73,16 @@ class BotApiController extends BaseController
             }
 
             $handlerClass = '\TokoBot\BotHandlers\GenericBotHandler'; // Example handler
-            $webhookFileContent = "<?php\nrequire_once __DIR__ . '/../../vendor/autoload.php';\n\n// Entry point for bot ID: $id\n\$botConfig = [\'id\' => $id];\n\n(new {$handlerClass}(\$botConfig))->handle();\n";
-            
-            if (!file_put_contents($webhookFilePath, $webhookFileContent)){
+            $webhookFileContent = "<?php
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+// Entry point for bot ID: $id
+\$botConfig = [\'id\' => $id];
+
+(new {$handlerClass}(\$botConfig))->handle();
+";
+
+            if (!file_put_contents($webhookFilePath, $webhookFileContent)) {
                 throw new \Exception('Could not write webhook file. Check permissions.');
             }
 
@@ -88,7 +98,10 @@ class BotApiController extends BaseController
 
             $this->sendJsonResponse(['success' => true, 'message' => 'Webhook set successfully!']);
         } catch (\Exception $e) {
-            Logger::channel('telegram')->error('Set webhook failed', ['bot_id' => $id, 'url' => $webhookUrl, 'error' => $e->getMessage()]);
+            Logger::channel('telegram')->error(
+                'Set webhook failed',
+                ['bot_id' => $id, 'url' => $webhookUrl, 'error' => $e->getMessage()]
+            );
             $this->sendJsonResponse(['error' => $e->getMessage()], 500);
         }
     }

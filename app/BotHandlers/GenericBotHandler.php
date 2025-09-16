@@ -31,7 +31,9 @@ class GenericBotHandler
             $text = $message->getText();
 
             // 1. Sinkronisasi Pengguna
-            $sql = "INSERT INTO users (telegram_id, username, first_name, last_name) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE username = VALUES(username), first_name = VALUES(first_name), last_name = VALUES(last_name)";
+            $sql = "INSERT INTO users (telegram_id, username, first_name, last_name) VALUES (?, ?, ?, ?) "
+                 . "ON DUPLICATE KEY UPDATE username = VALUES(username), "
+                 . "first_name = VALUES(first_name), last_name = VALUES(last_name)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 $user->getId(),
@@ -42,7 +44,8 @@ class GenericBotHandler
             Logger::channel('app')->info("User {$user->getId()} ({$user->getUsername()}) synced.");
 
             // 2. Log Pesan
-            $sql = "INSERT INTO messages (id, message_id, user_id, chat_id, bot_id, text, raw_update) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO messages (id, message_id, user_id, chat_id, bot_id, text, raw_update) "
+                 . "VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 $update->getUpdateId(),
@@ -58,7 +61,6 @@ class GenericBotHandler
             if ($text === '/login') {
                 $this->handleLoginCommand($user->getId());
             }
-
         } catch (\Exception $e) {
             // Log error menggunakan Monolog
             Logger::channel('app')->error("Bot Handler Error for Bot ID {$this->botId}", [
@@ -71,7 +73,7 @@ class GenericBotHandler
     private function handleLoginCommand(int $userId)
     {
         $pdo = Database::getInstance();
-        
+
         // Buat token acak yang aman
         $token = bin2hex(random_bytes(32));
         $tokenHash = hash('sha256', $token);

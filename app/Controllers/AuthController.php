@@ -18,7 +18,8 @@ class AuthController extends BaseController
         $password = $_POST['password'] ?? '';
         $hardcodedPassword = 'sup3r4dmin'; // Password sementara
 
-        if (password_verify($password, password_hash($hardcodedPassword, PASSWORD_DEFAULT))) { // Verifikasi password dengan aman
+        $hashedPassword = password_hash($hardcodedPassword, PASSWORD_DEFAULT);
+        if (password_verify($password, $hashedPassword)) { // Verifikasi password dengan aman
             // Password benar, atur session dan alihkan ke dashboard
             Session::set('user_role', 'admin');
             header('Location: /dashboard');

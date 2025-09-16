@@ -4,8 +4,14 @@ namespace TokoBot\Controllers;
 
 class DashmixController extends BaseController
 {
-    protected function renderDashmix($viewPath, $pageTitle = 'Dashboard', $pageDescription = '', $mainNav = [], $breadcrumbs = [], $data = [])
-    {
+    protected function renderDashmix(
+        $viewPath,
+        $pageTitle = 'Dashboard',
+        $pageDescription = '',
+        $mainNav = [],
+        $breadcrumbs = [],
+        $data = []
+    ) {
         $dm = $this->container->get('template');
 
         // Secara otomatis mengatur link aktif berdasarkan URL saat ini

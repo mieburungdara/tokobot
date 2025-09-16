@@ -17,7 +17,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.2'
-        extensions: mbstring, pdo, pdo_mysql
+        extensions: mbstring, pdo, pdo_mysql, curl
         tools: composer:v2
 
     - name: Validate composer.json and composer.lock
@@ -37,6 +37,9 @@ jobs:
 
     - name: Run PHPStan
       run: vendor/bin/phpstan analyse --level=5 --no-progress app/
+
+    - name: Run PHP_CodeSniffer
+      run: vendor/bin/phpcs
 
     - name: Run PHPUnit
       run: vendor/bin/phpunit

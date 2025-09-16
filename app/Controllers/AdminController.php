@@ -194,7 +194,8 @@ class AdminController extends DashmixController
 
                 // --- Save public info to DB ---
                 $pdo = \TokoBot\Helpers\Database::getInstance();
-                $sql = "INSERT INTO bots (id, username, first_name, is_bot) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE username = VALUES(username), first_name = VALUES(first_name)";
+                $sql = "INSERT INTO bots (id, username, first_name, is_bot) VALUES (?, ?, ?, ?) "
+                     . "ON DUPLICATE KEY UPDATE username = VALUES(username), first_name = VALUES(first_name)";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
                     $botId,
@@ -208,13 +209,18 @@ class AdminController extends DashmixController
                 $botTokens = file_exists($botsFile) ? require $botsFile : [];
                 $botTokens[$botId] = $token;
 
-                $fileContent = "<?php\n\n// Bot token configuration file\n// Maps Bot ID to its secret token.\nreturn " . var_export($botTokens, true) . ";\n";
-                
+                $fileContent = "<?php\n\n// Bot token configuration file\n" \
+                             . "// Maps Bot ID to its secret token.\nreturn " \
+                             . var_export($botTokens, true) . ";\n";
+
                 if (file_put_contents($botsFile, $fileContent) === false) {
-                    throw new \Exception('Failed to write to token config file. Please check file permissions for config/bots.php.');
+                    throw new \Exception(
+                        'Failed to write to token config file. Please check file permissions for config/bots.php.'
+                    );
                 }
 
-                \TokoBot\Helpers\Session::flash('success_message', 'Bot "' . $botInfo['first_name'] . '" has been added/updated successfully!');
+                $successMessage = 'Bot "' . $botInfo['first_name'] . '" has been added/updated successfully!';
+                \TokoBot\Helpers\Session::flash('success_message', $successMessage);
             } else {
                 throw new \Exception('Invalid token: ' . $response->getDescription());
             }
@@ -240,7 +246,9 @@ class AdminController extends DashmixController
             $botTokens = file_exists($botsFile) ? require $botsFile : [];
             if (isset($botTokens[$id])) {
                 unset($botTokens[$id]);
-                $fileContent = "<?php\n\n// Bot token configuration file\n// Maps Bot ID to its secret token.\nreturn " . var_export($botTokens, true) . ";\n";
+                $fileContent = "<?php\n\n// Bot token configuration file\n" \
+                             . "// Maps Bot ID to its secret token.\nreturn " \
+                             . var_export($botTokens, true) . ";\n";
                 file_put_contents($botsFile, $fileContent);
                 if (function_exists('opcache_invalidate')) {
                     opcache_invalidate($botsFile);
