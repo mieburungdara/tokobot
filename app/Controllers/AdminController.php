@@ -171,7 +171,7 @@ class AdminController extends DashmixController
         }, $tbotsFromDb);
 
         $this->renderDashmix(
-            VIEWS_PATH . '/admin/ttbots.php',
+            VIEWS_PATH . '/admin/tbots.php',
             'Bot Management',
             'Manage your Telegram bots.',
             [],
