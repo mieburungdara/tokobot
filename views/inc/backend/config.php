@@ -68,6 +68,11 @@ $dm->main_nav                   = array(
                 'name'  => 'Bot Management',
                 'url'   => '/tbot',
                 'roles' => ['admin']
+            ),
+            array(
+                'name'  => 'Log Viewer',
+                'url'   => '/logs',
+                'roles' => ['admin']
             )
         )
     ),

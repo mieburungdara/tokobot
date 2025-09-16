@@ -2,7 +2,7 @@
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+error_reporting(E_ALL & ~E_DEPRECATED);
 
 // Define global path constants
 define('ROOT_PATH', dirname(__DIR__));
@@ -18,6 +18,37 @@ require_once ROOT_PATH . '/views/inc/backend/config.php';
 require_once ROOT_PATH . '/vendor/autoload.php';
 
 use TokoBot\Helpers\Session;
+use TokoBot\Helpers\Logger;
+
+// Set global error and exception handlers
+set_error_handler(function ($severity, $message, $file, $line) {
+    if (!(error_reporting() & $severity)) {
+        // This error code is not included in error_reporting
+        return;
+    }
+    throw new \ErrorException($message, 0, $severity, $file, $line);
+});
+
+set_exception_handler(function ($exception) {
+    // Log the exception to its own channel
+    Logger::channel('critical')->critical(
+        $exception->getMessage(),
+        [
+            'exception' => get_class($exception),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            'trace' => $exception->getTraceAsString()
+        ]
+    );
+
+    // Show a generic error page to the user
+    // Avoid showing raw errors in production
+    if (!headers_sent()) {
+        $errorController = new \TokoBot\Controllers\ErrorController();
+        $errorController->internalError();
+    }
+});
+
 
 Session::start();
 

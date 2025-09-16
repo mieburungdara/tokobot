@@ -14,6 +14,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/users', ['TokoBot\Controllers\AdminController', 'users']);
     $r->addRoute('GET', '/settings', ['TokoBot\Controllers\AdminController', 'settings']);
     $r->addRoute('GET', '/reports', ['TokoBot\Controllers\AdminController', 'reports']);
+    $r->addRoute('GET', '/logs', ['TokoBot\Controllers\AdminController', 'viewLogs']);
     $r->addRoute('GET', '/tbot', ['TokoBot\Controllers\AdminController', 'manageBots']);
     $r->addRoute('POST', '/tbot', ['TokoBot\Controllers\AdminController', 'addBot']);
     $r->addRoute('POST', '/tbot/{id:\d+}/delete', ['TokoBot\Controllers\AdminController', 'deleteBot']);

@@ -5,6 +5,7 @@ namespace TokoBot\BotHandlers;
 use TokoBot\Helpers\Database;
 use TelegramBot\Telegram;
 use TelegramBot\Request;
+use TokoBot\Helpers\Logger;
 
 class GenericBotHandler
 {
@@ -21,11 +22,10 @@ class GenericBotHandler
             $pdo = Database::getInstance();
             $update = Telegram::getUpdate();
 
-            if (!$update || !$update->getMessage()) {
-                return; // Bukan update pesan, abaikan
+            $message = $update ? $update->getMessage() : null;
+            if (!$message) {
+                return; // Not a message update, ignore
             }
-
-            $message = $update->getMessage();
             $user = $message->getFrom();
             $chat = $message->getChat();
             $text = $message->getText();
@@ -40,6 +40,7 @@ class GenericBotHandler
                 $user->getFirstName(),
                 $user->getLastName()
             ]);
+            Logger::channel('app')->info("User {$user->getId()} ({$user->getUsername()}) synced.");
 
             // 2. Log Pesan
             $sql = "INSERT INTO messages (id, message_id, user_id, chat_id, bot_id, text, raw_update) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -60,8 +61,11 @@ class GenericBotHandler
             }
 
         } catch (\Exception $e) {
-            // Di production, error ini harus di-log ke file
-            error_log("Bot Handler Error for Bot ID {$this->botId}: " . $e->getMessage());
+            // Log error menggunakan Monolog
+            Logger::error("Bot Handler Error for Bot ID {$this->botId}", [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
         }
     }
 
@@ -97,6 +101,11 @@ class GenericBotHandler
             Request::sendMessage([
                 'chat_id' => $userId,
                 'text' => $text
+            ]);
+        }
+    }
+}
+t
             ]);
         }
     }

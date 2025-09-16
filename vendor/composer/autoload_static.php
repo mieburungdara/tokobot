@@ -34,10 +34,15 @@ class ComposerStaticInita2215efcd5a56efadb0b3ec0440c5fd9
         ),
         'P' => 
         array (
+            'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
             'PhpParser\\' => 10,
             'PhpOption\\' => 10,
+        ),
+        'M' => 
+        array (
+            'Monolog\\' => 8,
         ),
         'G' => 
         array (
@@ -83,6 +88,10 @@ class ComposerStaticInita2215efcd5a56efadb0b3ec0440c5fd9
         array (
             0 => __DIR__ . '/..' . '/symfony/dotenv',
         ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/src',
+        ),
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-factory/src',
@@ -99,6 +108,10 @@ class ComposerStaticInita2215efcd5a56efadb0b3ec0440c5fd9
         'PhpOption\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoption/phpoption/src/PhpOption',
+        ),
+        'Monolog\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (

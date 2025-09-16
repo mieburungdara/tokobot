@@ -11,6 +11,30 @@ class AdminController extends DashmixController
 
     public function dashmixDashboard()
     {
+        // Widget Data: Bot Status
+        $pdo = \TokoBot\Helpers\Database::getInstance();
+        $stmt = $pdo->query("SELECT count(*) FROM bots");
+        $totalBots = $stmt->fetchColumn();
+
+        $botsFile = CONFIG_PATH . '/bots.php';
+        $botTokens = file_exists($botsFile) ? require $botsFile : [];
+        $botsWithToken = count($botTokens);
+
+        // Widget Data: Critical Logs
+        $logFile = ROOT_PATH . '/logs/critical.log';
+        $criticalLogs = [];
+        if (file_exists($logFile)) {
+            $fileContent = file_get_contents($logFile);
+            $lines = explode("\n", trim($fileContent));
+            $criticalLogs = array_slice(array_reverse($lines), 0, 5); // Get latest 5 lines
+        }
+
+        $viewData = [
+            'totalBots' => $totalBots,
+            'botsWithToken' => $botsWithToken,
+            'criticalLogs' => $criticalLogs
+        ];
+
         $breadcrumbs = [
             ['name' => 'Dashboard']
         ];
@@ -20,7 +44,8 @@ class AdminController extends DashmixController
             'Admin Dashboard',
             'Welcome to the admin dashboard.',
             [],
-            $breadcrumbs
+            $breadcrumbs,
+            $viewData
         );
     }
 
@@ -69,6 +94,48 @@ class AdminController extends DashmixController
             'View application reports.',
             [],
             $breadcrumbs
+        );
+    }
+
+    public function viewLogs()
+    {
+        $logChannel = $_GET['log'] ?? 'app';
+        $allowedLogs = ['app', 'telegram', 'critical'];
+
+        if (!in_array($logChannel, $allowedLogs)) {
+            $logChannel = 'app';
+        }
+
+        $logFile = ROOT_PATH . "/logs/{$logChannel}.log";
+
+        if (isset($_GET['action']) && $_GET['action'] === 'clear') {
+            if (file_exists($logFile)) {
+                file_put_contents($logFile, '');
+            }
+            header("Location: /logs?log={$logChannel}");
+            exit;
+        }
+
+        $breadcrumbs = [
+            ['name' => 'Dashboard', 'url' => '/dashboard'],
+            ['name' => 'Log Viewer']
+        ];
+
+        $logs = [];
+
+        if (file_exists($logFile)) {
+            $fileContent = file_get_contents($logFile);
+            $logs = explode("\n", trim($fileContent));
+            $logs = array_reverse($logs);
+        }
+
+        $this->renderDashmix(
+            VIEWS_PATH . '/admin/logs.php',
+            'Log Viewer',
+            'View application logs.',
+            [],
+            $breadcrumbs,
+            ['logs' => $logs]
         );
     }
 

@@ -58,6 +58,15 @@ class BotApiController extends BaseController
 
             // Create the bot's webhook entry file
             $webhookFilePath = PUBLIC_PATH . '/bots/' . $id . '.php';
+            $webhookFileDir = dirname($webhookFilePath);
+
+            // Create the directory if it doesn't exist
+            if (!is_dir($webhookFileDir)) {
+                if (!mkdir($webhookFileDir, 0775, true)) {
+                    throw new \Exception('Could not create webhook directory. Check permissions.');
+                }
+            }
+
             $handlerClass = '\TokoBot\BotHandlers\GenericBotHandler'; // Example handler
             $webhookFileContent = "<?php\nrequire_once __DIR__ . '/../../vendor/autoload.php';\n\n// Entry point for bot ID: $id\n\$botConfig = [\'id\' => $id];\n\n(new {$handlerClass}(\$botConfig))->handle();\n";
             
@@ -90,7 +99,7 @@ class BotApiController extends BaseController
             }
 
             new Telegram($token);
-            $response = Request::deleteWebhook();
+            $response = Request::deleteWebhook(['drop_pending_updates' => true]);
 
             if (!$response->isOk()) {
                 throw new \Exception($response->getDescription());

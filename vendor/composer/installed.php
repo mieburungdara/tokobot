@@ -3,7 +3,7 @@
         'name' => 'tokobot/tokobot',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '8cd3f23f49f3549577cf7bf08655bfce513fed98',
+        'reference' => '92c18582ca9566a2e55db6303dfe0e58f7de301b',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -52,6 +52,15 @@
             'reference' => '21dc724a0583619cd1652f673303492272778051',
             'type' => 'library',
             'install_path' => __DIR__ . '/../guzzlehttp/psr7',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'monolog/monolog' => array(
+            'pretty_version' => '3.9.0',
+            'version' => '3.9.0.0',
+            'reference' => '10d85740180ecba7896c87e06a166e0c95a0e3b6',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../monolog/monolog',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
@@ -215,6 +224,21 @@
             'dev_requirement' => false,
             'provided' => array(
                 0 => '1.0',
+            ),
+        ),
+        'psr/log' => array(
+            'pretty_version' => '3.0.2',
+            'version' => '3.0.2.0',
+            'reference' => 'f16e1d5863e37f8d8c2a01719f5b34baa2b714d3',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../psr/log',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'psr/log-implementation' => array(
+            'dev_requirement' => false,
+            'provided' => array(
+                0 => '3.0.0',
             ),
         ),
         'ralouphie/getallheaders' => array(
@@ -436,7 +460,7 @@
         'tokobot/tokobot' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '8cd3f23f49f3549577cf7bf08655bfce513fed98',
+            'reference' => '92c18582ca9566a2e55db6303dfe0e58f7de301b',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

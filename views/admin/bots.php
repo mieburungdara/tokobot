@@ -161,16 +161,31 @@ document.addEventListener('DOMContentLoaded', function () {
             } else if (!data.url) {
                 content = `<div class="alert alert-warning">Webhook is not set.</div>`;
             } else {
+                const formatTitle = (str) => {
+                    return str.replace(/_/g, ' ').replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+                };
+
                 for (const [key, value] of Object.entries(data)) {
-                    if (value) {
-                        content += `<dt class="col-sm-4">${key.replace(/_/g, ' ')}</dt><dd class="col-sm-8">${value}</dd>`;
+                    if (value !== null && value !== '') {
+                        let formattedValue = value;
+                        let formattedKey = formatTitle(key);
+
+                        if (key === 'last_error_date') {
+                            formattedValue = new Date(value * 1000).toLocaleString(undefined, { dateStyle: 'long', timeStyle: 'medium' });
+                        } else if (key === 'last_error_message') {
+                            formattedValue = `<span class="text-danger fw-semibold">${value}</span>`;
+                        } else if (typeof value === 'boolean') {
+                            formattedValue = value ? '<span class="text-success">Yes</span>' : '<span class="text-muted">No</span>';
+                        }
+
+                        content += `<dt class="col-sm-5 text-muted">${formattedKey}</dt><dd class="col-sm-7">${formattedValue}</dd>`;
                     }
                 }
             }
             content += '</dl>';
             webhookInfoContent.innerHTML = content;
         } catch (error) {
-            webhookInfoContent.innerHTML = `<div class="alert alert-danger">Failed to fetch webhook status.</div>`;
+            webhookInfoContent.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${error.message}<br><small>Could not connect to the server or the response was not valid JSON.</small></div>`;
         }
     });
 
@@ -188,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function () {
             let message = data.success ? data.message : data.error;
             webhookInfoContent.innerHTML = `<div class="alert alert-${alertType}">${message}</div>`;
         } catch (error) {
-            webhookInfoContent.innerHTML = `<div class="alert alert-danger">An error occurred.</div>`;
+            webhookInfoContent.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${error.message}<br><small>Could not connect to the server or the response was not valid JSON.</small></div>`;
         }
     });
 
@@ -207,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function () {
             let message = data.success ? data.message : data.error;
             webhookInfoContent.innerHTML = `<div class="alert alert-${alertType}">${message}</div>`;
         } catch (error) {
-            webhookInfoContent.innerHTML = `<div class="alert alert-danger">An error occurred.</div>`;
+            webhookInfoContent.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${error.message}<br><small>Could not connect to the server or the response was not valid JSON.</small></div>`;
         }
     });
 });
