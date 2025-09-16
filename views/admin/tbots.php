@@ -9,15 +9,21 @@
     </div>
   </div>
   <div class="block-content">
-    <?php if (\TokoBot\Helpers\Session::get('success_message')) : ?>
+    <?php
+    $successMessage = \TokoBot\Helpers\Session::flash('success_message');
+    if ($successMessage) :
+    ?>
         <div class="alert alert-success alert-dismissible" role="alert">
-            <p class="mb-0"><?php echo \TokoBot\Helpers\Session::flash('success_message'); ?></p>
+            <p class="mb-0"><?php echo $successMessage; ?></p>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
-    <?php if (\TokoBot\Helpers\Session::get('error_message')) : ?>
+    <?php
+    $errorMessage = \TokoBot\Helpers\Session::flash('error_message');
+    if ($errorMessage) :
+    ?>
         <div class="alert alert-danger alert-dismissible" role="alert">
-            <p class="mb-0"><?php echo \TokoBot\Helpers\Session::flash('error_message'); ?></p>
+            <p class="mb-0"><?php echo $errorMessage; ?></p>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
