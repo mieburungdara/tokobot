@@ -60,12 +60,17 @@ class AdminController extends DashmixController
             ['name' => 'Users']
         ];
 
+        $pdo = \TokoBot\Helpers\Database::getInstance();
+        $stmt = $pdo->query("SELECT telegram_id, username, first_name, role FROM users ORDER BY first_name ASC");
+        $users = $stmt->fetchAll();
+
         $this->renderDashmix(
             VIEWS_PATH . '/admin/users.php',
             'User Management',
             'Manage all application users.',
             [],
-            $breadcrumbs
+            $breadcrumbs,
+            ['users' => $users]
         );
     }
 
