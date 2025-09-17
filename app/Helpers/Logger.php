@@ -13,6 +13,14 @@ class Logger
     public static function channel(string $name = 'app'): MonologLogger
     {
         if (!isset(self::$instances[$name])) {
+            // Define ROOT_PATH if it's not already defined.
+            // This makes the Logger usable in different entry points (e.g., webhooks)
+            // without needing to load the main bootstrap file.
+            if (!defined('ROOT_PATH')) {
+                // This assumes Logger.php is in app/Helpers/
+                define('ROOT_PATH', dirname(__DIR__, 2));
+            }
+
             // Format log: [timestamp] channel.LEVEL: message context extra
             $formatter = new LineFormatter(
                 "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n",
