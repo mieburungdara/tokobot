@@ -1,0 +1,145 @@
+{
+  "file": "app/Models/BaseModel.php",
+  "description": "Provides a foundational class for all models, encapsulating common database operations.",
+  "class": {
+    "name": "BaseModel",
+    "namespace": "TokoBot\\Models",
+    "abstract": true,
+    "properties": [
+      {
+        "name": "db",
+        "type": "PDO",
+        "visibility": "protected",
+        "description": "The PDO database connection instance."
+      },
+      {
+        "name": "table",
+        "type": "string",
+        "visibility": "protected",
+        "description": "The name of the database table associated with the model."
+      }
+    ],
+    "methods": [
+      {
+        "name": "__construct",
+        "description": "Initializes the PDO instance and derives the table name.",
+        "parameters": [],
+        "return": {
+          "type": "void"
+        }
+      },
+      {
+        "name": "deriveTableName",
+        "description": "Derives the table name from the class name (e.g., UserModel -> users).",
+        "parameters": [],
+        "return": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "find",
+        "description": "Finds a record by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "int",
+            "description": "The ID of the record."
+          }
+        ],
+        "return": {
+          "type": "array|false",
+          "description": "The record as an associative array, or false if not found."
+        },
+        "throws": [
+          {
+            "type": "DatabaseException",
+            "description": "If a database error occurs."
+          }
+        ]
+      },
+      {
+        "name": "findAll",
+        "description": "Gets all records from the table.",
+        "parameters": [],
+        "return": {
+          "type": "array",
+          "description": "An array of all records."
+        },
+        "throws": [
+          {
+            "type": "DatabaseException",
+            "description": "If a database error occurs."
+          }
+        ]
+      },
+      {
+        "name": "create",
+        "description": "Creates a new record.",
+        "parameters": [
+          {
+            "name": "data",
+            "type": "array",
+            "description": "An associative array of data to insert."
+          }
+        ],
+        "return": {
+          "type": "int|false",
+          "description": "The ID of the newly inserted record, or false on failure."
+        },
+        "throws": [
+          {
+            "type": "DatabaseException",
+            "description": "If a database error occurs."
+          }
+        ]
+      },
+      {
+        "name": "update",
+        "description": "Updates an existing record.",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "int",
+            "description": "The ID of the record to update."
+          },
+          {
+            "name": "data",
+            "type": "array",
+            "description": "An associative array of data to update."
+          }
+        ],
+        "return": {
+          "type": "int",
+          "description": "The number of affected rows."
+        },
+        "throws": [
+          {
+            "type": "DatabaseException",
+            "description": "If a database error occurs."
+          }
+        ]
+      },
+      {
+        "name": "delete",
+        "description": "Deletes a record.",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "int",
+            "description": "The ID of the record to delete."
+          }
+        ],
+        "return": {
+          "type": "int",
+          "description": "The number of affected rows."
+        },
+        "throws": [
+          {
+            "type": "DatabaseException",
+            "description": "If a database error occurs."
+          }
+        ]
+      }
+    ]
+  }
+}
