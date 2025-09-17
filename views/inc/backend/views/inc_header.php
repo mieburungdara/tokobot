@@ -37,8 +37,16 @@
       <?php if (\TokoBot\Helpers\Session::get('user_role', 'guest') !== 'guest'): ?>
       <div class="dropdown d-inline-block">
         <button type="button" class="btn btn-alt-secondary" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fa fa-fw fa-user d-sm-none"></i>
-          <span class="d-none d-sm-inline-block"><?php echo ucfirst(\TokoBot\Helpers\Session::get('user_role')); ?></span>
+          <?php 
+            // Ambil data pengguna dari session
+            $currentUser = \TokoBot\Helpers\Session::get('user');
+            if (isset($currentUser['photo_url']) && !empty($currentUser['photo_url'])) : 
+          ?>
+            <img class="img-avatar img-avatar32" src="<?= htmlspecialchars(\$currentUser['photo_url']) ?>" alt="User Photo">
+          <?php else: ?>
+            <i class="fa fa-fw fa-user d-sm-none"></i>
+          <?php endif; ?>
+          <span class="d-none d-sm-inline-block"><?= isset($currentUser['first_name']) ? htmlspecialchars($currentUser['first_name']) : ucfirst(\TokoBot\Helpers\Session::get('user_role')); ?></span>
           <i class="fa fa-fw fa-angle-down opacity-50 ms-1 d-none d-sm-inline-block"></i>
         </button>
         <div class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="page-header-user-dropdown">

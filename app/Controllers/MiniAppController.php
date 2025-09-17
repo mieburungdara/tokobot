@@ -130,11 +130,15 @@ class MiniAppController extends DashmixController
                 $user['language_code'] ?? 'en'
             ]);
 
-            // Catat interaksi di tabel relasi bot_user. Cukup masukkan data baru, 
-            // atau biarkan trigger `ON UPDATE CURRENT_TIMESTAMP` pada `last_accessed_at` bekerja jika data sudah ada.
-            $sqlBotUser = "INSERT INTO bot_user (bot_id, user_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE last_accessed_at = NOW()";
+            // Catat interaksi di tabel relasi bot_user. 
+            $sqlBotUser = "INSERT INTO bot_user (bot_id, user_id, allows_write_to_pm) VALUES (?, ?, ?) "
+                        . "ON DUPLICATE KEY UPDATE last_accessed_at = NOW(), allows_write_to_pm = VALUES(allows_write_to_pm)";
             $stmtBotUser = $pdo->prepare($sqlBotUser);
-            $stmtBotUser->execute([$bot_id, $user['id']]);
+            $stmtBotUser->execute([
+                $bot_id, 
+                $user['id'],
+                isset($user['allows_write_to_pm']) && $user['allows_write_to_pm'] ? 1 : 0
+            ]);
 
             // Setelah sinkronisasi, ambil data lengkap pengguna dari DB untuk membuat sesi
             $stmt = $pdo->prepare("SELECT * FROM users WHERE telegram_id = ?");
