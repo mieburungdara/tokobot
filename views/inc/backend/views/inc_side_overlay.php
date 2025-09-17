@@ -14,18 +14,29 @@
   <div class="bg-image" style="background-image: url('<?php echo $dm->assets_folder; ?>/media/various/bg_side_overlay_header.jpg');">
     <div class="bg-primary-op">
       <div class="content-header">
+        <?php
+        // Cek jika ada sesi pengguna
+        if (\TokoBot\Helpers\Session::get('user_role', 'guest') !== 'guest') : 
+          // Ambil data pengguna dari session
+          $currentUser = \TokoBot\Helpers\Session::get('user');
+        ?>
         <!-- User Avatar -->
-        <a class="img-link me-1" href="be_pages_generic_profile.php">
-          <?php $dm->get_avatar(10, '', 48); ?>
+        <a class="img-link me-1" href="javascript:void(0)">
+          <?php if (isset($currentUser['photo_url']) && !empty($currentUser['photo_url'])) : ?>
+            <img class="img-avatar img-avatar48" src="<?= htmlspecialchars($currentUser['photo_url']) ?>" alt="User Photo">
+          <?php else: ?>
+            <?php $dm->get_avatar(0, '', 48); ?>
+          <?php endif; ?>
         </a>
         <!-- END User Avatar -->
 
         <!-- User Info -->
         <div class="ms-2">
-          <a class="text-white fw-semibold" href="be_pages_generic_profile.php">George Taylor</a>
-          <div class="text-white-75 fs-sm">Full Stack Developer</div>
+          <a class="text-white fw-semibold" href="javascript:void(0)"><?= isset($currentUser['first_name']) ? htmlspecialchars($currentUser['first_name'] . ' ' . ($currentUser['last_name'] ?? '')) : 'Guest' ?></a>
+          <div class="text-white-75 fs-sm"><?= isset($currentUser['role']) ? ucfirst(htmlspecialchars($currentUser['role'])) : '' ?></div>
         </div>
         <!-- END User Info -->
+        <?php endif; ?>
 
         <!-- Close Side Overlay -->
         <!-- Layout API, functionality initialized in Template._uiApiLayout() -->
