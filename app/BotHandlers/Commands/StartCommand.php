@@ -2,7 +2,7 @@
 
 namespace TokoBot\BotHandlers\Commands;
 
-use TelegramBot\Types\Update;
+use TelegramBot\Entities\Update;
 use TelegramBot\Telegram;
 use TelegramBot\Request;
 

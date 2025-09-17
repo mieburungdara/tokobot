@@ -2,7 +2,7 @@
 
 namespace TokoBot\BotHandlers\Commands;
 
-use TelegramBot\Types\Update;
+use TelegramBot\Entities\Update;
 
 /**
  * Interface CommandInterface

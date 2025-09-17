@@ -8,8 +8,8 @@ use TokoBot\Helpers\Database;
 use TelegramBot\Telegram;
 use TelegramBot\Request;
 use TokoBot\Helpers\Logger;
+use TelegramBot\Entities\Update;
 use TelegramBot\Entities\User;
-use TelegramBot\Types\Update;
 use TelegramBot\Types\Message;
 use TelegramBot\Types\Chat;
 

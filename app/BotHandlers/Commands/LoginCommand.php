@@ -4,7 +4,7 @@ namespace TokoBot\BotHandlers\Commands;
 
 use TokoBot\Helpers\Logger;
 use TokoBot\Helpers\Database;
-use TelegramBot\Types\Update;
+use TelegramBot\Entities\Update;
 use TelegramBot\Telegram;
 use TelegramBot\Request;
 
