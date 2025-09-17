@@ -54,8 +54,16 @@ class GenericBotHandler
 
         // If not handled statefully or as a callback query, proceed to command handling
         $this->telegram->addCommandsPath(ROOT_PATH . '/app/Commands');
-        return $this->telegram->handle();
+        
+        $response = $this->telegram->handle();
+
+        if ($response instanceof ServerResponse) {
+            return $response;
+        }
+
+        return Request::emptyResponse();
     }
+
 
     private function handleStatefulMessage(Message $message): bool
     {
@@ -89,10 +97,11 @@ class GenericBotHandler
         }
         
         // If the text is not numeric and not a command, we can ignore it or reply with a helper text.
-        if ($text[0] !== '/') {
+        if (is_string($text) && strlen($text) > 0 && $text[0] !== '/') {
             Request::sendMessage(['chat_id' => $userId, 'text' => "Saya menunggu harga (angka) atau perintah /cancel."]);
             return true;
         }
+
 
         return false;
     }
