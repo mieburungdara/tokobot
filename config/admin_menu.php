@@ -3,11 +3,18 @@
 // config/admin_menu.php
 
 return [
+    
     [
         'name'  => 'Admin Dashboard',
         'icon'  => 'si si-speedometer',
         'url'   => '/dashboard',
         'roles' => ['admin']
+    ],
+    [
+        'name'  => 'Member Dashboard',
+        'icon'  => 'si si-user',
+        'url'   => '/dashboard',
+        'roles' => ['member']
     ],
     [
         'name'  => 'Management',
@@ -40,11 +47,5 @@ return [
         'icon'  => 'si si-settings',
         'url'   => '/settings',
         'roles' => ['admin', 'member'] // Diperbarui
-    ],
-    [
-        'name'  => 'Member Dashboard',
-        'icon'  => 'si si-user',
-        'url'   => '/dashboard',
-        'roles' => ['member']
     ]
 ];
