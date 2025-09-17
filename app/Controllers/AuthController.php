@@ -43,31 +43,60 @@ class AuthController extends BaseController
 
     public function handleTokenLogin($token)
     {
+                $ipAddress = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        Logger::channel('auth')->info('Token login process started.', [
+            'ip_address' => $ipAddress
+        ]);
+
+
         try {
             $tokenHash = hash('sha256', $token);
+            Logger::channel('auth')->debug('Hashed received token for DB lookup.', [
+                'token_hash' => $tokenHash,
+                'ip_address' => $ipAddress
+            ]);
 
             $pdo = \TokoBot\Helpers\Database::getInstance();
 
             // Cari pengguna dengan token yang cocok dan belum kedaluwarsa
-            $sql = "SELECT * FROM users WHERE login_token = ?";
+            $sql = "SELECT * FROM users WHERE login_token = ? AND token_expires_at > NOW()";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$tokenHash]);
             $user = $stmt->fetch();
+            Logger::channel('auth')->debug('DB query for token executed.', [
+                'ip_address' => $ipAddress
+            ]);
+
 
             if ($user) {
+                Logger::channel('auth')->debug('Session set for user.', [
+                    'user_id' => $user['telegram_id'],
+                    'role' => $user['role'],
+                    'ip_address' => $ipAddress
+                ]);
                 // Token valid, loginkan pengguna
                 Session::set('user_id', $user['telegram_id']);
                 Session::set('user_role', $user['role']);
 
                 Logger::channel('auth')->info('Successful token login', [
                     'user_id' => $user['telegram_id'],
-                    'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                    'ip_address' => $ipAddress
                 ]);
 
                 // Hapus token agar tidak bisa digunakan lagi (single-use)
                 $sql = "UPDATE users SET login_token = NULL, token_expires_at = NULL WHERE telegram_id = ?";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([$user['telegram_id']]);
+                
+                Logger::channel('auth')->info('Token invalidated after use.', [
+                    'user_id' => $user['telegram_id'],
+                    'ip_address' => $ipAddress
+                ]);
+
+                Logger::channel('auth')->info('Successful token login. Redirecting to dashboard.', [
+                    'user_id' => $user['telegram_id'],
+                    'ip_address' => $ipAddress
+                ]);
 
                 header('Location: /dashboard');
                 exit();

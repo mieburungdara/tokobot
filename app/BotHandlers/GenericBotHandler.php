@@ -81,11 +81,14 @@ class GenericBotHandler
 
     private function handleLoginCommand(int $userId)
     {
+        Logger::channel('app')->info("Initiating login token generation for user: {$userId}");
+
         // Buat token acak yang aman
         $token = bin2hex(random_bytes(32));
         $tokenHash = hash('sha256', $token);
+        Logger::channel('app')->debug("Generated token hash for user: {$userId}");
 
-        // Set expiration to 5 minutes from now, using UTC to avoid timezone issues.
+        // Atur kedaluwarsa 5 menit dari sekarang, gunakan UTC untuk menghindari masalah zona waktu.
         // The database should also ideally use UTC timestamps for comparison.
         $expires = new \DateTime('now', new \DateTimeZone('UTC'));
         $expires->add(new \DateInterval('PT5M'));
@@ -96,6 +99,7 @@ class GenericBotHandler
         $sql = "UPDATE users SET login_token = ?, token_expires_at = ? WHERE telegram_id = ?";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$tokenHash, $expiresAt, $userId]);
+        Logger::channel('app')->info("Stored login token in DB for user: {$userId}. Expires at: {$expiresAt} UTC.");
 
         if ($this->botToken) {
             // Build the login URL. Use APP_URL from environment for consistency, with a fallback.
@@ -109,6 +113,9 @@ class GenericBotHandler
                 'chat_id' => $userId,
                 'text' => $text
             ]);
+            Logger::channel('app')->info("Sent login link to user: {$userId}");
+        } else {
+            Logger::channel('app')->warning("Could not send login link to user {$userId}: Bot token is not configured.");
         }
     }
 }
