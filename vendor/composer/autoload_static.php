@@ -28,7 +28,6 @@ class ComposerStaticInita2215efcd5a56efadb0b3ec0440c5fd9
         'T' => 
         array (
             'TokoBot\\' => 8,
-            'TelegramBot\\' => 12,
         ),
         'S' => 
         array (
@@ -40,7 +39,6 @@ class ComposerStaticInita2215efcd5a56efadb0b3ec0440c5fd9
             'Symfony\\Contracts\\Service\\' => 26,
             'Symfony\\Component\\String\\' => 25,
             'Symfony\\Component\\Filesystem\\' => 29,
-            'Symfony\\Component\\Dotenv\\' => 25,
             'Symfony\\Component\\Console\\' => 26,
             'Symfony\\Component\\Config\\' => 25,
         ),
@@ -62,6 +60,7 @@ class ComposerStaticInita2215efcd5a56efadb0b3ec0440c5fd9
         ),
         'L' => 
         array (
+            'Longman\\TelegramBot\\' => 20,
             'League\\Container\\' => 17,
         ),
         'G' => 
@@ -96,10 +95,6 @@ class ComposerStaticInita2215efcd5a56efadb0b3ec0440c5fd9
         array (
             0 => __DIR__ . '/../..' . '/app',
         ),
-        'TelegramBot\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/telegram-bot-php/core/src',
-        ),
         'Symfony\\Polyfill\\Php80\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
@@ -131,10 +126,6 @@ class ComposerStaticInita2215efcd5a56efadb0b3ec0440c5fd9
         'Symfony\\Component\\Filesystem\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/filesystem',
-        ),
-        'Symfony\\Component\\Dotenv\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/dotenv',
         ),
         'Symfony\\Component\\Console\\' => 
         array (
@@ -184,6 +175,10 @@ class ComposerStaticInita2215efcd5a56efadb0b3ec0440c5fd9
         'Monolog\\' => 
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
+        ),
+        'Longman\\TelegramBot\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/longman/telegram-bot/src',
         ),
         'League\\Container\\' => 
         array (

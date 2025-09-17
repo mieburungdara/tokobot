@@ -897,6 +897,115 @@
             "install-path": "../league/container"
         },
         {
+            "name": "longman/telegram-bot",
+            "version": "0.83.1",
+            "version_normalized": "0.83.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-telegram-bot/core.git",
+                "reference": "ca9eeb1c9e51c39a33070efeba01aac105ed9aa7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-telegram-bot/core/zipball/ca9eeb1c9e51c39a33070efeba01aac105ed9aa7",
+                "reference": "ca9eeb1c9e51c39a33070efeba01aac105ed9aa7",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "ext-pdo": "*",
+                "guzzlehttp/guzzle": "^6.0|^7.0",
+                "php": "^8.1",
+                "psr/log": "^1.1|^2.0|^3.0"
+            },
+            "require-dev": {
+                "dms/phpunit-arraysubset-asserts": "^0.2",
+                "monolog/monolog": "^2.1",
+                "phpunit/phpunit": "^9.5",
+                "squizlabs/php_codesniffer": "^3.6"
+            },
+            "time": "2024-05-30T21:05:25+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop": "0.83.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Longman\\TelegramBot\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Avtandil Kikabidze aka LONGMAN",
+                    "email": "akalongman@gmail.com",
+                    "homepage": "http://longman.me",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Armando Lüscher",
+                    "email": "armando@noplanman.ch",
+                    "homepage": "https://noplanman.ch",
+                    "role": "Developer"
+                },
+                {
+                    "name": "PHP Telegram Bot Team",
+                    "homepage": "https://github.com/php-telegram-bot/core/graphs/contributors",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP Telegram bot",
+            "homepage": "https://github.com/php-telegram-bot/core",
+            "keywords": [
+                "api",
+                "bot",
+                "telegram"
+            ],
+            "support": {
+                "issues": "https://github.com/php-telegram-bot/core/issues",
+                "source": "https://github.com/php-telegram-bot/core"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/php-telegram-bot/core#donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/noplanman",
+                    "type": "github"
+                },
+                {
+                    "url": "https://ko-fi.com/phptelegrambot",
+                    "type": "ko_fi"
+                },
+                {
+                    "url": "https://liberapay.com/PHP-Telegram-Bot",
+                    "type": "liberapay"
+                },
+                {
+                    "url": "https://opencollective.com/php-telegram-bot",
+                    "type": "open_collective"
+                },
+                {
+                    "url": "https://www.patreon.com/phptelegrambot",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/longman/telegram-bot",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "../longman/telegram-bot"
+        },
+        {
             "name": "monolog/monolog",
             "version": "3.9.0",
             "version_normalized": "3.9.0.0",
@@ -3793,87 +3902,6 @@
             "install-path": "../symfony/deprecation-contracts"
         },
         {
-            "name": "symfony/dotenv",
-            "version": "v7.3.2",
-            "version_normalized": "7.3.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/dotenv.git",
-                "reference": "2192790a11f9e22cbcf9dc705a3ff22a5503923a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dotenv/zipball/2192790a11f9e22cbcf9dc705a3ff22a5503923a",
-                "reference": "2192790a11f9e22cbcf9dc705a3ff22a5503923a",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.2"
-            },
-            "conflict": {
-                "symfony/console": "<6.4",
-                "symfony/process": "<6.4"
-            },
-            "require-dev": {
-                "symfony/console": "^6.4|^7.0",
-                "symfony/process": "^6.4|^7.0"
-            },
-            "time": "2025-07-10T08:29:33+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Dotenv\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Registers environment variables from a .env file",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "dotenv",
-                "env",
-                "environment"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/dotenv/tree/v7.3.2"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://github.com/nicolas-grekas",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "install-path": "../symfony/dotenv"
-        },
-        {
             "name": "symfony/filesystem",
             "version": "v7.3.2",
             "version_normalized": "7.3.2.0",
@@ -4559,72 +4587,6 @@
                 }
             ],
             "install-path": "../symfony/string"
-        },
-        {
-            "name": "telegram-bot-php/core",
-            "version": "v1.1.0",
-            "version_normalized": "1.1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/telegram-bot-php/core.git",
-                "reference": "81e15920e37627c1d4f70df0e7fdec60af5cfed4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/telegram-bot-php/core/zipball/81e15920e37627c1d4f70df0e7fdec60af5cfed4",
-                "reference": "81e15920e37627c1d4f70df0e7fdec60af5cfed4",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-json": "*",
-                "ext-mbstring": "*",
-                "guzzlehttp/guzzle": "^7.8",
-                "php": ">=8.2",
-                "symfony/dotenv": "^v7.1"
-            },
-            "require-dev": {
-                "fakerphp/faker": "^1.23",
-                "phpunit/phpunit": "^11.2",
-                "psr/log": "^1.1|^2.0|^3.0"
-            },
-            "time": "2024-06-24T05:51:45+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "TelegramBot\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Shahrad Elahi",
-                    "email": "shahrad@litehex.com"
-                },
-                {
-                    "name": "LiteHex",
-                    "email": "opensource@litehex.com"
-                }
-            ],
-            "description": "A PHP library that makes using Telegram Bot API much easier.",
-            "homepage": "https://github.com/telegram-bot-php/core",
-            "keywords": [
-                "bot",
-                "core",
-                "library",
-                "php",
-                "telegram",
-                "update-handler"
-            ],
-            "support": {
-                "issues": "https://github.com/telegram-bot-php/core/issues",
-                "source": "https://github.com/telegram-bot-php/core"
-            },
-            "install-path": "../telegram-bot-php/core"
         },
         {
             "name": "theseer/tokenizer",

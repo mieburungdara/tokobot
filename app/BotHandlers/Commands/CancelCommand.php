@@ -1,44 +1,41 @@
 <?php
 
-namespace TokoBot\BotHandlers\Commands;
+namespace TokoBot\Commands;
 
-use TelegramBot\Entities\Update;
-use TelegramBot\Request;
+use Longman\TelegramBot\Commands\UserCommand;
+use Longman\TelegramBot\Entities\ServerResponse;
+use Longman\TelegramBot\Request;
 use TokoBot\Helpers\Database;
 
-class CancelCommand implements CommandInterface
+class CancelCommand extends UserCommand
 {
-    protected ?string $botToken;
-    protected \PDO $pdo;
+    protected $name = 'cancel';
+    protected $description = 'Cancel the current operation';
+    protected $usage = '/cancel';
+    protected $version = '1.0.0';
 
-    public function __construct(?string $botToken)
+    public function execute(): ServerResponse
     {
-        $this->botToken = $botToken;
-        $this->pdo = Database::getInstance();
-    }
+        $message = $this->getMessage();
+        $userId = $message->getFrom()->getId();
+        $chatId = $message->getChat()->getId();
 
-    public function handle(Update $update, array $args = []): void
-    {
-        $userId = $update->getMessage()->getFrom()->getId();
-        $chatId = $update->getMessage()->getChat()->getId();
-
-        $stmt = $this->pdo->prepare("SELECT * FROM user_states WHERE telegram_id = ?");
+        $pdo = Database::getInstance();
+        $stmt = $pdo->prepare("SELECT * FROM user_states WHERE telegram_id = ?");
         $stmt->execute([$userId]);
         $state = $stmt->fetch();
 
         if ($state) {
-            $deleteStmt = $this->pdo->prepare("DELETE FROM user_states WHERE telegram_id = ?");
+            $deleteStmt = $pdo->prepare("DELETE FROM user_states WHERE telegram_id = ?");
             $deleteStmt->execute([$userId]);
             $responseText = 'Proses sebelumnya telah dibatalkan.';
         } else {
             $responseText = 'Tidak ada proses yang sedang berjalan untuk dibatalkan.';
         }
 
-        if ($this->botToken) {
-            Request::sendMessage([
-                'chat_id' => $chatId,
-                'text' => $responseText,
-            ]);
-        }
+        return Request::sendMessage([
+            'chat_id' => $chatId,
+            'text'    => $responseText,
+        ]);
     }
 }

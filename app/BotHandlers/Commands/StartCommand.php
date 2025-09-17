@@ -1,34 +1,30 @@
 <?php
 
-namespace TokoBot\BotHandlers\Commands;
+namespace TokoBot\Commands;
 
-use TelegramBot\Entities\Update;
-use TelegramBot\Telegram;
-use TelegramBot\Request;
+use Longman\TelegramBot\Commands\UserCommand;
+use Longman\TelegramBot\Entities\ServerResponse;
+use Longman\TelegramBot\Request;
 
-class StartCommand implements CommandInterface
+class StartCommand extends UserCommand
 {
-    protected ?string $botToken;
+    protected $name = 'start';
+    protected $description = 'A command for starting the bot';
+    protected $usage = '/start';
+    protected $version = '1.0.0';
 
-    public function __construct(?string $botToken)
+    public function execute(): ServerResponse
     {
-        $this->botToken = $botToken;
-    }
+        $message = $this->getMessage();
+        $chat_id = $message->getChat()->getId();
+        $user = $message->getFrom();
 
-    public function handle(Update $update, array $args = []): void
-    {
-        $user = $update->getMessage()->getFrom();
-        $chatId = $update->getMessage()->getChat()->getId();
+        $text = 'Selamat datang, ' . $user->getFirstName() . "!\n\n";
+        $text .= 'Saya adalah bot yang siap membantu Anda.';
 
-        $text = "Selamat datang, " . $user->getFirstName() . "!\n\n";
-        $text .= "Saya adalah bot yang siap membantu Anda.";
-
-        if ($this->botToken) {
-            new Telegram($this->botToken);
-            Request::sendMessage([
-                'chat_id' => $chatId,
-                'text' => $text,
-            ]);
-        }
+        return Request::sendMessage([
+            'chat_id' => $chat_id,
+            'text'    => $text,
+        ]);
     }
 }
