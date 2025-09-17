@@ -55,7 +55,7 @@
     <div class="block block-transparent pull-x pull-t mb-0">
       <ul class="nav nav-tabs nav-tabs-block nav-justified" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="so-profile-tab" data-bs-toggle="tab" data-bs-target="#so-profile" role="tab" aria-controls="so-profile" aria-selected="false">
+          <button class="nav-link active" id="so-profile-tab" data-bs-toggle="tab" data-bs-target="#so-profile" role="tab" aria-controls="so-profile" aria-selected="false">
             <i class="fa fa-fw fa-robot"></i>
           </button>
         </li>
@@ -63,7 +63,7 @@
       <div class="block-content tab-content overflow-hidden">
 
         <!-- Profile -->
-        <div class="tab-pane pull-x fade fade-up" id="so-profile" role="tabpanel" aria-labelledby="so-profile-tab" tabindex="0">
+        <div class="tab-pane pull-x fade fade-up show active" id="so-profile" role="tabpanel" aria-labelledby="so-profile-tab" tabindex="0">
           <div class="block mb-0">
             <div class="block-content block-content-sm block-content-full bg-body">
               <span class="text-uppercase fs-sm fw-bold">All Bots</span>
