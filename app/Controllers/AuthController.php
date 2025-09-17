@@ -98,6 +98,27 @@ class AuthController extends BaseController
                     'ip_address' => $ipAddress
                 ]);
 
+                // Send success message back to the user via Telegram
+                $botId = $_GET['bot_id'] ?? null;
+                if ($botId) {
+                    $botsFile = CONFIG_PATH . '/tbots.php';
+                    $botTokens = file_exists($botsFile) ? require $botsFile : [];
+                    $botToken = $botTokens[$botId] ?? null;
+
+                    if ($botToken) {
+                        new \TelegramBot\Telegram($botToken);
+                        \TelegramBot\Request::sendMessage([
+                            'chat_id' => $user['telegram_id'],
+                            'text' => 'Login Anda berhasil! Anda sekarang dapat mengakses dashboard.'
+                        ]);
+                        Logger::channel('auth')->info("Sent login success message to user: {$user['telegram_id']} via bot: {$botId}");
+                    } else {
+                        Logger::channel('auth')->warning("Could not send login success message: Bot token not found for bot ID: {$botId}");
+                    }
+                } else {
+                    Logger::channel('auth')->warning("Could not send login success message: Bot ID not provided in URL.");
+                }
+
                 header('Location: /dashboard');
                 exit();
             } else {

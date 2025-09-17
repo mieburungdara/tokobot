@@ -105,13 +105,22 @@ class GenericBotHandler
             // Build the login URL. Use APP_URL from environment for consistency, with a fallback.
             // Ensure your .env file has an APP_URL variable (e.g., APP_URL=https://core.my.id).
             $appBaseUrl = rtrim($_ENV['APP_URL'] ?? 'https://' . ($_SERVER['HTTP_HOST'] ?? 'your-domain.com'), '/');
-            $loginUrl = $appBaseUrl . '/login/' . $token;
-            $text = "Ini adalah link login sekali pakai Anda. Link akan kedaluwarsa dalam 5 menit:\n\n" . $loginUrl;
+            $loginUrl = $appBaseUrl . '/login/' . $token . '?bot_id=' . $this->botId;
+            $keyboard = [
+                'inline_keyboard' => [
+                    [
+                        ['text' => 'Login ke TokoBot', 'url' => $loginUrl]
+                    ]
+                ]
+            ];
+
+            $text = "Klik tombol di bawah untuk login ke TokoBot. Link akan kedaluwarsa dalam 5 menit.";
 
             new Telegram($this->botToken);
             Request::sendMessage([
                 'chat_id' => $userId,
-                'text' => $text
+                'text' => $text,
+                'reply_markup' => json_encode($keyboard)
             ]);
             Logger::channel('app')->info("Sent login link to user: {$userId}");
         } else {
