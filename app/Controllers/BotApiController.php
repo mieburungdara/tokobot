@@ -35,28 +35,28 @@ class BotApiController extends BaseController
             $response = Request::getWebhookInfo();
 
             if (!$response->isOk()) {
-    throw new TelegramException($response->getDescription());
-}
+                throw new TelegramException($response->getDescription());
+            }
 
-$result = $response->getResult();
+            $result = $response->getResult();
 
-Logger::channel('app')->info('Webhook info result', [
-    'class' => is_object($result) ? get_class($result) : 'not an object',
-    'is_null' => is_null($result)
-]);
+            Logger::channel('app')->info('Webhook info result', [
+                'class' => is_object($result) ? get_class($result) : 'not an object',
+                'is_null' => is_null($result)
+            ]);
 
-if ($result === null) {
-    $this->sendJsonResponse([]);
-} else {
-    $dataToSend = method_exists($result, 'toArray') ? $result->toArray() : (array) $result;
+            if ($result === null) {
+                $this->sendJsonResponse([]);
+            } else {
+                $data = $result->toArray();
+                $cleanData = [
+                    'bot_username' => $data['bot_username'] ?? null,
+                    'webhook_info' => $data['raw_data'] ?? [],
+                ];
 
-    Logger::channel('app')->debug('Value before sendJsonResponse', [
-        'data' => $dataToSend,
-        'type' => gettype($dataToSend)
-    ]);
-
-    $this->sendJsonResponse($dataToSend);
-}
+                // Kirim $cleanData ke response JSON
+                $this->sendJsonResponse($cleanData);
+            }
 
         } catch (BotNotFoundException $e) {
             Logger::channel('telegram')->warning($e->getMessage());
