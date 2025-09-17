@@ -26,7 +26,7 @@ class MiniAppController extends DashmixController
 
         // Jika bot valid, render halaman start yang akan me-redirect ke halaman app.
         $this->renderDashmix(
-            VIEWS_PATH . '/miniapp/start.php',
+            VIEWS_PATH . '/miniapp/auth.php',
             'Verifying...',
             '',
             [],
