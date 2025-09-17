@@ -22,6 +22,17 @@
   <?php } ?>
   <!-- END Stylesheets -->
 
+  <!-- Injected Scripts -->
+  <?php
+  if (!empty($dm->page_scripts)) {
+    foreach ($dm->page_scripts as $script) {
+      echo '<script src="' . htmlspecialchars($script) . '"></script>
+';
+    }
+  }
+  ?>
+  <!-- END Injected Scripts -->
+
   <!-- Load and set color theme + dark mode preference (blocking script to prevent flashing) -->
   <script src="<?php echo $dm->assets_folder; ?>/js/setTheme.js"></script>
 </head>

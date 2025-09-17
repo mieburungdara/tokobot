@@ -23,8 +23,8 @@
 </div>
 
 <script>
-    // Ambil botId dari variabel global yang disediakan oleh layout
-    const botId = window.appData.bot_id;
+    // Ambil bot_id dari variabel PHP yang di-extract oleh renderDashmix
+    const botId = <?= json_encode($bot_id) ?>;
 
     // INISIALISASI TELEGRAM WEB APP
     const tg = window.Telegram.WebApp;

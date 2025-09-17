@@ -25,15 +25,17 @@ class MiniAppController extends DashmixController
             return;
         }
 
-        // Langkah 2: Jika bot valid, render view menggunakan template Mini App.
+        // Langkah 2: Jika bot valid, siapkan template dan render.
+        $dm = $this->container->get('template');
+        $dm->page_scripts = ['https://telegram.org/js/telegram-web-app.js'];
+
         $this->renderDashmix(
-            VIEWS_PATH . '/miniapp/index.php', // File konten
-            'TokoBot Mini App', // Judul Halaman
-            'Welcome to TokoBot Mini App', // Deskripsi Halaman
-            [], // Navigasi (kosongkan)
-            [], // Breadcrumbs (kosongkan)
-            ['bot_id' => $bot_id], // Data yang akan di-pass ke view
-            VIEWS_PATH . '/templates/miniapp_layout.php' // Path ke layout kustom
+            VIEWS_PATH . '/miniapp/index.php',      // File konten
+            'TokoBot Mini App',                   // Judul Halaman
+            'Welcome to TokoBot Mini App',        // Deskripsi Halaman
+            [],                                   // Navigasi (gunakan default)
+            [['name' => 'Mini App']],             // Breadcrumbs
+            ['bot_id' => $bot_id]                   // Data yang akan di-pass ke view
         );
     }
 
