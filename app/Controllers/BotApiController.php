@@ -126,7 +126,6 @@ if (!isset(\$botTokens[\$botId])) {
 PHP;
 
             Logger::channel('app')->info('Writing webhook file to: ' . $webhookFilePath);
-            Logger::channel('app')->info('Webhook file content: ' . $webhookFileContent);
 
             if (!file_put_contents($webhookFilePath, $webhookFileContent)) {
                 throw new \Exception('Could not write webhook file. Check permissions.');

@@ -23,10 +23,10 @@ class DashmixController extends BaseController
 
         // --- START: Logika Filter Navigasi Berdasarkan Peran ---
 
-        // 1. Ambil peran pengguna dari Session, untuk contoh kita beri default 'admin'
-        $userRole = \TokoBot\Helpers\Session::get('user_role', 'admin');
+        // 1. Ambil peran pengguna dari Session, default ke 'guest' jika tidak ada untuk keamanan
+        $userRole = \TokoBot\Helpers\Session::get('user_role', 'guest');
 
-        // 2. Filter navigasi utama berdasarkan peran pengguna
+        // 2. Filter navigasi utama berdasarkan peran pengguna (admin, member, atau guest)
         $filteredNav = $this->filterNavByRole($dm->main_nav, $userRole);
 
         // --- END: Logika Filter ---
