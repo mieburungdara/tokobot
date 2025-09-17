@@ -48,10 +48,11 @@ class BotApiController extends BaseController
             if ($result === null) {
                 $this->sendJsonResponse([]);
             } else {
-                $data = $result->toArray();
+                $dataToSend = method_exists($result, 'toArray') ? $result->toArray() : (array) $result;
+
                 $cleanData = [
-                    'bot_username' => $data['bot_username'] ?? null,
-                    'webhook_info' => $data['raw_data'] ?? [],
+                    'bot_username' => $dataToSend['bot_username'] ?? null,
+                    'webhook_info' => $dataToSend['raw_data'] ?? [],
                 ];
 
                 // Kirim $cleanData ke response JSON
