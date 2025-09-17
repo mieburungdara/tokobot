@@ -42,7 +42,7 @@
             $currentUser = \TokoBot\Helpers\Session::get('user');
             if (isset($currentUser['photo_url']) && !empty($currentUser['photo_url'])) : 
           ?>
-            <img class="img-avatar img-avatar32" src="<?= htmlspecialchars(\$currentUser['photo_url']) ?>" alt="User Photo">
+            <img class="img-avatar img-avatar32" src="<?= htmlspecialchars($currentUser['photo_url']) ?>" alt="User Photo">
           <?php else: ?>
             <i class="fa fa-fw fa-user d-sm-none"></i>
           <?php endif; ?>
