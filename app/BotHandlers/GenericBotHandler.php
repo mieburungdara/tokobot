@@ -212,7 +212,7 @@ class GenericBotHandler
     private function logMessage(Update $update): void
     {
         $message = $update->getMessage();
-        $sql = "INSERT INTO messages (id, message_id, user_id, chat_id, bot_id, text, raw_update) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO messages (id, message_id, user_id, chat_id, bot_id, text, raw_update) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE message_id = VALUES(message_id), user_id = VALUES(user_id), chat_id = VALUES(chat_id), bot_id = VALUES(bot_id), text = VALUES(text), raw_update = VALUES(raw_update)";
         $this->pdo->prepare($sql)->execute([$update->getUpdateId(), $message->getMessageId(), $message->getFrom()->getId(), $message->getChat()->getId(), $this->botId, $message->getText(), json_encode($update->getRawData())]);
     }
 }
