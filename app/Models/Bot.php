@@ -11,7 +11,7 @@ class Bot extends BaseModel
     /**
      * Find a bot token by its ID.
      *
-     * @param int \$botId
+     * @param int $botId
      * @return string|null
      */
     public static function findTokenById(int $botId): ?string
