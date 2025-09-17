@@ -3,6 +3,7 @@
 namespace TokoBot\BotHandlers\Commands;
 
 use TelegramBot\Entities\Update;
+use TelegramBot\Entities\Message;
 use TelegramBot\Request;
 use TokoBot\Helpers\Database;
 use TokoBot\Helpers\Logger;
@@ -49,7 +50,7 @@ class JualCommand implements CommandInterface
             'message_id' => $reply->getMessageId(),
             'chat_id' => $reply->getChat()->getId(),
             'media_group_id' => $reply->getMediaGroupId(),
-            'raw_media' => json_decode($reply, true) // Store the whole message object
+            'raw_media' => json_encode($reply) // Store the whole message object
         ];
         $context['items'][] = $newItem;
 

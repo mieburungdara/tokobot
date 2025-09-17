@@ -166,13 +166,17 @@ class GenericBotHandler
         $storageChannelId = $storageChannel ? $storageChannel['channel_id'] : '-1002649138088'; 
 
         // 3. Copy messages
-        $originalMessageIds = array_column($context['items'], 'message_id');
-        $originalChatId = $context['items'][0]['chat_id'];
-        $copiedMessages = Request::copyMessages([
-            'chat_id' => $storageChannelId,
-            'from_chat_id' => $originalChatId,
-            'message_ids' => json_encode($originalMessageIds)
-        ]);
+        $copiedMessageResults = [];
+        foreach ($context['items'] as $item) {
+            $response = Request::copyMessage([
+                'chat_id' => $storageChannelId,
+                'from_chat_id' => $item['chat_id'],
+                'message_id' => $item['message_id']
+            ]);
+            if ($response->isOk()) {
+                $copiedMessageResults[] = $response->getResult();
+            }
+        }
 
         // 4. Create Content UID
         $countStmt = $this->pdo->prepare("SELECT COUNT(*) FROM contents WHERE seller_telegram_id = ?");
@@ -209,7 +213,7 @@ class GenericBotHandler
                     $item['message_id'],
                     $item['media_group_id'],
                     $storageChannelId,
-                    $copiedMessages->getResult()[$index]['message_id'],
+                    $copiedMessageResults[$index]->getMessageId(),
                     json_encode($raw)
                 ]);
             }

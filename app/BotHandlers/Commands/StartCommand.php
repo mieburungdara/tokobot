@@ -10,7 +10,7 @@ class StartCommand implements CommandInterface
 {
     protected ?string $botToken;
 
-    public function __construct(int $botId, ?string $botToken)
+    public function __construct(?string $botToken)
     {
         $this->botToken = $botToken;
     }

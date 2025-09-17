@@ -11,7 +11,7 @@ class CancelCommand implements CommandInterface
     protected ?string $botToken;
     protected \PDO $pdo;
 
-    public function __construct(int $botId, ?string $botToken)
+    public function __construct(?string $botToken)
     {
         $this->botToken = $botToken;
         $this->pdo = Database::getInstance();
