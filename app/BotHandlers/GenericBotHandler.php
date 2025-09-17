@@ -8,6 +8,10 @@ use TokoBot\Helpers\Database;
 use TelegramBot\Telegram;
 use TelegramBot\Request;
 use TokoBot\Helpers\Logger;
+use TelegramBot\Entities\User;
+use TelegramBot\Types\Update;
+use TelegramBot\Types\Message;
+use TelegramBot\Types\Chat;
 
 class GenericBotHandler
 {
@@ -60,7 +64,7 @@ class GenericBotHandler
         }
     }
 
-    private function syncUser(\TelegramBot\Types\User $user): void
+    private function syncUser(User $user): void
     {
         $sql = "INSERT INTO users (telegram_id, username, first_name, last_name, last_activity_at) "
              . "VALUES (?, ?, ?, ?, NOW()) "
@@ -81,7 +85,7 @@ class GenericBotHandler
         $stmtBotUser->execute([$this->botId, $user->getId()]);
     }
 
-    private function logMessage(\TelegramBot\Types\Update $update, \TelegramBot\Types\Message $message, \TelegramBot\Types\User $user, \TelegramBot\Types\Chat $chat, ?string $text): void
+    private function logMessage(Update $update, Message $message, User $user, Chat $chat, ?string $text): void
     {
         $sql = "INSERT INTO messages (id, message_id, user_id, chat_id, bot_id, text, raw_update) "
              . "VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -97,7 +101,7 @@ class GenericBotHandler
         ]);
     }
 
-    private function dispatchCommand(\TelegramBot\Types\Update $update): void
+    private function dispatchCommand(Update $update): void
     {
         $message = $update->getMessage();
         $text = $message->getText();
