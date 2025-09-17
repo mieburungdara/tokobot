@@ -28,7 +28,10 @@ class GenericBotHandler
 
     public function handle(): ?ServerResponse
     {
-        $update = new Update(json_decode($this->telegram->getCustomInput(), true), $this->telegram->getBotUsername());
+        $input = json_decode($this->telegram->getCustomInput(), true) ?: [];
+        $update = new Update($input, $this->telegram->getBotUsername());
+
+        //$update = new Update(json_decode($this->telegram->getCustomInput(), true), $this->telegram->getBotUsername());
         Logger::channel('telegram_raw')->info('Incoming Update', ['data' => $update->getRawData()]);
 
         $updateType = $update->getUpdateType();
