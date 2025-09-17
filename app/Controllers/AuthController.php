@@ -58,8 +58,8 @@ class AuthController extends BaseController
 
             $pdo = \TokoBot\Helpers\Database::getInstance();
 
-            // Cari pengguna dengan token yang cocok dan belum kedaluwarsa
-            $sql = "SELECT * FROM users WHERE login_token = ? AND token_expires_at > NOW()";
+            // Cari pengguna dengan token yang cocok
+            $sql = "SELECT * FROM users WHERE login_token = ?";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$tokenHash]);
             $user = $stmt->fetch();
@@ -84,7 +84,7 @@ class AuthController extends BaseController
                 ]);
 
                 // Hapus token agar tidak bisa digunakan lagi (single-use)
-                $sql = "UPDATE users SET login_token = NULL, token_expires_at = NULL WHERE telegram_id = ?";
+                $sql = "UPDATE users SET login_token = NULL WHERE telegram_id = ?";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([$user['telegram_id']]);
                 
@@ -109,7 +109,7 @@ class AuthController extends BaseController
                         new \TelegramBot\Telegram($botToken);
                         \TelegramBot\Request::sendMessage([
                             'chat_id' => $user['telegram_id'],
-                            'text' => 'Login Anda berhasil! Anda sekarang dapat mengakses dashboard.'
+                            'text' => "Login Anda berhasil dari IP: {\$ipAddress}! Anda sekarang dapat mengakses dashboard."
                         ]);
                         Logger::channel('auth')->info("Sent login success message to user: {$user['telegram_id']} via bot: {$botId}");
                     } else {
@@ -122,7 +122,7 @@ class AuthController extends BaseController
                 header('Location: /dashboard');
                 exit();
             } else {
-                // Token tidak valid atau sudah kedaluwarsa
+                // Token tidak valid
                 Logger::channel('auth')->warning('Failed token login attempt', [
                     'token' => $token,
                     'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'

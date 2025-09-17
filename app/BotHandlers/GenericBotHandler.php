@@ -99,7 +99,26 @@ class GenericBotHandler
         $sql = "UPDATE users SET login_token = ?, token_expires_at = ? WHERE telegram_id = ?";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$tokenHash, $expiresAt, $userId]);
-        Logger::channel('app')->info("Stored login token in DB for user: {$userId}. Expires at: {$expiresAt} UTC.");
+                // Store the token hash in the database. Token will not expire.
+        $sql = "UPDATE users SET login_token = ? WHERE telegram_id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$tokenHash, $userId]);
+        Logger::channel('app')->info("Stored login token in DB for user: {\$userId}. Token will not expire.");
+
+        if ($this->botToken) {
+            // Build the login URL. Use APP_URL from environment for consistency, with a fallback.
+            // Ensure your .env file has an APP_URL variable (e.g., APP_URL=https://core.my.id).
+            $appBaseUrl = rtrim($_ENV['APP_URL'] ?? 'https://' . ($_SERVER['HTTP_HOST'] ?? 'your-domain.com'), '/');
+            $loginUrl = $appBaseUrl . '/login/' . $token . '?bot_id=' . $this->botId;
+            $keyboard = [
+                'inline_keyboard' => [
+                    [
+                        ['text' => 'Login ke TokoBot', 'url' => $loginUrl]
+                    ]
+                ]
+            ];
+
+            $text = "Klik tombol di bawah untuk login ke TokoBot. Link ini berlaku selamanya.";
 
         if ($this->botToken) {
             // Build the login URL. Use APP_URL from environment for consistency, with a fallback.
