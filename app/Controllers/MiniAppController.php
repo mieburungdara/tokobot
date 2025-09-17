@@ -114,11 +114,11 @@ class MiniAppController extends DashmixController
         // Sinkronisasi data pengguna ke database (opsional, tapi sangat direkomendasikan)
         try {
             $pdo = \TokoBot\Helpers\Database::getInstance();
-            $sql = "INSERT INTO users (telegram_id, username, first_name, last_name, photo_url, language_code, is_premium, last_activity_at) "
-                 . "VALUES (?, ?, ?, ?, ?, ?, ?, NOW()) "
+            $sql = "INSERT INTO users (telegram_id, username, first_name, last_name, photo_url, language_code, last_activity_at) "
+                 . "VALUES (?, ?, ?, ?, ?, ?, NOW()) "
                  . "ON DUPLICATE KEY UPDATE username = VALUES(username), "
                  . "first_name = VALUES(first_name), last_name = VALUES(last_name), photo_url = VALUES(photo_url), "
-                 . "language_code = VALUES(language_code), is_premium = VALUES(is_premium), "
+                 . "language_code = VALUES(language_code), "
                  . "last_activity_at = NOW()";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
@@ -127,8 +127,7 @@ class MiniAppController extends DashmixController
                 $user['first_name'],
                 $user['last_name'] ?? null,
                 $user['photo_url'] ?? null,
-                $user['language_code'] ?? 'en',
-                isset($user['is_premium']) && $user['is_premium'] ? 1 : 0,
+                $user['language_code'] ?? 'en'
             ]);
 
             // Catat interaksi di tabel relasi bot_user. Cukup masukkan data baru, 
