@@ -6,7 +6,7 @@ use PDO;
 
 class Bot extends BaseModel
 {
-    protected string \$table = 'tbots';
+    protected string $table = 'tbots';
 
     /**
      * Find a bot token by its ID.
