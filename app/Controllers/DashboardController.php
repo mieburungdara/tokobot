@@ -19,7 +19,7 @@ class DashboardController extends BaseController
         } else {
             // Panggil method dashboard dari MemberController
             $memberController = new MemberController($this->container);
-            return $memberController->dashmixDashboard();
+            return $memberController->index();
         }
     }
 }
