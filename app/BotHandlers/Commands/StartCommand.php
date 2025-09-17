@@ -21,7 +21,7 @@ class StartCommand implements CommandInterface
         $chatId = $update->getMessage()->getChat()->getId();
 
         $text = "Selamat datang, " . $user->getFirstName() . "!\n\n";
-        $text .= "Saya adalah bot yang siap membantu Anda. Silakan gunakan perintah /login untuk masuk ke sistem.";
+        $text .= "Saya adalah bot yang siap membantu Anda.";
 
         if ($this->botToken) {
             new Telegram($this->botToken);

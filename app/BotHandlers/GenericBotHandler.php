@@ -23,7 +23,6 @@ class GenericBotHandler
      * @var array<string, string> Command mapping
      */
     protected array $commands = [
-        '/login' => LoginCommand::class,
         '/start' => StartCommand::class,
     ];
 
