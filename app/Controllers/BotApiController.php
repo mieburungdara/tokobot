@@ -83,25 +83,20 @@ class BotApiController extends BaseController
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-// Definisikan konstanta path jika belum ada
 if (!defined('CONFIG_PATH')) {
     define('CONFIG_PATH', __DIR__ . '/../../config');
 }
 
-// Ambil Bot ID dari nama file
 \$botId = (int) basename(__FILE__, '.php');
 
-// Muat semua token bot
 \$botTokens = require CONFIG_PATH . '/tbots.php';
 
-// Periksa apakah token untuk bot ini ada
 if (!isset(\$botTokens[\$botId])) {
     http_response_code(404);
     echo "Bot configuration not found for ID: " . \$botId;
     exit();
 }
 
-// Siapkan konfigurasi untuk handler
 \$botConfig = [
     'id' => \$botId,
     'token' => \$botTokens[\$botId],
