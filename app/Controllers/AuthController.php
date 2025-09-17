@@ -48,7 +48,7 @@ class AuthController extends BaseController
         $pdo = \TokoBot\Helpers\Database::getInstance();
 
         // Cari pengguna dengan token yang cocok dan belum kedaluwarsa
-        $sql = "SELECT * FROM users WHERE login_token = ? AND token_expires_at > NOW()";
+        $sql = "SELECT * FROM users WHERE login_token = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$tokenHash]);
         $user = $stmt->fetch();
