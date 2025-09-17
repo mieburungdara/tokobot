@@ -23,7 +23,7 @@ require_once VIEWS_PATH . '/inc/_classes/Template.php';
 $container = new Container();
 
 // Create the template object
-$dm = new Template('Dashmix', '5.10', 'assets');
+$dm = new Template('Dashmix', '5.10', '/assets');
 
 // Load template configuration
 $templateConfig = require_once CONFIG_PATH . '/template.php';
