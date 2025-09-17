@@ -50,8 +50,7 @@ class App
                     $allowedRoles = $handlerRoles[$handlerKey];
                     $userRole = \TokoBot\Helpers\Session::get('user_role', 'guest');
                     if (!in_array($userRole, $allowedRoles)) {
-                        $errorController = new ErrorController();
-                        $errorController->forbidden();
+                        header('Location: /'); 
                         exit();
                     }
                 }
