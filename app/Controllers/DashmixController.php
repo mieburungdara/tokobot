@@ -10,7 +10,8 @@ class DashmixController extends BaseController
         $pageDescription = '',
         $mainNav = [],
         $breadcrumbs = [],
-        $data = []
+        $data = [],
+        $layoutPath = null // Tambahkan parameter opsional untuk layout kustom
     ) {
         $dm = $this->container->get('template');
 
@@ -45,8 +46,9 @@ class DashmixController extends BaseController
         require_once $viewPath;
         $page_content = ob_get_clean();
 
-        // Gunakan konstanta path yang sudah kita definisikan
-        require_once VIEWS_PATH . '/templates/dashmix_layout.php';
+        // Gunakan layout kustom jika disediakan, jika tidak, gunakan layout default.
+        $finalLayoutPath = $layoutPath ?? VIEWS_PATH . '/templates/dashmix_layout.php';
+        require_once $finalLayoutPath;
     }
 
     /**

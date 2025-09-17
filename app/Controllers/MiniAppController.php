@@ -5,7 +5,7 @@ namespace TokoBot\Controllers;
 use TokoBot\Helpers\Logger;
 use TokoBot\Helpers\Session;
 
-class MiniAppController extends BaseController
+class MiniAppController extends DashmixController
 {
     /**
      * Menampilkan halaman utama Mini App setelah memverifikasi bot_id.
@@ -25,9 +25,16 @@ class MiniAppController extends BaseController
             return;
         }
 
-        // Langkah 2: Jika bot valid, teruskan ke view utama.
-        // Kita akan menyisipkan $bot_id ke dalam view agar bisa digunakan oleh JavaScript.
-        require_once VIEWS_PATH . '/miniapp/index.php';
+        // Langkah 2: Jika bot valid, render view menggunakan template Mini App.
+        $this->renderDashmix(
+            VIEWS_PATH . '/miniapp/index.php', // File konten
+            'TokoBot Mini App', // Judul Halaman
+            'Welcome to TokoBot Mini App', // Deskripsi Halaman
+            [], // Navigasi (kosongkan)
+            [], // Breadcrumbs (kosongkan)
+            ['bot_id' => $bot_id], // Data yang akan di-pass ke view
+            VIEWS_PATH . '/templates/miniapp_layout.php' // Path ke layout kustom
+        );
     }
 
     /**

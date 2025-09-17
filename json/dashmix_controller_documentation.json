@@ -1,0 +1,54 @@
+{
+  "controller_name": "DashmixController",
+  "description": "Base controller for pages that use the Dashmix admin template. It provides a helper method to render views within the standard layout.",
+  "methods": [
+    {
+      "name": "renderDashmix",
+      "description": "Renders a given view file within the Dashmix template. It sets up page variables, filters navigation by user role, and includes the main layout file.",
+      "parameters": [
+        {
+          "name": "viewPath",
+          "type": "string",
+          "description": "The absolute path to the content view file."
+        },
+        {
+          "name": "pageTitle",
+          "type": "string",
+          "description": "The title of the page.",
+          "optional": true
+        },
+        {
+          "name": "pageDescription",
+          "type": "string",
+          "description": "The meta description for the page.",
+          "optional": true
+        },
+        {
+          "name": "mainNav",
+          "type": "array",
+          "description": "A custom navigation array to override the default.",
+          "optional": true
+        },
+        {
+          "name": "breadcrumbs",
+          "type": "array",
+          "description": "An array to generate page breadcrumbs.",
+          "optional": true
+        },
+        {
+          "name": "data",
+          "type": "array",
+          "description": "An associative array of data to be extracted and made available to the view file.",
+          "optional": true
+        },
+        {
+          "name": "layoutPath",
+          "type": "string|null",
+          "description": "The absolute path to a custom layout file to use instead of the default dashmix_layout.php.",
+          "optional": true
+        }
+      ],
+      "returns": "Renders a full HTML page."
+    }
+  ]
+}
