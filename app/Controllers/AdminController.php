@@ -3,7 +3,9 @@
 namespace TokoBot\Controllers;
 
 use TokoBot\Helpers\Logger;
-use TokoBot\Exceptions\TelegramApiException;
+use Longman\TelegramBot\Request;
+use Longman\TelegramBot\Telegram;
+use Longman\TelegramBot\Exception\TelegramException;
 use TokoBot\Exceptions\DatabaseException;
 
 class AdminController extends DashmixController
@@ -230,12 +232,12 @@ class AdminController extends DashmixController
 
         try {
             // Use the provided token for this request
-            new \TelegramBot\Telegram($token);
-            $response = \TelegramBot\Request::getMe();
+            $telegram = new Telegram($token, 'TokoBot');
+            $response = Request::getMe();
 
             if ($response->isOk()) {
-                $botInfo = $response->getResult(); // This is an array
-                $botId = $botInfo['id'];
+                $botInfo = $response->getResult();
+                $botId = $botInfo->getId();
 
                 // --- Save public info and token to DB ---
                 $pdo = \TokoBot\Helpers\Database::getInstance();
@@ -244,18 +246,18 @@ class AdminController extends DashmixController
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
                     $botId,
-                    $botInfo['username'],
-                    $botInfo['first_name'],
-                    $botInfo['is_bot'],
+                    $botInfo->getUsername(),
+                    $botInfo->getFirstName(),
+                    $botInfo->getIsBot(),
                     $token // Simpan token di sini
                 ]);
 
-                $successMessage = 'Bot "' . $botInfo['first_name'] . '" has been added/updated successfully!';
+                $successMessage = 'Bot "' . $botInfo->getFirstName() . '" has been added/updated successfully!';
                 \TokoBot\Helpers\Session::flash('success_message', $successMessage);
             } else {
-                throw new TelegramApiException('Invalid token: ' . $response->getDescription());
+                throw new TelegramException('Invalid token: ' . $response->getDescription());
             }
-        } catch (TelegramApiException $e) {
+        } catch (TelegramException $e) {
             Logger::channel('telegram')->error('Failed to add bot', ['error' => $e->getMessage()]);
             \TokoBot\Helpers\Session::flash('error_message', 'Failed to add bot: ' . $e->getMessage());
         } catch (\Exception $e) {

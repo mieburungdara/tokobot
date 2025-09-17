@@ -156,7 +156,7 @@ PHP;
             }
 
             $telegram = new Telegram($token, 'TokoBot');
-            $response = Request::deleteWebhook();
+                        $response = Request::deleteWebhook([]);
 
             if (!$response->isOk()) {
                 throw new TelegramException($response->getDescription());
