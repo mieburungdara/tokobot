@@ -37,25 +37,22 @@ class GenericBotHandler
         if ($updateType === 'message') {
             $user = $update->getMessage()->getFrom();
             $this->logMessage($update);
+            if ($this->handleStatefulMessage($update->getMessage())) {
+                return Request::emptyResponse(); // Handled statefully
+            }
         } elseif ($updateType === 'callback_query') {
             $user = $update->getCallbackQuery()->getFrom();
+            $this->handleCallbackQuery($update->getCallbackQuery());
+            return Request::emptyResponse(); // Handled callback query
         }
 
         if (!$user) {
-            return Request::emptyResponse();
+            return Request::emptyResponse(); // No user, return empty response
         }
 
         $this->syncUser($user);
 
-        if ($updateType === 'message' && $this->handleStatefulMessage($update->getMessage())) {
-            return Request::emptyResponse();
-        }
-
-        if ($updateType === 'callback_query') {
-            $this->handleCallbackQuery($update->getCallbackQuery());
-            return Request::emptyResponse();
-        }
-        
+        // If not handled statefully or as a callback query, proceed to command handling
         $this->telegram->addCommandsPath(ROOT_PATH . '/app/Commands');
         return $this->telegram->handle();
     }
