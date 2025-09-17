@@ -1,26 +1,39 @@
 <?php
-// File ini hanya berisi konten dan logika JavaScript untuk Mini App.
-// Kerangka HTML, head, dan body disediakan oleh miniapp_layout.php
+// File ini dirender di dalam layout utama Dashmix.
+// Menggunakan komponen-komponen Dashmix untuk tampilan yang konsisten.
 ?>
-<style>
-    #user-info, #status { margin-top: 20px; padding: 10px; border-radius: 8px; background-color: var(--tg-theme-secondary-bg-color); }
-    pre { white-space: pre-wrap; word-wrap: break-word; background: #333; color: #eee; padding: 10px; border-radius: 5px; }
-    .hidden { display: none; }
-</style>
 
-<h1>Selamat Datang di Mini App!</h1>
-<p>Status Otentikasi:</p>
-<div id="status">Menunggu validasi...</div>
-
-<div id="user-info" class="hidden">
-    <h2>Data Pengguna (Tervalidasi)</h2>
-    <pre id="user-json"></pre>
+<!-- Blok Status Otentikasi -->
+<div class="block block-rounded">
+  <div class="block-header block-header-default">
+    <h3 class="block-title">Status Otentikasi</h3>
+  </div>
+  <div class="block-content">
+    <p id="status-text">Menunggu validasi...</p>
+  </div>
 </div>
 
-<div id="init-data-raw" class="hidden">
-    <h3>Raw InitData:</h3>
-    <pre id="init-data-pre"></pre>
+<!-- Blok Data Pengguna (disembunyikan awalnya) -->
+<div id="user-info-block" class="block block-rounded d-none">
+  <div class="block-header block-header-default">
+    <h3 class="block-title">Data Pengguna Tervalidasi</h3>
+  </div>
+  <div class="block-content">
+    <!-- Menggunakan <pre> di dalam block akan otomatis diberi style oleh Dashmix/Bootstrap -->
+    <pre><code id="user-json-code"></code></pre>
+  </div>
 </div>
+
+<!-- Blok Debug (disembunyikan awalnya) -->
+<div id="init-data-raw-block" class="block block-rounded d-none">
+  <div class="block-header block-header-default">
+    <h3 class="block-title">Raw InitData (untuk Debug)</h3>
+  </div>
+  <div class="block-content">
+    <pre><code id="init-data-pre"></code></pre>
+  </div>
+</div>
+
 
 <script>
     // Ambil bot_id dari variabel PHP yang di-extract oleh renderDashmix
@@ -28,33 +41,32 @@
 
     // INISIALISASI TELEGRAM WEB APP
     const tg = window.Telegram.WebApp;
-    tg.ready(); // Memberitahu Telegram bahwa aplikasi siap
-    tg.expand(); // Memperluas tampilan Mini App
+    tg.ready();
+    tg.expand();
 
     // Fungsi untuk mengirim data ke backend
     async function authenticateUser() {
-        const statusDiv = document.getElementById('status');
-        
+        const statusText = document.getElementById('status-text');
         const initData = tg.initData;
 
         if (!initData) {
-            statusDiv.textContent = 'Error: initData tidak ditemukan. Aplikasi ini harus dibuka dari dalam Telegram.';
-            statusDiv.style.color = 'red';
+            statusText.textContent = 'Error: initData tidak ditemukan. Aplikasi ini harus dibuka dari dalam Telegram.';
+            statusText.parentElement.classList.add('text-danger');
             return;
         }
 
         // Tampilkan raw initData untuk debug
         document.getElementById('init-data-pre').textContent = initData;
-        document.getElementById('init-data-raw').classList.remove('hidden');
+        document.getElementById('init-data-raw-block').classList.remove('d-none');
 
         try {
-            statusDiv.textContent = 'Mengirim data ke server untuk validasi...';
+            statusText.textContent = 'Mengirim data ke server untuk validasi...';
 
             // KIRIM INITDATA & BOT_ID KE BACKEND API
             const response = await fetch('/api/miniapp/auth', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json' // Kirim sebagai JSON
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     initData: initData,
@@ -65,30 +77,27 @@
             const result = await response.json();
 
             if (response.ok && result.status === 'success') {
-                statusDiv.textContent = 'Berhasil! Pengguna telah diautentikasi oleh server.';
-                statusDiv.style.color = 'green';
+                statusText.textContent = 'Berhasil! Pengguna telah diautentikasi oleh server.';
+                statusText.parentElement.classList.add('text-success');
 
-                // TAMPILKAN DATA PENGGUNA YANG DITERIMA DARI BACKEND
-                const userInfoDiv = document.getElementById('user-info');
-                const userJsonPre = document.getElementById('user-json');
-                userJsonPre.textContent = JSON.stringify(result.user_data, null, 2);
-                userInfoDiv.classList.remove('hidden');
+                // TAMPILKAN DATA PENGGUNA DI BLOK YANG SESUAI
+                const userInfoBlock = document.getElementById('user-info-block');
+                const userJsonCode = document.getElementById('user-json-code');
+                userJsonCode.textContent = JSON.stringify(result.user_data, null, 2);
+                userInfoBlock.classList.remove('d-none');
 
-                // Kirim notifikasi ke user di dalam chat Telegram
                 tg.showAlert(`Halo, ${result.user_data.first_name}! Anda berhasil diautentikasi.`);
-
             } else {
                 throw new Error(result.message || 'Validasi di server gagal.');
             }
-
         } catch (error) {
-            statusDiv.textContent = `Error: ${error.message}`;
-            statusDiv.style.color = 'red';
+            statusText.textContent = `Error: ${error.message}`;
+            statusText.parentElement.classList.add('text-danger');
             tg.showAlert(`Otentikasi gagal: ${error.message}`);
         }
     }
 
     // Panggil fungsi otentikasi saat halaman dimuat
     authenticateUser();
-
 </script>
+
