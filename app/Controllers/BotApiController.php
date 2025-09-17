@@ -78,30 +78,94 @@ class BotApiController extends BaseController
                 }
             }
 
-            $handlerClass = '\TokoBot\BotHandlers\GenericBotHandler'; // Handler default
+            $handlerClass = '\TokoBot\BotHandlers\GenericBotHandler'; // Default handler
             $webhookFileContent = <<<PHP
 <?php
-require_once __DIR__ . '/../../vendor/autoload.php';
 
-if (!defined('CONFIG_PATH')) {
-    define('CONFIG_PATH', __DIR__ . '/../../config');
+// This is a standalone entry point for a Telegram webhook.
+// It needs to bootstrap a minimal application environment to access helpers and config.
+
+// Define ROOT_PATH, the project root directory.
+// This is essential for locating other files like .env and the vendor directory.
+if (!defined('ROOT_PATH')) {
+    define('ROOT_PATH', dirname(__DIR__, 2));
 }
 
+// Include the Composer autoloader.
+require_once ROOT_PATH . '/vendor/autoload.php';
+
+// Load environment variables from the .env file.
+// This is crucial for database connections, API keys, and other configurations.
+// The Database helper relies on these variables.
+if (class_exists('Dotenv\Dotenv')) {
+    try {
+        \$dotenv = Dotenv\Dotenv::createImmutable(ROOT_PATH);
+        \$dotenv->load();
+    } catch (\Dotenv\Exception\InvalidPathException \$e) {
+        // It's fine if the .env file is missing, but log it for debugging.
+        // The application might be configured via server environment variables instead.
+        error_log('Could not find .env file for webhook: ' . \$e->getMessage());
+    }
+}
+
+// Define other path constants for compatibility if they are not already set.
+if (!defined('CONFIG_PATH')) {
+    define('CONFIG_PATH', ROOT_PATH . '/config');
+}
+
+// Register a basic exception handler for this entry point to ensure errors are logged.
+set_exception_handler(function (\$exception) {
+    // Use the application's logger if it's available.
+    if (class_exists('\TokoBot\Helpers\Logger')) {
+        \TokoBot\Helpers\Logger::channel('critical')->critical(
+            'Unhandled exception in webhook: ' . \$exception->getMessage(),
+            [
+                'exception' => get_class(\$exception),
+                'file' => \$exception->getFile(),
+                'line' => \$exception->getLine(),
+                'trace' => \$exception->getTraceAsString()
+            ]
+        );
+    } else {
+        // Fallback to PHP's error log if the logger can't be loaded.
+        error_log('Unhandled exception in webhook: ' . \$exception->getMessage() . "\\n" . \$exception->getTraceAsString());
+    }
+
+    // Avoid leaking exception details to the public.
+    if (!headers_sent()) {
+        http_response_code(500);
+        echo 'Internal Server Error';
+    }
+});
+
+// The bot ID for this entry point is derived from the filename.
 \$botId = (int) basename(__FILE__, '.php');
 
-\$botTokens = require CONFIG_PATH . '/tbots.php';
+// Load the bot token configuration.
+\$botsFile = CONFIG_PATH . '/tbots.php';
+\$botTokens = file_exists(\$botsFile) ? require \$botsFile : [];
 
+// Ensure a token exists for this bot ID.
 if (!isset(\$botTokens[\$botId])) {
     http_response_code(404);
+    \TokoBot\Helpers\Logger::channel('telegram')->error('Webhook call for unknown bot ID: ' . \$botId);
     echo "Bot configuration not found for ID: " . \$botId;
     exit();
 }
 
+\$botToken = \$botTokens[\$botId];
+
+// The telegram-bot-php library uses a static context for some operations like getUpdate().
+// We must set the token for the current request.
+\TelegramBot\Telegram::setToken(\$botToken);
+
+// Prepare bot configuration for the handler.
 \$botConfig = [
     'id' => \$botId,
-    'token' => \$botTokens[\$botId],
+    'token' => \$botToken,
 ];
 
+// Instantiate the handler and process the incoming update.
 (new {$handlerClass}(\$botConfig))->handle();
 PHP;
 
