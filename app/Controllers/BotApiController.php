@@ -49,7 +49,7 @@ class BotApiController extends BaseController
                 if ($dataToSend === null) {
                     $dataToSend = [];
                 }
-                Logger::channel('app')->debug('Value before sendJsonResponse', ['data' => $dataToSend, 'type' => gettype($dataToSend)]);
+                
                 $this->sendJsonResponse($dataToSend);
             }
         } catch (BotNotFoundException $e) {
