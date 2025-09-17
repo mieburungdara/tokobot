@@ -45,7 +45,7 @@ class BotApiController extends BaseController
             if ($result === null) {
                 $this->sendJsonResponse([]);
             } else {
-                $this->sendJsonResponse($result->toArray());
+                $this->sendJsonResponse($result ? $result->toArray() : []);
             }
         } catch (BotNotFoundException $e) {
             Logger::channel('telegram')->warning($e->getMessage());
