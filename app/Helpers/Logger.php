@@ -22,7 +22,7 @@ class Logger
             );
 
             // Handler akan menulis log ke file logs/{$name}.log
-            $handler = new StreamHandler(ROOT_PATH . "/logs/{$name}.log", MonologLogger::DEBUG);
+            $handler = new StreamHandler(\ROOT_PATH . "/logs/{$name}.log", MonologLogger::DEBUG);
             $handler->setFormatter($formatter);
 
             // Buat logger instance
