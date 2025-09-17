@@ -2,32 +2,33 @@
 
 namespace TokoBot\Controllers;
 
-use TelegramBot\Telegram;
-use TelegramBot\Request;
-
-// Add this
+use Longman\TelegramBot\Telegram;
+use Longman\TelegramBot\Request;
 
 class BotController
 {
+    protected Telegram $telegram;
+
     public function __construct(string $token)
     {
-        // The constructor is still needed to set the token globally for the library
-        new Telegram($token);
+        $this->telegram = new Telegram($token, 'TokoBot');
     }
 
     public function handle()
     {
-        // API calls are made statically via the Request class
+        // This method is likely unused in the new webhook flow.
+        // Kept for potential future use or manual polling.
         $response = Request::getUpdates([]);
-        $updates = $response->getResult();
+        if ($response->isOk()) {
+            $updates = $response->getResult();
 
-        // Simple echo bot for now
-        foreach ($updates as $update) {
-            if ($update->getMessage()) {
-                Request::sendMessage([
-                    'chat_id' => $update->getMessage()->getChat()->getId(),
-                    'text' => 'Echo: ' . $update->getMessage()->getText(),
-                ]);
+            foreach ($updates as $update) {
+                if ($update->getMessage()) {
+                    Request::sendMessage([
+                        'chat_id' => $update->getMessage()->getChat()->getId(),
+                        'text' => 'Echo: ' . $update->getMessage()->getText(),
+                    ]);
+                }
             }
         }
     }
