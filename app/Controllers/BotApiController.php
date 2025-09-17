@@ -56,7 +56,7 @@ class BotApiController extends BaseController
                 ];
 
                 // Kirim $cleanData ke response JSON
-                $this->sendJsonResponse($cleanData);
+                $this->sendJsonResponse($dataToSend['raw_data'] ?? []);
             }
 
         } catch (BotNotFoundException $e) {
