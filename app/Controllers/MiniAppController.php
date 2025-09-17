@@ -4,6 +4,7 @@ namespace TokoBot\Controllers;
 
 use TokoBot\Helpers\Logger;
 use TokoBot\Helpers\Session;
+use TokoBot\Helpers\Database;
 
 class MiniAppController extends DashmixController
 {
@@ -63,8 +64,23 @@ class MiniAppController extends DashmixController
             'Welcome to TokoBot Mini App',        // Deskripsi Halaman
             [],                                   // Navigasi (gunakan default)
             [['name' => 'Mini App']],             // Breadcrumbs
-            ['bot_id' => $bot_id]                   // Data yang akan di-pass ke view
-        );
+            $pdo = Database::getInstance();
+            $telegramId = Session::get('user_id');
+            $sellerId = null;
+            if ($telegramId) {
+                $stmt = $pdo->prepare("SELECT seller_id FROM users WHERE telegram_id = ?");
+                $stmt->execute([$telegramId]);
+                $sellerId = $stmt->fetchColumn();
+            }
+
+            $this->renderDashmix(
+                VIEWS_PATH . '/miniapp/index.php',      // File konten
+                'TokoBot Mini App',                   // Judul Halaman
+                'Welcome to TokoBot Mini App',        // Deskripsi Halaman
+                [],                                   // Navigasi (gunakan default)
+                [['name' => 'Mini App']],             // Breadcrumbs
+                ['bot_id' => $bot_id, 'seller_id' => $sellerId]                   // Data yang akan di-pass ke view
+            );
     }
 
     /**

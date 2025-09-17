@@ -10,6 +10,7 @@
   </div>
   <div class="block-content">
     <p id="status-text">Menunggu inisialisasi...</p>
+    <p id="seller-id-text" class="d-none">ID Penjual: <span id="seller-id-value"></span></p>
   </div>
 </div>
 
@@ -46,6 +47,12 @@
 
         // Ambil bot_id dari variabel PHP
         const botId = <?= json_encode($bot_id) ?>;
+        const sellerId = <?= json_encode($seller_id) ?>;
+
+        if (sellerId) {
+            document.getElementById('seller-id-value').textContent = sellerId;
+            document.getElementById('seller-id-text').classList.remove('d-none');
+        }
         const tg = window.Telegram.WebApp;
 
         // Inisialisasi Mini App
