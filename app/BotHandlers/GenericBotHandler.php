@@ -2,6 +2,8 @@
 
 namespace TokoBot\BotHandlers;
 
+use TokoBot\BotHandlers\Commands\LoginCommand;
+use TokoBot\BotHandlers\Commands\StartCommand;
 use TokoBot\Helpers\Database;
 use TelegramBot\Telegram;
 use TelegramBot\Request;
@@ -13,17 +15,24 @@ class GenericBotHandler
     protected ?string $botToken;
     protected ?\PDO $pdo;
 
+    /**
+     * @var array<string, string> Command mapping
+     */
+    protected array $commands = [
+        '/login' => LoginCommand::class,
+        '/start' => StartCommand::class,
+    ];
+
     public function __construct(array $botConfig)
     {
         $this->botId = $botConfig['id'];
         $this->pdo = Database::getInstance();
-
         $this->botToken = \TokoBot\Models\Bot::findTokenById($this->botId);
     }
 
     public function handle()
     {
-        try {            
+        try {
             $update = Telegram::getUpdate();
 
             $message = $update ? $update->getMessage() : null;
@@ -34,46 +43,16 @@ class GenericBotHandler
             $chat = $message->getChat();
             $text = $message->getText();
 
-            // 1. Sinkronisasi Pengguna
-            $sql = "INSERT INTO users (telegram_id, username, first_name, last_name, last_activity_at) "
-                 . "VALUES (?, ?, ?, ?, NOW()) "
-                 . "ON DUPLICATE KEY UPDATE username = VALUES(username), "
-                 . "first_name = VALUES(first_name), last_name = VALUES(last_name), "
-                 . "last_activity_at = NOW()";
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([
-                $user->getId(),
-                $user->getUsername(),
-                $user->getFirstName(),
-                $user->getLastName(),
-            ]);
-            Logger::channel('app')->info("User {$user->getId()} ({$user->getUsername()}) synced.");
+            // 1. Sync User
+            $this->syncUser($user);
 
-            // Tambahan: Catat interaksi di tabel relasi bot_user
-            $sqlBotUser = "INSERT INTO bot_user (bot_id, user_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE last_accessed_at = NOW()";
-            $stmtBotUser = $this->pdo->prepare($sqlBotUser);
-            $stmtBotUser->execute([$this->botId, $user->getId()]);
+            // 2. Log Message
+            $this->logMessage($update, $message, $user, $chat, $text);
 
-            // 2. Log Pesan
-            $sql = "INSERT INTO messages (id, message_id, user_id, chat_id, bot_id, text, raw_update) "
-                 . "VALUES (?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([
-                $update->getUpdateId(),
-                $message->getMessageId(),
-                $user->getId(),
-                $chat->getId(),
-                $this->botId,
-                $text,
-                json_encode($update->getRawData())
-            ]);
+            // 3. Handle Command
+            $this->dispatchCommand($update);
 
-            // 3. Tangani perintah /login
-            if ($text === '/login') {
-                $this->handleLoginCommand($user->getId());
-            }
         } catch (\Exception $e) {
-            // Log error menggunakan Monolog
             Logger::channel('app')->error("Bot Handler Error for Bot ID {$this->botId}", [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -81,45 +60,78 @@ class GenericBotHandler
         }
     }
 
-    private function handleLoginCommand(int $userId)
+    private function syncUser(\TelegramBot\Types\User $user): void
     {
-        Logger::channel('app')->info("Initiating login token generation for user: {$userId}");
-
-        // Buat token acak yang aman
-        $token = bin2hex(random_bytes(32));
-        $tokenHash = hash('sha256', $token);
-        Logger::channel('app')->debug("Generated token hash for user: {$userId}");
-
-        // Store the token hash in the database. Token will not expire.
-        $sql = "UPDATE users SET login_token = ? WHERE telegram_id = ?";
+        $sql = "INSERT INTO users (telegram_id, username, first_name, last_name, last_activity_at) "
+             . "VALUES (?, ?, ?, ?, NOW()) "
+             . "ON DUPLICATE KEY UPDATE username = VALUES(username), "
+             . "first_name = VALUES(first_name), last_name = VALUES(last_name), "
+             . "last_activity_at = NOW()";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$tokenHash, $userId]);
-        Logger::channel('app')->info("Stored login token in DB for user: {\$userId}. Token will not expire.");
+        $stmt->execute([
+            $user->getId(),
+            $user->getUsername(),
+            $user->getFirstName(),
+            $user->getLastName(),
+        ]);
+        Logger::channel('app')->info("User {$user->getId()} ({$user->getUsername()}) synced.");
 
+        $sqlBotUser = "INSERT INTO bot_user (bot_id, user_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE last_accessed_at = NOW()";
+        $stmtBotUser = $this->pdo->prepare($sqlBotUser);
+        $stmtBotUser->execute([$this->botId, $user->getId()]);
+    }
+
+    private function logMessage(\TelegramBot\Types\Update $update, \TelegramBot\Types\Message $message, \TelegramBot\Types\User $user, \TelegramBot\Types\Chat $chat, ?string $text): void
+    {
+        $sql = "INSERT INTO messages (id, message_id, user_id, chat_id, bot_id, text, raw_update) "
+             . "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            $update->getUpdateId(),
+            $message->getMessageId(),
+            $user->getId(),
+            $chat->getId(),
+            $this->botId,
+            $text,
+            json_encode($update->getRawData())
+        ]);
+    }
+
+    private function dispatchCommand(\TelegramBot\Types\Update $update): void
+    {
+        $message = $update->getMessage();
+        $text = $message->getText();
+        if ($text === null || $text === '' || $text[0] !== '/') {
+            return; // Ignore non-command messages
+        }
+
+        $commandParts = explode(' ', $text);
+        $command = $commandParts[0];
+        $args = array_slice($commandParts, 1);
+
+        if (isset($this->commands[$command])) {
+            $commandClass = $this->commands[$command];
+            if (class_exists($commandClass)) {
+                $commandHandler = new $commandClass($this->botId, $this->botToken);
+                $commandHandler->handle($update, $args);
+                Logger::channel('app')->info("Dispatched command '{$command}' to {$commandClass}");
+            } else {
+                Logger::channel('app')->warning("Command class {$commandClass} not found for command '{$command}'");
+            }
+        } else {
+            $this->handleUnknownCommand($message->getChat()->getId(), $command);
+        }
+    }
+
+    private function handleUnknownCommand(int $chatId, string $command): void
+    {
+        Logger::channel('app')->info("Unknown command '{$command}' received.");
         if ($this->botToken) {
-            // Build the login URL. Use APP_URL from environment for consistency, with a fallback.
-            // Ensure your .env file has an APP_URL variable (e.g., APP_URL=https://core.my.id).
-            $appBaseUrl = rtrim($_ENV['APP_URL'] ?? 'https://' . ($_SERVER['HTTP_HOST'] ?? 'your-domain.com'), '/');
-            $loginUrl = $appBaseUrl . '/login/' . $token . '?bot_id=' . $this->botId;
-            $keyboard = [
-                'inline_keyboard' => [
-                    [
-                        ['text' => 'Login ke TokoBot', 'url' => $loginUrl]
-                    ]
-                ]
-            ];
-
-            $text = "Klik tombol di bawah untuk login ke TokoBot. Link ini berlaku selamanya.";
-
             new Telegram($this->botToken);
             Request::sendMessage([
-                'chat_id' => $userId,
-                'text' => $text,
-                'reply_markup' => json_encode($keyboard)
+                'chat_id' => $chatId,
+                'text' => "Maaf, perintah '{$command}' tidak dikenali.",
             ]);
-            Logger::channel('app')->info("Sent login link to user: {$userId}");
-        } else {
-            Logger::channel('app')->warning("Could not send login link to user {$userId}: Bot token is not configured.");
         }
     }
 }

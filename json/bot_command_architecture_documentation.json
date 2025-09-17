@@ -1,0 +1,56 @@
+{
+  "title": "Bot Command Architecture",
+  "description": "This document outlines the modular command handling architecture for the Telegram bot.",
+  "version": "1.0",
+  "last_updated": "2025-09-17",
+  "components": [
+    {
+      "name": "GenericBotHandler",
+      "path": "app/BotHandlers/GenericBotHandler.php",
+      "purpose": "Acts as the main dispatcher for all incoming bot messages.",
+      "workflow": [
+        "Receives an update from Telegram via the bot-specific webhook entry point.",
+        "Performs common tasks: user synchronization and message logging.",
+        "Parses the message text to identify a command (e.g., '/login').",
+        "Looks up the command in its internal `$commands` array to find the corresponding handler class.",
+        "Instantiates the handler class and calls its `handle()` method.",
+        "Logs the dispatch action or any warnings if the command/class is not found."
+      ]
+    },
+    {
+      "name": "CommandInterface",
+      "path": "app/BotHandlers/Commands/CommandInterface.php",
+      "purpose": "Defines the contract that all command handler classes must follow.",
+      "details": "Ensures every command class has a `public function handle(Update $update, array $args = []): void` method, promoting consistency."
+    },
+    {
+      "name": "Command Handlers",
+      "path": "app/BotHandlers/Commands/",
+      "purpose": "Directory containing individual classes for each bot command.",
+      "details": "Each file in this directory should be a class that implements CommandInterface and contains the specific logic for one single command."
+    }
+  ],
+  "how_to_add_a_new_command": {
+    "steps": [
+      {
+        "step": 1,
+        "action": "Create a new command class file in `app/BotHandlers/Commands/`.",
+        "example": "Create a file named `HelpCommand.php`."
+      },
+      {
+        "step": 2,
+        "action": "Implement the `CommandInterface` in the new class.",
+        "example": "`class HelpCommand implements CommandInterface { ... }`"
+      },
+      {
+        "step": 3,
+        "action": "Implement the logic for the command inside the `handle()` method of the new class."
+      },
+      {
+        "step": 4,
+        "action": "Register the new command in the `$commands` array within `GenericBotHandler.php`.",
+        "example": "Add `'/help' => HelpCommand::class,` to the array."
+      }
+    ]
+  }
+}
