@@ -131,6 +131,12 @@ class MiniAppController extends DashmixController
                 isset($user['is_premium']) && $user['is_premium'] ? 1 : 0,
             ]);
 
+            // Catat interaksi di tabel relasi bot_user
+            $sqlBotUser = "INSERT INTO bot_user (bot_id, user_id, last_accessed_at) VALUES (?, ?, NOW()) "
+                        . "ON DUPLICATE KEY UPDATE last_accessed_at = NOW()";
+            $stmtBotUser = $pdo->prepare($sqlBotUser);
+            $stmtBotUser->execute([$bot_id, $user['id']]);
+
             // Setelah sinkronisasi, ambil data lengkap pengguna dari DB untuk membuat sesi
             $stmt = $pdo->prepare("SELECT * FROM users WHERE telegram_id = ?");
             $stmt->execute([$user['id']]);

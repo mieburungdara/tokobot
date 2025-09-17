@@ -1,0 +1,23 @@
+{
+  "class_name": "GenericBotHandler",
+  "description": "Handles incoming updates from Telegram for any configured bot. It processes messages, syncs user data, and logs interactions.",
+  "methods": [
+    {
+      "name": "__construct",
+      "description": "Initializes the handler with a specific bot's configuration, database connection, and token.",
+      "parameters": [
+        {
+          "name": "botConfig",
+          "type": "array",
+          "description": "An array containing bot configuration, including the 'id'."
+        }
+      ]
+    },
+    {
+      "name": "handle",
+      "description": "The main entry point for processing an update. It syncs user data to the 'users' table, logs the message to the 'messages' table, updates the 'last_accessed_at' timestamp in the new 'bot_user' relationship table, and handles specific commands like /login.",
+      "parameters": [],
+      "returns": "void"
+    }
+  ]
+}

@@ -52,6 +52,12 @@ class GenericBotHandler
             ]);
             Logger::channel('app')->info("User {$user->getId()} ({$user->getUsername()}) synced.");
 
+            // Tambahan: Catat interaksi di tabel relasi bot_user
+            $sqlBotUser = "INSERT INTO bot_user (bot_id, user_id, last_accessed_at) VALUES (?, ?, NOW()) "
+                        . "ON DUPLICATE KEY UPDATE last_accessed_at = NOW()";
+            $stmtBotUser = $this->pdo->prepare($sqlBotUser);
+            $stmtBotUser->execute([$this->botId, $user->getId()]);
+
             // 2. Log Pesan
             $sql = "INSERT INTO messages (id, message_id, user_id, chat_id, bot_id, text, raw_update) "
                  . "VALUES (?, ?, ?, ?, ?, ?, ?)";
