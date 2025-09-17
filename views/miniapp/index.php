@@ -4,20 +4,12 @@
 ?>
 
 <!-- Blok Status Otentikasi -->
-<!-- Blok Status Otentikasi -->
 <div class="block block-rounded">
   <div class="block-header block-header-default">
     <h3 class="block-title">Status Otentikasi</h3>
   </div>
   <div class="block-content">
-    <p id="status-text">Menunggu validasi...</p>
-  </div>
-</div>
-  <div class="block-header block-header-default">
-    <h3 class="block-title">Status Otentikasi</h3>
-  </div>
-  <div class="block-content">
-    <p id="status-text">Menunggu validasi...</p>
+    <p id="status-text">Menunggu inisialisasi...</p>
   </div>
 </div>
 
@@ -27,7 +19,6 @@
     <h3 class="block-title">Data Pengguna Tervalidasi</h3>
   </div>
   <div class="block-content">
-    <!-- Menggunakan <pre> di dalam block akan otomatis diberi style oleh Dashmix/Bootstrap -->
     <pre><code id="user-json-code"></code></pre>
   </div>
 </div>
@@ -42,34 +33,49 @@
   </div>
 </div>
 
-
 <script>
-    // Ambil bot_id dari variabel PHP yang di-extract oleh renderDashmix
-    const botId = <?= json_encode($bot_id) ?>;
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusText = document.getElementById('status-text');
 
-    // INISIALISASI TELEGRAM WEB APP
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
+        // PERIKSA APAKAH APLIKASI DIJALANKAN DI DALAM TELEGRAM
+        if (typeof window.Telegram?.WebApp === 'undefined') {
+            statusText.textContent = 'Error: Aplikasi ini harus dijalankan dari dalam Telegram.';
+            statusText.parentElement.classList.add('text-danger');
+            return; // Hentikan eksekusi jika tidak di dalam Telegram
+        }
+
+        // Ambil bot_id dari variabel PHP
+        const botId = <?= json_encode($bot_id) ?>;
+        const tg = window.Telegram.WebApp;
+
+        // Inisialisasi Mini App
+        tg.ready();
+        tg.expand();
+
+        // Panggil fungsi otentikasi
+        authenticateUser(tg, botId, statusText);
+    });
 
     // Fungsi untuk mengirim data ke backend
-    async function authenticateUser() {
-        const statusBlock = document.getElementById('status-block');
-        const statusText = document.getElementById('status-text');
+    async function authenticateUser(tg, botId, statusText) {
         const initData = tg.initData;
 
         if (!initData) {
-            statusText.textContent = 'Error: initData tidak ditemukan. Aplikasi ini harus dibuka dari dalam Telegram.';
-            statusBlock.classList.remove('block-mode-loading');
+            statusText.textContent = 'Error: initData tidak ditemukan. Sesi Telegram tidak valid.';
             statusText.parentElement.classList.add('text-danger');
             return;
         }
 
-        // Tampilkan raw initData untuk debug
-        document.getElementById('init-data-pre').textContent = initData;
-        // document.getElementById('init-data-raw-block').classList.remove('d-none'); // Sembunyikan debug secara default
+        // Tampilkan raw initData untuk debug (opsional)
+        const initDataBlock = document.getElementById('init-data-raw-block');
+        if (initDataBlock) {
+            document.getElementById('init-data-pre').textContent = initData;
+            // initDataBlock.classList.remove('d-none'); // Uncomment untuk menampilkan blok debug
+        }
 
         try {
+            statusText.textContent = 'Mengirim data ke server untuk validasi...';
+
             // KIRIM INITDATA & BOT_ID KE BACKEND API
             const response = await fetch('/api/miniapp/auth', {
                 method: 'POST',
@@ -83,9 +89,6 @@
             });
 
             const result = await response.json();
-
-            // Hentikan mode loading
-            statusBlock.classList.remove('block-mode-loading');
 
             if (response.ok && result.status === 'success') {
                 statusText.textContent = 'Berhasil! Pengguna telah diautentikasi oleh server.';
@@ -102,15 +105,9 @@
                 throw new Error(result.message || 'Validasi di server gagal.');
             }
         } catch (error) {
-            // Hentikan mode loading jika terjadi error
-            statusBlock.classList.remove('block-mode-loading');
             statusText.textContent = `Error: ${error.message}`;
             statusText.parentElement.classList.add('text-danger');
             tg.showAlert(`Otentikasi gagal: ${error.message}`);
         }
     }
-
-    // Panggil fungsi otentikasi saat halaman dimuat
-    authenticateUser();
 </script>
-
