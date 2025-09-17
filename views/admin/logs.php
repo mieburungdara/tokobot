@@ -19,35 +19,34 @@ function get_log_level_badge($level) {
 ?>
 
 <div class="block block-rounded">
-    <div class="block-header block-header-default">
-        <h3 class="block-title">Application Logs</h3>
-        <div class="block-options">
-            <div class="btn-group me-2">
-                <button type="button" class="btn btn-sm btn-alt-secondary dropdown-toggle" id="dropdown-log-channel" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Viewing: <?php echo ucfirst($_GET['log'] ?? 'app'); ?>.log
-                </button>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-log-channel">
-                    <a class="dropdown-item" href="/logs?log=app">app.log</a>
-                    <a class="dropdown-item" href="/logs?log=telegram">telegram.log</a>
-                    <a class="dropdown-item" href="/logs?log=critical">critical.log</a>
+        <div class="block-header block-header-default">
+            <h3 class="block-title">Log Viewer <small class="text-muted">- <?= htmlentities(ucfirst($logChannel)) ?>.log</small></h3>
+            <div class="block-options">
+                <!-- Grup tombol untuk memilih channel log -->
+                <div class="btn-group" role="group" aria-label="Log Channels">
+                    <?php foreach ($allowedLogs as $channel) : ?>
+                        <a href="/logs?log=<?= urlencode($channel) ?>" class="btn btn-sm <?= $logChannel === $channel ? 'btn-primary' : 'btn-outline-primary' ?>">
+                            <?= htmlentities(ucfirst($channel)) ?>
+                        </a>
+                    <?php endforeach; ?>
                 </div>
+                <a href="/logs?log=<?= urlencode($logChannel) ?>&action=clear" class="btn btn-sm btn-outline-danger ms-2" onclick="return confirm('Anda yakin ingin membersihkan file log ini?');">
+                    <i class="fa fa-trash me-1"></i> Clear Log
+                </a>
             </div>
-            <a href="/logs?action=clear&log=<?php echo ($_GET['log'] ?? 'app'); ?>" class="btn btn-sm btn-alt-danger" onclick="return confirm('Are you sure you want to clear this log file?');">
-                <i class="fa fa-trash-alt"></i> Clear Log
-            </a>
+        </div>
+        <div class="block-content">
+            <?php if (empty($logs)) : ?>
+                <div class="alert alert-info text-center">
+                    File log kosong.
+                </div>
+            <?php else : ?>
+                <pre class="p-3 bg-light rounded" style="max-height: 600px; overflow-y: auto;"><code><?php
+                    foreach ($logs as $log) {
+                        // Escape output untuk mencegah XSS
+                        echo htmlentities($log, ENT_QUOTES, 'UTF-8') . "\n";
+                    }
+                ?></code></pre>
+            <?php endif; ?>
         </div>
     </div>
-    <div class="block-content">
-        <?php if (empty($logs) || (count($logs) === 1 && empty($logs[0]))): ?>
-            <div class="alert alert-success text-center">
-                <i class="fa fa-check-circle"></i> Log file is empty. No errors to show.
-            </div>
-        <?php else: ?>
-            <pre class="bg-light p-3 rounded"><code><?php
-                foreach ($logs as $log) {
-                    echo htmlspecialchars($log) . "\n";
-                }
-            ?></code></pre>
-        <?php endif; ?>
-    </div>
-</div>

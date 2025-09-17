@@ -184,7 +184,11 @@ class AdminController extends DashmixController
             'View application logs.',
             [],
             $breadcrumbs,
-            ['logs' => $logs]
+            [
+                'logs' => $logs,
+                'logChannel' => $logChannel,
+                'allowedLogs' => $allowedLogs,
+            ]
         );
     }
 
