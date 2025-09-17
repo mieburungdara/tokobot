@@ -1,0 +1,39 @@
+{
+  "controller_name": "MiniAppController",
+  "description": "Handles all logic related to the Telegram Mini App, including rendering the view and authenticating the user.",
+  "methods": [
+    {
+      "name": "index",
+      "description": "Acts as the entry point for the Mini App. It verifies the bot_id from the URL. If the bot is valid, it renders the main Mini App view. Otherwise, it shows an error page.",
+      "route": "GET /miniapp/{bot_id}",
+      "parameters": [
+        {
+          "name": "bot_id",
+          "type": "int",
+          "description": "The Telegram Bot ID, passed from the URL."
+        }
+      ],
+      "returns": "Renders a PHP view (`views/miniapp/index.php` or `views/miniapp/invalid_bot.php`)."
+    },
+    {
+      "name": "authenticate",
+      "description": "API endpoint to securely authenticate a Mini App user. It validates the `initData` string from Telegram using the specific bot's token.",
+      "route": "POST /api/miniapp/auth",
+      "parameters": [
+        {
+          "name": "initData",
+          "type": "string",
+          "in": "body",
+          "description": "The raw `initData` string provided by the Telegram client."
+        },
+        {
+          "name": "bot_id",
+          "type": "int",
+          "in": "body",
+          "description": "The ID of the bot to use for validating the hash."
+        }
+      ],
+      "returns": "A JSON response containing the authentication status and user data on success."
+    }
+  ]
+}
