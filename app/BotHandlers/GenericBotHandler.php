@@ -56,7 +56,7 @@ class GenericBotHandler
         $this->syncUser($user);
 
         // If not handled statefully or as a callback query, proceed to command handling
-        $this->telegram->addCommandsPath(ROOT_PATH . '/app/Commands');
+        $this->telegram->addCommandsPath(ROOT_PATH . '/app/BotHandlers/Commands');
         
         $response = $this->telegram->handle();
 
