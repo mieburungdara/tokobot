@@ -149,7 +149,7 @@ class AdminController extends DashmixController
     public function viewLogs()
     {
         $logChannel = $_GET['log'] ?? 'app';
-        $allowedLogs = ['app', 'telegram', 'critical', 'tbot_error','auth'];
+        $allowedLogs = ['app', 'telegram', 'critical', 'tbot_error','auth','database'];
 
         if (!in_array($logChannel, $allowedLogs)) {
             $logChannel = 'app';

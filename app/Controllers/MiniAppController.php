@@ -131,9 +131,9 @@ class MiniAppController extends DashmixController
                 isset($user['is_premium']) && $user['is_premium'] ? 1 : 0,
             ]);
 
-            // Catat interaksi di tabel relasi bot_user
-            $sqlBotUser = "INSERT INTO bot_user (bot_id, user_id, last_accessed_at) VALUES (?, ?, NOW()) "
-                        . "ON DUPLICATE KEY UPDATE last_accessed_at = NOW()";
+            // Catat interaksi di tabel relasi bot_user. Cukup masukkan data baru, 
+            // atau biarkan trigger `ON UPDATE CURRENT_TIMESTAMP` pada `last_accessed_at` bekerja jika data sudah ada.
+            $sqlBotUser = "INSERT INTO bot_user (bot_id, user_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE last_accessed_at = NOW()";
             $stmtBotUser = $pdo->prepare($sqlBotUser);
             $stmtBotUser->execute([$bot_id, $user['id']]);
 
