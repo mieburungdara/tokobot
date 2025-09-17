@@ -17,6 +17,9 @@ class MemberController extends DashmixController
      */
     public function dashmixDashboard()
     {
+        $userId = \TokoBot\Helpers\Session::get('user_id');
+        $bots = \TokoBot\Models\Bot::findByUserId($userId);
+
         $breadcrumbs = [
             ['name' => 'Dashboard']
         ];
@@ -26,7 +29,10 @@ class MemberController extends DashmixController
             'Member Dashboard',
             'Welcome to your member dashboard.',
             [], // Gunakan navigasi default
-            $breadcrumbs
+            $breadcrumbs,
+            [
+                'bots' => $bots
+            ]
         );
     }
 }

@@ -27,4 +27,29 @@ class Bot extends BaseModel
             return null;
         }
     }
+
+    /**
+     * Find all bots associated with a user.
+     *
+     * @param int $userId
+     * @return array
+     */
+    public static function findByUserId(int $userId): array
+    {
+        try {
+            $pdo = \TokoBot\Helpers\Database::getInstance();
+            $stmt = $pdo->prepare("
+                SELECT b.id, b.username, b.first_name, b.token IS NOT NULL as has_token
+                FROM tbots b
+                INNER JOIN bot_user bu ON b.id = bu.bot_id
+                WHERE bu.user_id = ?
+                ORDER BY b.first_name ASC
+            ");
+            $stmt->execute([$userId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            \TokoBot\Helpers\Logger::channel('database')->error('Failed to find bots by user ID', ['user_id' => $userId, 'error' => $e->getMessage()]);
+            return [];
+        }
+    }
 }
