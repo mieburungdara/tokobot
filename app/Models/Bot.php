@@ -14,7 +14,7 @@ class Bot extends BaseModel
      * @param int \$botId
      * @return string|null
      */
-    public static function findTokenById(int \$botId): ?string
+    public static function findTokenById(int $botId): ?string
     {
         try {
             \$pdo = \TokoBot\Helpers\Database::getInstance();
