@@ -40,6 +40,8 @@ class BotApiController extends BaseController
 
             $result = $response->getResult();
 
+            Logger::channel('app')->info('Webhook info result', ['type' => gettype($result), 'is_null' => is_null($result)]);
+
             if ($result === null) {
                 $this->sendJsonResponse([]);
             } else {
