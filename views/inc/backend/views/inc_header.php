@@ -50,9 +50,18 @@
               <i class="far fa-fw fa-user me-1"></i> Profile
             </a>
             <div role="separator" class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/logout">
-              <i class="far fa-fw fa-arrow-alt-circle-left me-1"></i> Log Out
-            </a>
+            <?php 
+            // Cek apakah ini halaman Mini App dengan memeriksa skrip yang di-inject
+            if (isset($dm->page_scripts) && in_array('https://telegram.org/js/telegram-web-app.js', $dm->page_scripts)) : 
+            ?>
+              <a class="dropdown-item" href="javascript:void(0)" onclick="window.Telegram.WebApp.close();">
+                <i class="fa fa-fw fa-times-circle me-1"></i> Tutup Aplikasi
+              </a>
+            <?php else: ?>
+              <a class="dropdown-item" href="/logout">
+                <i class="far fa-fw fa-arrow-alt-circle-left me-1"></i> Log Out
+              </a>
+            <?php endif; ?>
           </div>
         </div>
       </div>
