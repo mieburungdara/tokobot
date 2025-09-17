@@ -79,11 +79,31 @@ class BotApiController extends BaseController
             }
 
             $handlerClass = '\TokoBot\BotHandlers\GenericBotHandler'; // Example handler
+            $handlerClass = '\TokoBot\BotHandlers\GenericBotHandler'; // Handler default
             $webhookFileContent = <<<PHP
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 // Entry point for bot ID: {$id}
+if (!defined('CONFIG_PATH')) {
+    define('CONFIG_PATH', __DIR__ . '/../../config');
+}
+
+\$botId = (int) basename(__FILE__, '.php');
+
+\$botTokens = require CONFIG_PATH . '/tbots.php';
+
+if (!isset(\$botTokens[\$botId])) {
+    http_response_code(404);
+    echo "Bot configuration not found for ID: " . \$botId;
+    exit();
+}
+
+\$botConfig = [
+    'id' => \$botId,
+    'token' => \$botTokens[\$botId],
+];
+
 (new {$handlerClass}(\$botConfig))->handle();
 PHP;
 
