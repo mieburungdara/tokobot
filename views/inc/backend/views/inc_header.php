@@ -33,6 +33,21 @@
 
     <!-- Right Section -->
     <div class="space-x-1">
+
+      <!-- DEBUG BLOCK -->
+      <?php
+      $currentUserForDebug = \TokoBot\Helpers\Session::get('user');
+      if (isset($_GET['debug_session']) && $currentUserForDebug) {
+          echo '<div style="position: fixed; top: 80px; right: 20px; background: #fff; border: 2px solid red; padding: 15px; z-index: 9999; max-width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,.2));">';
+          echo '<h6 style="border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px;">DEBUG: Session User Data</h6>';
+          echo '<pre style="white-space: pre-wrap; word-wrap: break-word; max-height: 300px; overflow-y: auto;">';
+          print_r($currentUserForDebug);
+          echo '</pre>';
+          echo '</div>';
+      }
+      ?>
+      <!-- END DEBUG BLOCK -->
+
       <!-- User Dropdown -->
       <?php if (\TokoBot\Helpers\Session::get('user_role', 'guest') !== 'guest'): ?>
       <div class="dropdown d-inline-block">
