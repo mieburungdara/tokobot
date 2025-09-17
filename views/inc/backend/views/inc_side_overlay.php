@@ -377,86 +377,45 @@
 
         <!-- Profile -->
         <div class="tab-pane pull-x fade fade-up" id="so-profile" role="tabpanel" aria-labelledby="so-profile-tab" tabindex="0">
-          <form action="be_pages_dashboard.php" method="POST" onsubmit="return false;">
-            <div class="block mb-0">
-              <!-- Personal -->
-              <div class="block-content block-content-sm block-content-full bg-body">
-                <span class="text-uppercase fs-sm fw-bold">Personal</span>
-              </div>
-              <div class="block-content block-content-full">
-                <div class="mb-4">
-                  <label class="form-label">Username</label>
-                  <input type="text" readonly class="form-control" id="so-profile-username-static" value="Admin">
-                </div>
-                <div class="mb-4">
-                  <label class="form-label" for="so-profile-name">Name</label>
-                  <input type="text" class="form-control" id="so-profile-name" name="so-profile-name" value="George Taylor">
-                </div>
-                <div class="mb-4">
-                  <label class="form-label" for="so-profile-email">Email</label>
-                  <input type="email" class="form-control" id="so-profile-email" name="so-profile-email" value="g.taylor@example.com">
-                </div>
-              </div>
-              <!-- END Personal -->
-
-              <!-- Password Update -->
-              <div class="block-content block-content-sm block-content-full bg-body">
-                <span class="text-uppercase fs-sm fw-bold">Password Update</span>
-              </div>
-              <div class="block-content block-content-full">
-                <div class="mb-4">
-                  <label class="form-label" for="so-profile-password">Current Password</label>
-                  <input type="password" class="form-control" id="so-profile-password" name="so-profile-password">
-                </div>
-                <div class="mb-4">
-                  <label class="form-label" for="so-profile-new-password">New Password</label>
-                  <input type="password" class="form-control" id="so-profile-new-password" name="so-profile-new-password">
-                </div>
-                <div class="mb-4">
-                  <label class="form-label" for="so-profile-new-password-confirm">Confirm New Password</label>
-                  <input type="password" class="form-control" id="so-profile-new-password-confirm" name="so-profile-new-password-confirm">
-                </div>
-              </div>
-              <!-- END Password Update -->
-
-              <!-- Options -->
-              <div class="block-content block-content-sm block-content-full bg-body">
-                <span class="text-uppercase fs-sm fw-bold">Options</span>
-              </div>
-              <div class="block-content">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="so-settings-status" name="so-settings-status">
-                  <label class="form-check-label fw-semibold" for="so-settings-status">Online Status</label>
-                </div>
-                <p class="text-muted fs-sm">
-                  Make your online status visible to other users of your app
-                </p>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="so-settings-notifications" name="so-settings-notifications">
-                  <label class="form-check-label fw-semibold" for="so-settings-notifications">Notifications</label>
-                </div>
-                <p class="text-muted fs-sm">
-                  Receive desktop notifications regarding your projects and sales
-                </p>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="so-settings-updates" name="so-settings-updates">
-                  <label class="form-check-label fw-semibold" for="so-settings-updates">Auto Updates</label>
-                </div>
-                <p class="text-muted fs-sm">
-                  If enabled, we will keep all your applications and servers up to date with the most recent features automatically
-                </p>
-              </div>
-              <!-- END Options -->
-
-              <!-- Submit -->
-              <div class="block-content block-content-full border-top">
-                <button type="submit" class="btn w-100 btn-alt-primary">
-                  <i class="fa fa-fw fa-save me-1 opacity-50"></i> Save
-                </button>
-              </div>
-              <!-- END Submit -->
+          <div class="block mb-0">
+            <div class="block-content block-content-sm block-content-full bg-body">
+              <span class="text-uppercase fs-sm fw-bold">All Bots</span>
             </div>
-          </form>
+            <div class="block-content">
+              <ul class="nav-items">
+                <?php
+                try {
+                    $pdo = \TokoBot\Helpers\Database::getInstance();
+                    $stmt = $pdo->query("SELECT id, username, first_name FROM tbots ORDER BY first_name ASC");
+                    $allBots = $stmt->fetchAll();
+
+                    if (empty($allBots)) {
+                        echo '<li class="text-muted fs-sm p-2">No bots found.</li>';
+                    } else {
+                        foreach ($allBots as $bot) {
+                ?>
+                <li>
+                  <a class="d-flex py-2" href="/bot-management">
+                    <div class="flex-shrink-0 mx-3 overlay-container">
+                      <i class="fa fa-2x fa-robot text-primary"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold"><?= htmlspecialchars($bot['first_name']) ?></div>
+                      <div class="fs-sm text-muted">@<?= htmlspecialchars($bot['username']) ?></div>
+                    </div>
+                  </a>
+                </li>
+                <?php
+                        }
+                    }
+                } catch (\Exception $e) {
+                    \TokoBot\Helpers\Logger::channel('app')->error('Failed to fetch bots for side overlay', ['error' => $e->getMessage()]);
+                    echo '<li class="text-danger fs-sm p-2">Error loading bots.</li>';
+                }
+                ?>
+              </ul>
+            </div>
+          </div>
         </div>
         <!-- END Profile -->
       </div>
