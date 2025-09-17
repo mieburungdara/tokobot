@@ -5,18 +5,9 @@ namespace TokoBot\Controllers;
 class MemberController extends DashmixController
 {
     /**
-     * Mengalihkan /member ke dashboard utama member.
-     */
-    public function index()
-    {
-        header('Location: /dashboard');
-        exit();
-    }
-
-    /**
      * Menampilkan dashboard utama untuk member.
      */
-    public function dashmixDashboard()
+    public function index()
     {
         $breadcrumbs = [
             ['name' => 'Dashboard']
