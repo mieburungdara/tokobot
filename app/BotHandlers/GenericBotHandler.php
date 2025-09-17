@@ -10,8 +10,8 @@ use TelegramBot\Request;
 use TokoBot\Helpers\Logger;
 use TelegramBot\Entities\Update;
 use TelegramBot\Entities\User;
-use TelegramBot\Types\Message;
-use TelegramBot\Types\Chat;
+use TelegramBot\Entities\Message;
+use TelegramBot\Entities\Chat;
 
 class GenericBotHandler
 {
