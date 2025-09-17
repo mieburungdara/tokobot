@@ -1,5 +1,7 @@
 <?php
 
+define('APP_RUNNING', true);
+
 // bootstrap/app.php
 
 // Define global path constants
