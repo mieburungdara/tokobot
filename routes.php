@@ -8,7 +8,7 @@ return FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/home', ['TokoBot\\Controllers\\HomeController', 'index']);
 
     // Main Dashboard (handled by the new DashboardController)
-    $r->addRoute('GET', '/dashboard', ['TokoBot\Controllers\MemberController', 'dashmixDashboard']);
+    $r->addRoute('GET', '/dashboard', ['TokoBot\Controllers\MemberController', 'index']);
 
     // Other Admin routes (without '/admin' prefix)
     $r->addRoute('GET', '/users', ['TokoBot\Controllers\AdminController', 'users']);
