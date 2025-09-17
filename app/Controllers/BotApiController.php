@@ -84,30 +84,26 @@ class BotApiController extends BaseController
 // It relies on a shared bootstrap file to set up the environment.
 
 // Bootstrap the minimal application environment.
-// This defines constants, loads .env, and sets up error handling.
 require_once dirname(__DIR__, 2) . '/bootstrap/webhook.php';
 
 // The bot ID for this entry point is derived from the filename.
 \$botId = (int) basename(__FILE__, '.php');
 
-// Load the bot token configuration.
-\$botsFile = CONFIG_PATH . '/tbots.php';
-\$botTokens = file_exists(\$botsFile) ? (require \$botsFile) : [];
+// --- Single Source of Truth: Get Token from Database ---
+\$botToken = \TokoBot\Models\Bot::findTokenById(\$botId);
 
 // Ensure a token exists for this bot ID.
-if (!isset(\$botTokens[\$botId])) {
+if (!\$botToken) {
     http_response_code(404);
     // Use the logger if available, otherwise fallback to error_log.
     if (class_exists('\TokoBot\Helpers\Logger')) {
-        \TokoBot\Helpers\Logger::channel('telegram')->error('Webhook call for unknown bot ID: ' . \$botId);
+        \TokoBot\Helpers\Logger::channel('telegram')->error('Webhook call for unknown bot ID or token not found in DB: ' . \$botId);
     } else {
-        error_log('Webhook call for unknown bot ID: ' . \$botId);
+        error_log('Webhook call for unknown bot ID or token not found in DB: ' . \$botId);
     }
     echo "Bot configuration not found for ID: " . \$botId;
     exit();
 }
-
-\$botToken = \$botTokens[\$botId];
 
 // The telegram-bot-php library uses a static context for some operations like getUpdate().
 // We must set the token for the current request context.
