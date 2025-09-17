@@ -79,17 +79,23 @@ class BotApiController extends BaseController
             }
 
             $handlerClass = '\TokoBot\BotHandlers\GenericBotHandler'; // Default handler
+            $handlerClass = '\TokoBot\BotHandlers\GenericBotHandler';
             $webhookFileContent = <<<PHP
 <?php
 
 // This is a standalone entry point for a Telegram webhook.
 // It needs to bootstrap a minimal application environment to access helpers and config.
+// This file is a bot-specific entry point for Telegram webhooks.
+// It relies on a shared bootstrap file to set up the environment.
 
 // Define ROOT_PATH, the project root directory.
 // This is essential for locating other files like .env and the vendor directory.
 if (!defined('ROOT_PATH')) {
     define('ROOT_PATH', dirname(__DIR__, 2));
 }
+// Bootstrap the minimal application environment.
+// This defines constants, loads .env, and sets up error handling.
+require_once dirname(__DIR__, 2) . '/bootstrap/webhook.php';
 
 // Include the Composer autoloader.
 require_once ROOT_PATH . '/vendor/autoload.php';
@@ -144,11 +150,18 @@ set_exception_handler(function (\$exception) {
 // Load the bot token configuration.
 \$botsFile = CONFIG_PATH . '/tbots.php';
 \$botTokens = file_exists(\$botsFile) ? require \$botsFile : [];
+\$botTokens = file_exists(\$botsFile) ? (require \$botsFile) : [];
 
 // Ensure a token exists for this bot ID.
 if (!isset(\$botTokens[\$botId])) {
     http_response_code(404);
     \TokoBot\Helpers\Logger::channel('telegram')->error('Webhook call for unknown bot ID: ' . \$botId);
+    // Use the logger if available, otherwise fallback to error_log.
+    if (class_exists('\TokoBot\Helpers\Logger')) {
+        \TokoBot\Helpers\Logger::channel('telegram')->error('Webhook call for unknown bot ID: ' . \$botId);
+    } else {
+        error_log('Webhook call for unknown bot ID: ' . \$botId);
+    }
     echo "Bot configuration not found for ID: " . \$botId;
     exit();
 }
@@ -157,6 +170,7 @@ if (!isset(\$botTokens[\$botId])) {
 
 // The telegram-bot-php library uses a static context for some operations like getUpdate().
 // We must set the token for the current request.
+// We must set the token for the current request context.
 \TelegramBot\Telegram::setToken(\$botToken);
 
 // Prepare bot configuration for the handler.
