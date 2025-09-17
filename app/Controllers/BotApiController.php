@@ -117,6 +117,7 @@ try {
     \$telegram->setCustomInput(file_get_contents('php://input'));
 
     // Pass the bot ID and Telegram object to our custom handler
+    Logger::channel('app')->debug('Bot ID before GenericBotHandler instantiation', ['botId' => \$botId, 'type' => gettype(\$botId)]);
     \$handler = new GenericBotHandler(\$botId, \$telegram);
     \$handler->handle();
 
