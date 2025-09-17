@@ -46,22 +46,22 @@
 
     // Fungsi untuk mengirim data ke backend
     async function authenticateUser() {
+        const statusBlock = document.getElementById('status-block');
         const statusText = document.getElementById('status-text');
         const initData = tg.initData;
 
         if (!initData) {
             statusText.textContent = 'Error: initData tidak ditemukan. Aplikasi ini harus dibuka dari dalam Telegram.';
+            statusBlock.classList.remove('block-mode-loading');
             statusText.parentElement.classList.add('text-danger');
             return;
         }
 
         // Tampilkan raw initData untuk debug
         document.getElementById('init-data-pre').textContent = initData;
-        document.getElementById('init-data-raw-block').classList.remove('d-none');
+        // document.getElementById('init-data-raw-block').classList.remove('d-none'); // Sembunyikan debug secara default
 
         try {
-            statusText.textContent = 'Mengirim data ke server untuk validasi...';
-
             // KIRIM INITDATA & BOT_ID KE BACKEND API
             const response = await fetch('/api/miniapp/auth', {
                 method: 'POST',
@@ -75,6 +75,9 @@
             });
 
             const result = await response.json();
+
+            // Hentikan mode loading
+            statusBlock.classList.remove('block-mode-loading');
 
             if (response.ok && result.status === 'success') {
                 statusText.textContent = 'Berhasil! Pengguna telah diautentikasi oleh server.';
@@ -91,6 +94,8 @@
                 throw new Error(result.message || 'Validasi di server gagal.');
             }
         } catch (error) {
+            // Hentikan mode loading jika terjadi error
+            statusBlock.classList.remove('block-mode-loading');
             statusText.textContent = `Error: ${error.message}`;
             statusText.parentElement.classList.add('text-danger');
             tg.showAlert(`Otentikasi gagal: ${error.message}`);
@@ -98,6 +103,11 @@
     }
 
     // Panggil fungsi otentikasi saat halaman dimuat
-    authenticateUser();
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusBlock = document.getElementById('status-block');
+        // Mulai mode loading saat proses otentikasi dimulai
+        statusBlock.classList.add('block-mode-loading');
+        authenticateUser();
+    });
 </script>
 
