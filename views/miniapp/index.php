@@ -4,7 +4,15 @@
 ?>
 
 <!-- Blok Status Otentikasi -->
+<!-- Blok Status Otentikasi -->
 <div class="block block-rounded">
+  <div class="block-header block-header-default">
+    <h3 class="block-title">Status Otentikasi</h3>
+  </div>
+  <div class="block-content">
+    <p id="status-text">Menunggu validasi...</p>
+  </div>
+</div>
   <div class="block-header block-header-default">
     <h3 class="block-title">Status Otentikasi</h3>
   </div>
@@ -103,11 +111,6 @@
     }
 
     // Panggil fungsi otentikasi saat halaman dimuat
-    document.addEventListener('DOMContentLoaded', function() {
-        const statusBlock = document.getElementById('status-block');
-        // Mulai mode loading saat proses otentikasi dimulai
-        statusBlock.classList.add('block-mode-loading');
-        authenticateUser();
-    });
+    authenticateUser();
 </script>
 

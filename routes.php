@@ -37,7 +37,8 @@ return FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/contact', ['TokoBot\Controllers\PageController', 'contact']);
 
     // Mini App routes
-    $r->addRoute('GET', '/miniapp/{bot_id:\d+}', ['TokoBot\Controllers\MiniAppController', 'index']);
+    $r->addRoute('GET', '/miniapp/start/{bot_id:\d+}', ['TokoBot\Controllers\MiniAppController', 'start']);
+    $r->addRoute('GET', '/miniapp/app/{bot_id:\d+}', ['TokoBot\Controllers\MiniAppController', 'app']);
     $r->addRoute('POST', '/api/miniapp/auth', ['TokoBot\Controllers\MiniAppController', 'authenticate']);
 
     // API routes

@@ -1,11 +1,11 @@
 {
   "controller_name": "MiniAppController",
-  "description": "Handles all logic related to the Telegram Mini App, including rendering the view and authenticating the user.",
+  "description": "Handles all logic related to the Telegram Mini App, including a verification step, rendering the main app, and authenticating the user.",
   "methods": [
     {
-      "name": "index",
-      "description": "Acts as the entry point for the Mini App. It verifies the bot_id from the URL. If the bot is valid, it renders the main Mini App view. Otherwise, it shows an error page.",
-      "route": "GET /miniapp/{bot_id}",
+      "name": "start",
+      "description": "Acts as the initial entry point for the Mini App. It verifies the bot_id from the URL. If valid, it renders a temporary verification page that automatically redirects to the main app. Otherwise, it shows an error page.",
+      "route": "GET /miniapp/start/{bot_id}",
       "parameters": [
         {
           "name": "bot_id",
@@ -13,7 +13,20 @@
           "description": "The Telegram Bot ID, passed from the URL."
         }
       ],
-      "returns": "Renders a PHP view (`views/miniapp/index.php` or `views/miniapp/invalid_bot.php`)."
+      "returns": "Renders a verification view (`views/miniapp/start.php`) or an error view."
+    },
+    {
+      "name": "app",
+      "description": "Renders the main Mini App page after the initial verification is complete. This page contains the primary UI and client-side logic.",
+      "route": "GET /miniapp/app/{bot_id}",
+      "parameters": [
+        {
+          "name": "bot_id",
+          "type": "int",
+          "description": "The Telegram Bot ID, passed from the URL."
+        }
+      ],
+      "returns": "Renders the main application view (`views/miniapp/index.php`) within the Dashmix template."
     },
     {
       "name": "authenticate",

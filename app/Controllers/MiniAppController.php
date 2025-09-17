@@ -8,11 +8,39 @@ use TokoBot\Helpers\Session;
 class MiniAppController extends DashmixController
 {
     /**
-     * Menampilkan halaman utama Mini App setelah memverifikasi bot_id.
-     * Ini adalah entry point yang akan diakses oleh Telegram.
+     * Halaman verifikasi awal untuk Mini App.
      * @param int $bot_id ID bot yang didapat dari URL.
      */
-    public function index(int $bot_id)
+    public function start(int $bot_id)
+    {
+        // Verifikasi apakah bot ada dan punya token.
+        $botsFile = CONFIG_PATH . '/tbots.php';
+        $botTokens = file_exists($botsFile) ? require $botsFile : [];
+
+        if (!isset($botTokens[$bot_id])) {
+            // Jika bot tidak ditemukan, tampilkan halaman error.
+            http_response_code(404);
+            require_once VIEWS_PATH . '/miniapp/invalid_bot.php';
+            return;
+        }
+
+        // Jika bot valid, render halaman start yang akan me-redirect ke halaman app.
+        $this->renderDashmix(
+            VIEWS_PATH . '/miniapp/start.php',
+            'Verifying...',
+            '',
+            [],
+            [],
+            ['bot_id' => $bot_id],
+            VIEWS_PATH . '/templates/miniapp_layout.php' // Gunakan layout minimalis untuk halaman redirect
+        );
+    }
+
+    /**
+     * Menampilkan halaman utama Mini App setelah verifikasi.
+     * @param int $bot_id ID bot yang didapat dari URL.
+     */
+    public function app(int $bot_id)
     {
         // Langkah 1: Verifikasi apakah bot ada dan punya token.
         $botsFile = CONFIG_PATH . '/tbots.php';
