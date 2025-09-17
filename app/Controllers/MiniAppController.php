@@ -86,10 +86,7 @@ class MiniAppController extends DashmixController
             return;
         }
 
-        // Ambil token bot spesifik dari file konfigurasi.
-        $botsFile = CONFIG_PATH . '/tbots.php';
-        $botTokens = file_exists($botsFile) ? require $botsFile : [];
-        $botToken = $botTokens[$bot_id] ?? null;
+        $botToken = \TokoBot\Models\Bot::findTokenById((int)$bot_id);
 
         if (!$botToken) {
             http_response_code(404);

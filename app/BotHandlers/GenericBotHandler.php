@@ -18,10 +18,7 @@ class GenericBotHandler
         $this->botId = $botConfig['id'];
         $this->pdo = Database::getInstance();
 
-        // Ambil token bot dari file config sekali saja
-        $botsFile = CONFIG_PATH . '/tbots.php';
-        $botTokens = file_exists($botsFile) ? require $botsFile : [];
-        $this->botToken = $botTokens[$this->botId] ?? null;
+        $this->botToken = \TokoBot\Models\Bot::findTokenById($this->botId);
     }
 
     public function handle()

@@ -1,0 +1,24 @@
+{
+  "model_name": "Bot",
+  "extends": "BaseModel",
+  "table": "tbots",
+  "description": "Represents a bot and handles database operations related to the 'tbots' table.",
+  "methods": [
+    {
+      "name": "findTokenById",
+      "type": "static",
+      "description": "Finds a bot token from the database by its ID.",
+      "parameters": [
+        {
+          "name": "botId",
+          "type": "int",
+          "description": "The ID of the bot."
+        }
+      ],
+      "returns": {
+        "type": "string|null",
+        "description": "The bot token string, or null if not found or on error."
+      }
+    }
+  ]
+}

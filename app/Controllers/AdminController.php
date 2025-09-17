@@ -205,18 +205,8 @@ class AdminController extends DashmixController
 
         // Load bots from the database
         $pdo = \TokoBot\Helpers\Database::getInstance();
-        $stmt = $pdo->query("SELECT * FROM tbots ORDER BY first_name ASC");
-        $tbotsFromDb = $stmt->fetchAll();
-
-        // Load tokens from the config file
-        $botsFile = CONFIG_PATH . '/tbots.php';
-        $botTokens = file_exists($botsFile) ? require $botsFile : [];
-
-        // Check token status for each bot
-        $tbots = array_map(function ($tbot) use ($botTokens) {
-            $tbot['has_token'] = isset($botTokens[$tbot['id']]);
-            return $tbot;
-        }, $tbotsFromDb);
+        $stmt = $pdo->query("SELECT id, username, first_name, token IS NOT NULL as has_token FROM tbots ORDER BY first_name ASC");
+        $tbots = $stmt->fetchAll();
 
         $this->renderDashmix(
             VIEWS_PATH . '/admin/tbots.php',
@@ -247,32 +237,18 @@ class AdminController extends DashmixController
                 $botInfo = $response->getResult(); // This is an array
                 $botId = $botInfo['id'];
 
-                // --- Save public info to DB ---
+                // --- Save public info and token to DB ---
                 $pdo = \TokoBot\Helpers\Database::getInstance();
-                $sql = "INSERT INTO tbots (id, username, first_name, is_bot) VALUES (?, ?, ?, ?) "
-                     . "ON DUPLICATE KEY UPDATE username = VALUES(username), first_name = VALUES(first_name)";
+                $sql = "INSERT INTO tbots (id, username, first_name, is_bot, token) VALUES (?, ?, ?, ?, ?) "
+                     . "ON DUPLICATE KEY UPDATE username = VALUES(username), first_name = VALUES(first_name), token = VALUES(token)";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
                     $botId,
                     $botInfo['username'],
                     $botInfo['first_name'],
-                    $botInfo['is_bot']
+                    $botInfo['is_bot'],
+                    $token // Simpan token di sini
                 ]);
-
-                // --- Save token to config file ---
-                $botsFile = CONFIG_PATH . '/tbots.php';
-                $botTokens = file_exists($botsFile) ? require $botsFile : [];
-                $botTokens[$botId] = $token;
-
-                $fileContent = "<?php\n\n// Bot token configuration file\n"
-                             . "// Maps Bot ID to its secret token.\nreturn "
-                             . var_export($botTokens, true) . ";\n";
-
-                if (file_put_contents($botsFile, $fileContent) === false) {
-                    throw new \Exception(
-                        'Failed to write to token config file. Please check file permissions for config/tbots.php.'
-                    );
-                }
 
                 $successMessage = 'Bot "' . $botInfo['first_name'] . '" has been added/updated successfully!';
                 \TokoBot\Helpers\Session::flash('success_message', $successMessage);
@@ -294,30 +270,14 @@ class AdminController extends DashmixController
     public function deleteBot($id)
     {
         try {
-            // --- Delete from DB ---
+            // --- Delete from DB (set token to NULL) ---
             try {
                 $pdo = \TokoBot\Helpers\Database::getInstance();
-                $stmt = $pdo->prepare("DELETE FROM tbots WHERE id = ?");
+                // Kita tidak hapus botnya, hanya tokennya, agar relasi tetap ada
+                $stmt = $pdo->prepare("UPDATE tbots SET token = NULL WHERE id = ?");
                 $stmt->execute([$id]);
             } catch (\PDOException $e) {
-                throw new DatabaseException('Failed to delete bot from database.', (int)$e->getCode(), $e);
-            }
-
-            // --- Delete token from config file ---
-            $botsFile = CONFIG_PATH . '/tbots.php';
-            $botTokens = file_exists($botsFile) ? require $botsFile : [];
-            if (isset($botTokens[$id])) {
-                unset($botTokens[$id]);
-                $fileContent = "<?php\n\n// Bot token configuration file\n"
-                             . "// Maps Bot ID to its secret token.\nreturn "
-                             . var_export($botTokens, true) . ";\n";
-                if (file_put_contents($botsFile, $fileContent) === false) {
-                    // Log this but don't throw, as the main DB operation succeeded
-                    Logger::channel('app')->error('Failed to write to token config file during bot deletion.', ['bot_id' => $id]);
-                }
-                if (function_exists('opcache_invalidate')) {
-                    opcache_invalidate($botsFile);
-                }
+                throw new DatabaseException('Failed to delete bot token from database.', (int)$e->getCode(), $e);
             }
 
             // --- Delete webhook file ---

@@ -12,9 +12,7 @@ class BotApiController extends BaseController
 {
     private function getBotToken(int $botId): ?string
     {
-        $botsFile = CONFIG_PATH . '/tbots.php';
-        $botTokens = file_exists($botsFile) ? require $botsFile : [];
-        return $botTokens[$botId] ?? null;
+        return \TokoBot\Models\Bot::findTokenById($botId);
     }
 
     private function sendJsonResponse(array $data, int $statusCode = 200)

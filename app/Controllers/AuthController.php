@@ -101,9 +101,7 @@ class AuthController extends BaseController
                 // Send success message back to the user via Telegram
                 $botId = $_GET['bot_id'] ?? null;
                 if ($botId) {
-                    $botsFile = CONFIG_PATH . '/tbots.php';
-                    $botTokens = file_exists($botsFile) ? require $botsFile : [];
-                    $botToken = $botTokens[$botId] ?? null;
+                    $botToken = \TokoBot\Models\Bot::findTokenById((int)$botId);
 
                     if ($botToken) {
                         new \TelegramBot\Telegram($botToken);
