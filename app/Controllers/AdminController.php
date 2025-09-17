@@ -149,13 +149,17 @@ class AdminController extends DashmixController
     public function viewLogs()
     {
         $logChannel = $_GET['log'] ?? 'app';
-        $allowedLogs = ['app', 'telegram', 'critical'];
+        $allowedLogs = ['app', 'telegram', 'critical', 'tbot_error'];
 
         if (!in_array($logChannel, $allowedLogs)) {
             $logChannel = 'app';
         }
 
-        $logFile = ROOT_PATH . "/logs/{$logChannel}.log";
+        if ($logChannel === 'tbot_error') {
+            $logFile = PUBLIC_PATH . '/tbot/error_log.txt';
+        } else {
+            $logFile = ROOT_PATH . "/logs/{$logChannel}.log";
+        }
 
         if (isset($_GET['action']) && $_GET['action'] === 'clear') {
             if (file_exists($logFile)) {
