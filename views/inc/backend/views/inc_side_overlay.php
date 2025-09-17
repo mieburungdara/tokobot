@@ -66,7 +66,7 @@
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="so-profile-tab" data-bs-toggle="tab" data-bs-target="#so-profile" role="tab" aria-controls="so-profile" aria-selected="false">
-            <i class="far fa-fw fa-edit"></i>
+            <i class="fa fa-fw fa-robot"></i>
           </button>
         </li>
       </ul>
@@ -386,18 +386,36 @@
                 <?php
                 try {
                     $pdo = \TokoBot\Helpers\Database::getInstance();
-                    $stmt = $pdo->query("SELECT id, username, first_name FROM tbots ORDER BY first_name ASC");
-                    $allBots = $stmt->fetchAll();
+                    
+                    // 1. Ambil data izin spesifik untuk pengguna yang sedang login
+                    $userBotPermissions = [];
+                    $currentUserId = \TokoBot\Helpers\Session::get('user')['telegram_id'] ?? null;
+
+                    if ($currentUserId) {
+                        $stmtPermissions = $pdo->prepare("SELECT bot_id, allows_write_to_pm FROM bot_user WHERE user_id = ?");
+                        $stmtPermissions->execute([$currentUserId]);
+                        $permissions = $stmtPermissions->fetchAll(\PDO::FETCH_KEY_PAIR);
+                    }
+
+                    // 2. Ambil semua data bot
+                    $stmtBots = $pdo->query("SELECT id, username, first_name FROM tbots ORDER BY first_name ASC");
+                    $allBots = $stmtBots->fetchAll();
 
                     if (empty($allBots)) {
                         echo '<li class="text-muted fs-sm p-2">No bots found.</li>';
                     } else {
                         foreach ($allBots as $bot) {
+                            // 3. Tentukan status centang
+                            $allowWrite = isset($permissions[$bot['id']]) && $permissions[$bot['id']];
                 ?>
                 <li>
                   <a class="d-flex py-2" href="/bot-management">
-                    <div class="flex-shrink-0 mx-3 overlay-container">
-                      <i class="fa fa-2x fa-robot text-primary"></i>
+                    <div class="flex-shrink-0 mx-3">
+                      <?php if ($allowWrite): ?>
+                        <i class="fa fa-2x fa-check-circle text-success"></i>
+                      <?php else: ?>
+                        <i class="fa fa-2x fa-times-circle text-danger"></i>
+                      <?php endif; ?>
                     </div>
                     <div class="flex-grow-1">
                       <div class="fw-semibold"><?= htmlspecialchars($bot['first_name']) ?></div>
