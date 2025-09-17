@@ -10,16 +10,23 @@ use TokoBot\Helpers\Logger;
 class GenericBotHandler
 {
     protected int $botId;
+    protected ?string $botToken;
+    protected ?\PDO $pdo;
 
     public function __construct(array $botConfig)
     {
         $this->botId = $botConfig['id'];
+        $this->pdo = Database::getInstance();
+
+        // Ambil token bot dari file config sekali saja
+        $botsFile = CONFIG_PATH . '/tbots.php';
+        $botTokens = file_exists($botsFile) ? require $botsFile : [];
+        $this->botToken = $botTokens[$this->botId] ?? null;
     }
 
     public function handle()
     {
-        try {
-            $pdo = Database::getInstance();
+        try {            
             $update = Telegram::getUpdate();
 
             $message = $update ? $update->getMessage() : null;
@@ -36,7 +43,7 @@ class GenericBotHandler
                  . "ON DUPLICATE KEY UPDATE username = VALUES(username), "
                  . "first_name = VALUES(first_name), last_name = VALUES(last_name), "
                  . "last_activity_at = NOW()";
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
             $stmt->execute([
                 $user->getId(),
                 $user->getUsername(),
@@ -48,7 +55,7 @@ class GenericBotHandler
             // 2. Log Pesan
             $sql = "INSERT INTO messages (id, message_id, user_id, chat_id, bot_id, text, raw_update) "
                  . "VALUES (?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->pdo->prepare($sql);
             $stmt->execute([
                 $update->getUpdateId(),
                 $message->getMessageId(),
@@ -74,8 +81,6 @@ class GenericBotHandler
 
     private function handleLoginCommand(int $userId)
     {
-        $pdo = Database::getInstance();
-
         // Buat token acak yang aman
         $token = bin2hex(random_bytes(32));
         $tokenHash = hash('sha256', $token);
@@ -89,22 +94,17 @@ class GenericBotHandler
         // Store the token hash and its expiration time in the database.
         // The login validation logic should compare against this UTC timestamp.
         $sql = "UPDATE users SET login_token = ?, token_expires_at = ? WHERE telegram_id = ?";
-        $stmt = $pdo->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$tokenHash, $expiresAt, $userId]);
 
-        // Ambil token bot dari file config untuk mengirim balasan
-        $botsFile = CONFIG_PATH . '/tbots.php';
-        $botTokens = file_exists($botsFile) ? require $botsFile : [];
-        $botToken = $botTokens[$this->botId] ?? null;
-
-        if ($botToken) {
+        if ($this->botToken) {
             // Build the login URL. Use APP_URL from environment for consistency, with a fallback.
             // Ensure your .env file has an APP_URL variable (e.g., APP_URL=https://core.my.id).
             $appBaseUrl = rtrim($_ENV['APP_URL'] ?? 'https://' . ($_SERVER['HTTP_HOST'] ?? 'your-domain.com'), '/');
             $loginUrl = $appBaseUrl . '/login/' . $token;
             $text = "Ini adalah link login sekali pakai Anda. Link akan kedaluwarsa dalam 5 menit:\n\n" . $loginUrl;
 
-            new Telegram($botToken);
+            new Telegram($this->botToken);
             Request::sendMessage([
                 'chat_id' => $userId,
                 'text' => $text

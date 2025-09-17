@@ -75,6 +75,7 @@ use TelegramBot\Entity;
  * @method WebAppData                    getWebAppData()                        Optional. Service message: data sent by a Web App
  * @method InlineKeyboard                getReplyMarkup()                       Optional. Inline keyboard attached to the message. login_url buttons are represented as ordinary url buttons.
  */
+#[AllowDynamicProperties]
 class Message extends Entity
 {
 

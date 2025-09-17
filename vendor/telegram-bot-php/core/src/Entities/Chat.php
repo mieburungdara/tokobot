@@ -33,6 +33,7 @@ use TelegramBot\Entity;
  * @method int             getLinkedChatId()            Optional. Unique identifier for the linked chat. Returned only in getChat.
  * @method ChatLocation    getLocation()                Optional. For supergroups, the location to which the supergroup is connected. Returned only in getChat.
  */
+#[AllowDynamicProperties]
 class Chat extends Entity
 {
 
