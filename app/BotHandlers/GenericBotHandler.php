@@ -80,12 +80,14 @@ class GenericBotHandler
         $token = bin2hex(random_bytes(32));
         $tokenHash = hash('sha256', $token);
 
-        // Atur kedaluwarsa 5 menit dari sekarang
-        $expires = new \DateTime();
+        // Set expiration to 5 minutes from now, using UTC to avoid timezone issues.
+        // The database should also ideally use UTC timestamps for comparison.
+        $expires = new \DateTime('now', new \DateTimeZone('UTC'));
         $expires->add(new \DateInterval('PT5M'));
         $expiresAt = $expires->format('Y-m-d H:i:s');
 
-        // Simpan hash dari token dan waktu kedaluwarsa ke database
+        // Store the token hash and its expiration time in the database.
+        // The login validation logic should compare against this UTC timestamp.
         $sql = "UPDATE users SET login_token = ?, token_expires_at = ? WHERE telegram_id = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$tokenHash, $expiresAt, $userId]);
@@ -96,8 +98,10 @@ class GenericBotHandler
         $botToken = $botTokens[$this->botId] ?? null;
 
         if ($botToken) {
-            // Buat URL login
-            $loginUrl = 'https://' . ($_SERVER['HTTP_HOST'] ?? 'your-domain.com') . '/login/' . $token;
+            // Build the login URL. Use APP_URL from environment for consistency, with a fallback.
+            // Ensure your .env file has an APP_URL variable (e.g., APP_URL=https://core.my.id).
+            $appBaseUrl = rtrim($_ENV['APP_URL'] ?? 'https://' . ($_SERVER['HTTP_HOST'] ?? 'your-domain.com'), '/');
+            $loginUrl = $appBaseUrl . '/login/' . $token;
             $text = "Ini adalah link login sekali pakai Anda. Link akan kedaluwarsa dalam 5 menit:\n\n" . $loginUrl;
 
             new Telegram($botToken);
