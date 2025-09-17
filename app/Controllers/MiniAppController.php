@@ -114,10 +114,10 @@ class MiniAppController extends DashmixController
         // Sinkronisasi data pengguna ke database (opsional, tapi sangat direkomendasikan)
         try {
             $pdo = \TokoBot\Helpers\Database::getInstance();
-            $sql = "INSERT INTO users (telegram_id, username, first_name, last_name, language_code, is_premium, last_activity_at) "
-                 . "VALUES (?, ?, ?, ?, ?, ?, NOW()) "
+            $sql = "INSERT INTO users (telegram_id, username, first_name, last_name, photo_url, language_code, is_premium, last_activity_at) "
+                 . "VALUES (?, ?, ?, ?, ?, ?, ?, NOW()) "
                  . "ON DUPLICATE KEY UPDATE username = VALUES(username), "
-                 . "first_name = VALUES(first_name), last_name = VALUES(last_name), "
+                 . "first_name = VALUES(first_name), last_name = VALUES(last_name), photo_url = VALUES(photo_url), "
                  . "language_code = VALUES(language_code), is_premium = VALUES(is_premium), "
                  . "last_activity_at = NOW()";
             $stmt = $pdo->prepare($sql);
@@ -126,17 +126,31 @@ class MiniAppController extends DashmixController
                 $user['username'] ?? null,
                 $user['first_name'],
                 $user['last_name'] ?? null,
+                $user['photo_url'] ?? null,
                 $user['language_code'] ?? 'en',
                 isset($user['is_premium']) && $user['is_premium'] ? 1 : 0,
             ]);
+
+            // Setelah sinkronisasi, ambil data lengkap pengguna dari DB untuk membuat sesi
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE telegram_id = ?");
+            $stmt->execute([$user['id']]);
+            $dbUser = $stmt->fetch();
+
+            if ($dbUser) {
+                // Buat sesi lengkap untuk pengguna
+                Session::set('user', $dbUser); // Simpan semua data pengguna dalam satu array
+                Session::set('user_id', $dbUser['telegram_id']);
+                Session::set('user_role', $dbUser['role']); // Gunakan role dari database
+                Logger::channel('auth')->info('Session created for Mini App user.', ['user_id' => $user['id'], 'role' => $dbUser['role']]);
+            } else {
+                // Ini seharusnya tidak terjadi jika sinkronisasi berhasil
+                Logger::channel('auth')->error('Failed to fetch user from DB after Mini App sync.', ['user_id' => $user['id']]);
+            }
+
         } catch (\Exception $e) {
             Logger::channel('database')->error('Failed to sync Mini App user.', ['error' => $e->getMessage()]);
             // Jangan hentikan proses jika DB gagal, tapi catat errornya.
         }
-        
-        // Set session jika perlu
-        Session::set('user_id', $user['id']);
-        Session::set('user_role', 'member'); // Atau ambil dari DB jika sudah ada role
 
         // Kirim kembali data user sebagai konfirmasi
         echo json_encode([

@@ -16,11 +16,11 @@ return
         'default_environment' => 'development',
         'development' => [
             'adapter' => 'mysql',
-            'host' => getenv('DB_HOST'),
-            'name' => getenv('DB_DATABASE'),
-            'user' => getenv('DB_USERNAME'),
-            'pass' => getenv('DB_PASSWORD'),
-            'port' => getenv('DB_PORT'),
+            'host' => $_ENV['DB_HOST'] ?? '127.0.0.1',
+            'name' => $_ENV['DB_DATABASE'] ?? '',
+            'user' => $_ENV['DB_USERNAME'] ?? '',
+            'pass' => $_ENV['DB_PASSWORD'] ?? '',
+            'port' => $_ENV['DB_PORT'] ?? '3306',
             'charset' => 'utf8',
         ]
     ],
