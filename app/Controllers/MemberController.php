@@ -9,8 +9,7 @@ class MemberController extends DashmixController
      */
     public function index()
     {
-        header('Location: /dashboard');
-        exit();
+                $this->dashmixDashboard();
     }
 
     /**
