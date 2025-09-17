@@ -78,13 +78,11 @@ class BotApiController extends BaseController
                 }
             }
 
-            $handlerClass = '\TokoBot\BotHandlers\GenericBotHandler'; // Example handler
             $handlerClass = '\TokoBot\BotHandlers\GenericBotHandler'; // Handler default
             $webhookFileContent = <<<PHP
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-// Entry point for bot ID: {$id}
 if (!defined('CONFIG_PATH')) {
     define('CONFIG_PATH', __DIR__ . '/../../config');
 }

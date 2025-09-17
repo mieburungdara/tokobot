@@ -9,9 +9,7 @@ if (!defined('CONFIG_PATH')) {
 // Load bot tokens
 $botTokens = require CONFIG_PATH . '/tbots.php';
 
-// Bot ID for this entry point
-$botId = 8420704595;
-// Bot ID untuk entry point ini didapatkan secara dinamis dari nama file.
+
 $botId = (int) basename(__FILE__, '.php');
 
 // Check if bot token exists for this ID
