@@ -10,6 +10,11 @@ class DashboardController extends BaseController
     {
         // Ambil peran pengguna dari session, default ke 'member' jika tidak ada.
         $userRole = Session::get('user_role', 'member');
+        Logger::channel('auth')->info('DashboardController: User role detected.', [
+            'user_id' => Session::get('user_id'),
+            'user_role' => $userRole,
+            'auth_source' => Session::get('auth_source')
+        ]);
 
         // Arahkan ke controller yang sesuai berdasarkan peran.
         if ($userRole === 'admin') {

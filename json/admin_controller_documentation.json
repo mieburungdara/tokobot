@@ -123,6 +123,16 @@
       "route": "POST /migrations/run",
       "parameters": [],
       "returns": "Redirects to `/migrations` with a success or error message."
+    },
+    {
+      "name": "updateUserRole",
+      "description": "Updates the role of a specific user.",
+      "route": "POST /users/update-role",
+      "parameters": [
+        {"name": "telegram_id", "type": "int", "description": "The Telegram ID of the user to update."},
+        {"name": "role_id", "type": "int", "description": "The ID of the new role to assign to the user."}
+      ],
+      "returns": "Redirects to `/users` with a success or error message."
     }
   ]
 }
