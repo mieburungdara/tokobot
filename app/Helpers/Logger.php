@@ -5,6 +5,8 @@ namespace TokoBot\Helpers;
 use Monolog\Logger as MonologLogger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Formatter\LineFormatter;
+use Monolog\Level;
+use Monolog\Processor\IntrospectionProcessor;
 
 class Logger
 {
@@ -21,9 +23,9 @@ class Logger
                 define('ROOT_PATH', dirname(__DIR__, 2));
             }
 
-            // Format log: [timestamp] channel.LEVEL: message context extra
+            // Format log: [timestamp] channel.LEVEL [file:line]: message context extra
             $formatter = new LineFormatter(
-                "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n",
+                "[%datetime%] %channel%.%level_name% [%extra.file%:%extra.line%]: %message% %context% %extra%\n",
                 'Y-m-d H:i:s',
                 true,
                 true
@@ -36,6 +38,14 @@ class Logger
             // Buat logger instance
             self::$instances[$name] = new MonologLogger(strtoupper($name));
             self::$instances[$name]->pushHandler($handler);
+
+            // Tambahkan processor untuk menyertakan file dan baris
+            // Ini akan menambahkan 'file', 'line', 'class', dan 'function' ke array 'extra'
+            $introspectionProcessor = new IntrospectionProcessor(
+                Level::Debug, // Log file/line untuk semua level
+                ['TokoBot\\Helpers\\Logger'] // Lewati kelas ini dalam stack trace untuk mendapatkan lokasi pemanggilan yang sebenarnya
+            );
+            self::$instances[$name]->pushProcessor($introspectionProcessor);
         }
 
         return self::$instances[$name];
