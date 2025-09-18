@@ -3,7 +3,7 @@
         'name' => 'tokobot/tokobot',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '48317beb82e2e03834bb307ca148252f55d1cbad',
+        'reference' => 'c088ff444d2b74512b257651ab6d4303a1bfc4aa',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -642,7 +642,7 @@
         'tokobot/tokobot' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '48317beb82e2e03834bb307ca148252f55d1cbad',
+            'reference' => 'c088ff444d2b74512b257651ab6d4303a1bfc4aa',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
