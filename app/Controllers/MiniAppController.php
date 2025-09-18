@@ -28,11 +28,7 @@ class MiniAppController extends DashmixController
         // Jika bot valid, render halaman start yang akan me-redirect ke halaman app.
         $this->renderDashmix(
             VIEWS_PATH . '/miniapp/auth.php',
-            'Verifying...',
-            '',
-            [],
-            [],
-            ['bot_id' => $bot_id],
+            'Verifying...', '', [], [], ['bot_id' => $bot_id],
             VIEWS_PATH . '/templates/miniapp_layout.php' // Gunakan layout minimalis untuk halaman redirect
         );
     }
@@ -65,22 +61,22 @@ class MiniAppController extends DashmixController
             [],                                   // Navigasi (gunakan default)
             [['name' => 'Mini App']],             // Breadcrumbs
             $pdo = Database::getInstance();
-            $telegramId = Session::get('user_id');
-            $sellerId = null;
-            if ($telegramId) {
-                $stmt = $pdo->prepare("SELECT seller_id FROM users WHERE telegram_id = ?");
-                $stmt->execute([$telegramId]);
-                $sellerId = $stmt->fetchColumn();
-            }
+        $telegramId = Session::get('user_id');
+        $sellerId = null;
+        if ($telegramId) {
+            $stmt = $pdo->prepare("SELECT seller_id FROM users WHERE telegram_id = ?");
+            $stmt->execute([$telegramId]);
+            $sellerId = $stmt->fetchColumn();
+        }
 
-            $this->renderDashmix(
-                VIEWS_PATH . '/miniapp/index.php',      // File konten
-                'TokoBot Mini App',                   // Judul Halaman
-                'Welcome to TokoBot Mini App',        // Deskripsi Halaman
-                [],                                   // Navigasi (gunakan default)
-                [['name' => 'Mini App']],             // Breadcrumbs
-                ['bot_id' => $bot_id, 'seller_id' => $sellerId]                   // Data yang akan di-pass ke view
-            );
+        $this->renderDashmix(
+            VIEWS_PATH . '/miniapp/index.php',      // File konten
+            'TokoBot Mini App',                   // Judul Halaman
+            'Welcome to TokoBot Mini App',        // Deskripsi Halaman
+            [],                                   // Navigasi (gunakan default)
+            [['name' => 'Mini App']],             // Breadcrumbs
+            ['bot_id' => $bot_id, 'seller_id' => $sellerId]                   // Data yang akan di-pass ke view
+        );
     }
 
     /**
