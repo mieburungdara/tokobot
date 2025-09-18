@@ -8,29 +8,29 @@ return FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
         $r->addRoute('GET', '/home', ['TokoBot\\Controllers\\HomeController', 'index']);
     
                 // Main Dashboard (handled by the new DashboardController)
-                $r->addRoute('GET', '/dashboard', ['TokoBot\Controllers\DashboardController', 'index', ['middleware' => ['AuthMiddleware', ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
+                $r->addRoute('GET', '/dashboard', ['TokoBot\Controllers\DashboardController', 'index', ['middleware' => ['AuthMiddleware', ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
         
                 // Other Admin routes (without '/admin' prefix)
-                $r->addRoute('GET', '/users', ['TokoBot\Controllers\AdminController', 'users', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
-                $r->addRoute('GET', '/settings', ['TokoBot\Controllers\AdminController', 'settings', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
-                $r->addRoute('GET', '/reports', ['TokoBot\Controllers\AdminController', 'reports', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
-                $r->addRoute('GET', '/analytics', ['TokoBot\Controllers\AdminController', 'botAnalytics', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
-                $r->addRoute('GET', '/logs', ['TokoBot\Controllers\AdminController', 'viewLogs', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
-                $r->addRoute('GET', '/bot-management', ['TokoBot\Controllers\AdminController', 'manageBots', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
-                $r->addRoute('POST', '/bot-management', ['TokoBot\Controllers\AdminController', 'addBot', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
-                $r->addRoute('POST', '/bot-management/{id:\d+}/delete', ['TokoBot\Controllers\AdminController', 'deleteBot', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
+                $r->addRoute('GET', '/users', ['TokoBot\Controllers\AdminController', 'users', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+                $r->addRoute('GET', '/settings', ['TokoBot\Controllers\AdminController', 'settings', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+                $r->addRoute('GET', '/reports', ['TokoBot\Controllers\AdminController', 'reports', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+                $r->addRoute('GET', '/analytics', ['TokoBot\Controllers\AdminController', 'botAnalytics', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+                $r->addRoute('GET', '/logs', ['TokoBot\Controllers\AdminController', 'viewLogs', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+                $r->addRoute('GET', '/bot-management', ['TokoBot\Controllers\AdminController', 'manageBots', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+                $r->addRoute('POST', '/bot-management', ['TokoBot\Controllers\AdminController', 'addBot', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+                $r->addRoute('POST', '/bot-management/{id:\d+}/delete', ['TokoBot\Controllers\AdminController', 'deleteBot', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
         
                 // Storage Channel Management
-                $r->addRoute('GET', '/storage-channels', ['TokoBot\Controllers\AdminController', 'storageChannels', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
-                $r->addRoute('GET', '/storage-channels/add', ['TokoBot\Controllers\AdminController', 'addStorageChannel', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
-                $r->addRoute('POST', '/storage-channels/add', ['TokoBot\Controllers\AdminController', 'addStorageChannel', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
-                $r->addRoute('GET', '/storage-channels/edit/{id:\d+}', ['TokoBot\Controllers\AdminController', 'editStorageChannel', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
-                $r->addRoute('POST', '/storage-channels/edit/{id:\d+}', ['TokoBot\Controllers\AdminController', 'editStorageChannel', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
-                $r->addRoute('POST', '/storage-channels/delete/{id:\d+}', ['TokoBot\Controllers\AdminController', 'deleteStorageChannel', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
+                $r->addRoute('GET', '/storage-channels', ['TokoBot\Controllers\AdminController', 'storageChannels', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+                $r->addRoute('GET', '/storage-channels/add', ['TokoBot\Controllers\AdminController', 'addStorageChannel', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+                $r->addRoute('POST', '/storage-channels/add', ['TokoBot\Controllers\AdminController', 'addStorageChannel', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+                $r->addRoute('GET', '/storage-channels/edit/{id:\d+}', ['TokoBot\Controllers\AdminController', 'editStorageChannel', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+                $r->addRoute('POST', '/storage-channels/edit/{id:\d+}', ['TokoBot\Controllers\AdminController', 'editStorageChannel', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+                $r->addRoute('POST', '/storage-channels/delete/{id:\d+}', ['TokoBot\Controllers\AdminController', 'deleteStorageChannel', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
         
                 // Database Migrations
-                $r->addRoute('GET', '/migrations', ['TokoBot\Controllers\AdminController', 'migrations', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
-                $r->addRoute('POST', '/migrations/run', ['TokoBot\Controllers\AdminController', 'runMigrations', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]);
+                $r->addRoute('GET', '/migrations', ['TokoBot\Controllers\AdminController', 'migrations', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+                $r->addRoute('POST', '/migrations/run', ['TokoBot\Controllers\AdminController', 'runMigrations', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
             
                 // Member routes
                 $r->addRoute('GET', '/member', ['TokoBot\Controllers\MemberController', 'index', ['middleware' => ['AuthMiddleware']]]);    
