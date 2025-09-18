@@ -44,29 +44,49 @@ class App
                 $handler = $routeInfo[1];
                 $vars = $routeInfo[2];
 
-                // Route Protection Middleware
-                $handlerKey = is_array($handler) ? $handler[0] . '@' . $handler[1] : null;
-                if (isset($handlerRoles[$handlerKey])) {
-                    $allowedRoles = $handlerRoles[$handlerKey];
-                    $userRole = \TokoBot\Helpers\Session::get('user_role', 'guest');
-                    if (!in_array($userRole, $allowedRoles)) {
-                        header('Location: /'); 
-                        exit();
+                $middlewares = [];
+                if (isset($handler[2]['middleware'])) {
+                    $middlewareDefinitions = $handler[2]['middleware'];
+                    foreach ($middlewareDefinitions as $middlewareDef) {
+                        if (is_array($middlewareDef)) {
+                            $middlewareClass = 'TokoBot\\Middleware\\' . $middlewareDef[0];
+                            $middlewareArgs = array_slice($middlewareDef, 1);
+                            $middlewares[] = new $middlewareClass(...$middlewareArgs);
+                        } else {
+                            $middlewareClass = 'TokoBot\\Middleware\\' . $middlewareDef;
+                            $middlewares[] = new $middlewareClass();
+                        }
                     }
+                    // Remove middleware definitions from handler to avoid passing them to controller
+                    unset($handler[2]);
                 }
 
-                // Call the handler
-                if (is_array($handler) && count($handler) === 2) {
-                    $controllerClass = $handler[0];
-                    $method = $handler[1];
+                // Build the pipeline
+                $pipeline = array_reduce(
+                    array_reverse($middlewares),
+                    function ($next, $middleware) {
+                        return function () use ($middleware, $next) {
+                            return $middleware->handle($next);
+                        };
+                    },
+                    function () use ($handler, $vars) {
+                        // Final handler (controller action)
+                        if (is_array($handler) && count($handler) >= 2) {
+                            $controllerClass = $handler[0];
+                            $method = $handler[1];
 
-                    $controller = new $controllerClass($this->container);
+                            $controller = new $controllerClass($this->container);
 
-                    call_user_func_array([$controller, $method], $vars);
-                } else {
-                    // Handle closure or other callable
-                    call_user_func_array($handler, $vars);
-                }
+                            return call_user_func_array([$controller, $method], $vars);
+                        } else {
+                            // Handle closure or other callable
+                            return call_user_func_array($handler, $vars);
+                        }
+                    }
+                );
+
+                // Execute the pipeline
+                $pipeline();
                 break;
         }
     }

@@ -51,4 +51,15 @@ class Session
         session_unset();
         session_destroy();
     }
+
+    /**
+     * Checks if the logged-in user has a specific role.
+     *
+     * @param string $role
+     * @return bool
+     */
+    public static function hasRole(string $role): bool
+    {
+        return self::get('user_role') === $role;
+    }
 }
