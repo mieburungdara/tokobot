@@ -18,7 +18,7 @@ if (!defined('ROOT_PATH')) {
 }
 
 require_once ROOT_PATH . '/vendor/autoload.php';
-require_once ROOT_PATH . '/app/Helpers/Database.php';
+require_once ROOT_PATH . '/bootstrap/app.php'; // Include bootstrap/app.php for constants
 
 use TokoBot\Helpers\Database;
 
