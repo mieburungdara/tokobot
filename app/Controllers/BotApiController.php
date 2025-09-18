@@ -31,27 +31,30 @@ public function getWebhookInfo($id)
             throw new BotNotFoundException('Bot token not found for ID: ' . $id);
         }
 
-        $telegram = new Telegram($token, 'TokoBot');
+        // Create a temporary Telegram object to make API requests
+        $telegram = new Telegram($token);
+
+        // Get bot info to retrieve the username, which is needed for the Telegram object.
+        $getMeResponse = Request::getMe();
+        if (!$getMeResponse->isOk()) {
+            throw new TelegramException('Failed to get bot info: ' . $getMeResponse->getDescription());
+        }
+        $botUsername = $getMeResponse->getResult()->getUsername();
+
+        // Re-initialize Telegram object with the correct username.
+        $telegram = new Telegram($token, $botUsername);
         $response = Request::getWebhookInfo();
 
         if (!$response->isOk()) {
             throw new TelegramException($response->getDescription());
         }
 
-        $result = $response->getResult();
+        $result = $response->getResult(); // This is a WebhookInfo object
 
         if ($result === null) {
             $this->sendJsonResponse([]);
         } else {
-            $dataToSend = method_exists($result, 'toArray') ? $result->toArray() : (array) $result;
-
-            $cleanData = [
-                'bot_username' => $dataToSend['bot_username'] ?? null,
-                'webhook_info' => $dataToSend['raw_data'] ?? [],
-            ];
-
-            // Kirim $cleanData ke response JSON
-            $this->sendJsonResponse($dataToSend['raw_data'] ?? []);
+            $this->sendJsonResponse($result->getRawData());
         }
     } catch (BotNotFoundException $e) {
         Logger::channel('telegram')->warning($e->getMessage());
@@ -67,6 +70,7 @@ public function getWebhookInfo($id)
 
     function setWebhook($id)
     {
+        
         Logger::channel('app')->info('setWebhook called for bot ID: ' . $id);
         $webhookUrl = $_POST['url'] ?? '';
         if (empty($webhookUrl) || !filter_var($webhookUrl, FILTER_VALIDATE_URL)) {
@@ -78,6 +82,16 @@ public function getWebhookInfo($id)
             if (!$token) {
                 throw new BotNotFoundException('Bot token not found for ID: ' . $id);
             }
+
+            // Create a temporary Telegram object to make API requests
+            $telegram = new Telegram($token);
+
+            // Get bot info to retrieve the username
+            $getMeResponse = Request::getMe();
+            if (!$getMeResponse->isOk()) {
+                throw new TelegramException('Failed to get bot info: ' . $getMeResponse->getDescription());
+            }
+            $botUsername = $getMeResponse->getResult()->getUsername();
 
             $webhookFilePath = PUBLIC_PATH . '/tbot/' . $id . '.php';
             $webhookFileDir = dirname($webhookFilePath);
@@ -110,7 +124,7 @@ if (!\$botToken) {
 
 try {
     // Create Telegram API object and handle webhook request
-    \$telegram = new Telegram(\$botToken, 'TokoBot');
+    \$telegram = new Telegram(\$botToken, '{$botUsername}');
     Logger::channel('debug')->debug('Bot ID before GenericBotHandler instantiation', ['botToken' => \$botToken, 'type' => \$telegram]);
 
 
@@ -136,7 +150,7 @@ PHP;
                 throw new \Exception('Could not write webhook file. Check permissions.');
             }
 
-            $telegram = new Telegram($token, 'TokoBot');
+            $telegram = new Telegram($token, $botUsername);
             $response = Request::setWebhook(['url' => $webhookUrl]);
 
             if (!$response->isOk()) {
