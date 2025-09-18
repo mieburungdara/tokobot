@@ -75,6 +75,7 @@ class GenericBotHandler
     {
         $userId = $message->getFrom()->getId();
         $text = $message->getText();
+        $chatId = $message->getChat()->getId();
 
         $stmt = $this->pdo->prepare("SELECT * FROM user_states WHERE telegram_id = ?");
         $stmt->execute([$userId]);
@@ -84,35 +85,32 @@ class GenericBotHandler
             return false;
         }
 
-        // Validate price input
+        // Attempt to parse price
         $price = (float) str_replace(['Rp', '.', ','], ['', '', '.'], $text);
-        if ($price <= 0) {
-            Request::sendMessage(['chat_id' => $chatId, 'text' => '❌ Harga tidak valid. Mohon masukkan angka positif (contoh: 10000 atau 10.000).']);
-            return true;
-        }
 
-        $context = json_decode($state['context'], true);
-        $context['price'] = $price;
+        // If price is valid (numeric and positive), process it
+        if ($price > 0) {
+            $context = json_decode($state['context'], true);
+            $context['price'] = $price;
 
-        $updateSql = "UPDATE user_states SET state = ?, context = ? WHERE telegram_id = ?";
-        $this->pdo->prepare($updateSql)->execute([\TokoBot\Helpers\BotState::SELLING_AWAITING_CONFIRMATION, json_encode($context), $userId]);
+            $updateSql = "UPDATE user_states SET state = ?, context = ? WHERE telegram_id = ?";
+            $this->pdo->prepare($updateSql)->execute([\TokoBot\Helpers\BotState::SELLING_AWAITING_CONFIRMATION, json_encode($context), $userId]);
 
-        $itemCount = count($context['items']);
-        $responseText = "Anda akan menjual paket berisi {$itemCount} item dengan harga Rp " . number_format($price, 0, ',', '.') . ". Lanjutkan?";
+            $itemCount = count($context['items']);
+            $responseText = "Anda akan menjual paket berisi {$itemCount} item dengan harga Rp " . number_format($price, 0, ',', '.') . ". Lanjutkan?";
             Request::sendMessage([
                 'chat_id' => $userId,
                 'text' => $responseText,
                 'reply_markup' => json_encode(['inline_keyboard' => [[['text' => '✅ Jual', 'callback_data' => 'jual_confirm'], ['text' => '❌ Batal', 'callback_data' => 'jual_cancel']]]])
             ]);
-            return true; // Message was handled
+            return true; // Message was handled as price
         }
-        
-        // If the text is not numeric and not a command, we can ignore it or reply with a helper text.
+
+        // If the text is not a valid price and not a command, reply with helper text
         if (is_string($text) && strlen($text) > 0 && $text[0] !== '/') {
             Request::sendMessage(['chat_id' => $userId, 'text' => "Saya menunggu harga (angka) atau perintah /cancel."]);
             return true;
         }
-
 
         return false;
     }
