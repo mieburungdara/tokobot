@@ -64,7 +64,6 @@ class AdminController extends DashmixController
         ];
 
         $pdo = \TokoBot\Helpers\Database::getInstance();
-        
         // Fetch users with their role names
         $stmt = $pdo->query("SELECT u.telegram_id, u.username, u.first_name, r.name as role_name FROM users u LEFT JOIN roles r ON u.role_id = r.id ORDER BY u.first_name ASC");
         $users = $stmt->fetchAll();
@@ -527,8 +526,4 @@ class AdminController extends DashmixController
         header('Location: /users');
         exit();
     }
-
-    public function migrations()
-    {
-
 }
