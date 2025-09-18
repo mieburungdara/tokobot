@@ -4,6 +4,7 @@ namespace TokoBot\Models;
 
 use PDO;
 use TokoBot\Exceptions\DatabaseException;
+use Longman\TelegramBot\Entities\User;
 
 class UserModel extends BaseModel
 {
@@ -36,12 +37,10 @@ class UserModel extends BaseModel
     {
         try {
             $pdo = self::getDb();
-            $stmt = $pdo->query("
-                SELECT u.telegram_id, u.username, u.first_name, r.name as role_name 
+            $stmt = $pdo->query("\n                SELECT u.telegram_id, u.username, u.first_name, r.name as role_name 
                 FROM users u 
                 LEFT JOIN roles r ON u.role_id = r.id 
-                ORDER BY u.first_name ASC
-            ");
+                ORDER BY u.first_name ASC\n            ");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
             throw new DatabaseException("Error getting all users with roles: " . $e->getMessage(), (int)$e->getCode(), $e);
@@ -58,13 +57,11 @@ class UserModel extends BaseModel
     {
         try {
             $pdo = self::getDb();
-            $stmt = $pdo->query("
-                SELECT username, first_name, last_activity_at 
+            $stmt = $pdo->query("\n                SELECT username, first_name, last_activity_at 
                 FROM users 
                 WHERE last_activity_at IS NOT NULL 
                 ORDER BY last_activity_at DESC 
-                LIMIT {$limit}
-            ");
+                LIMIT {$limit}\n            ");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
             throw new DatabaseException("Error getting recently active users: " . $e->getMessage(), (int)$e->getCode(), $e);
@@ -109,6 +106,35 @@ class UserModel extends BaseModel
     }
 
     /**
+     * Finds an existing seller ID or creates a new one.
+     *
+     * @param integer $userId
+     * @return array
+     */
+    public static function findOrCreateSellerId(int $userId): array
+    {
+        $pdo = self::getDb();
+        $sellerId = self::findSellerIdByTelegramId($userId);
+
+        if ($sellerId) {
+            return ['id' => $sellerId, 'created' => false];
+        }
+
+        // Generate a new unique ID
+        do {
+            $newId = strtoupper(substr(str_shuffle(str_repeat('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 5)), 0, 5));
+            $checkStmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE seller_id = ?");
+            $checkStmt->execute([$newId]);
+        } while ($checkStmt->fetchColumn() > 0);
+
+        // Update the user record with the new ID
+        $updateStmt = $pdo->prepare("UPDATE users SET seller_id = ? WHERE telegram_id = ?");
+        $updateStmt->execute([$newId, $userId]);
+
+        return ['id' => $newId, 'created' => true];
+    }
+
+    /**
      * Sync user data from Telegram Mini App.
      *
      * @param array $userData
@@ -147,7 +173,7 @@ class UserModel extends BaseModel
      * @param \Longman\TelegramBot\Entities\User $user
      * @return boolean
      */
-    public static function syncUser(\Longman\TelegramBot\Entities\User $user): bool
+    public static function syncUser(User $user): bool
     {
         try {
             $pdo = self::getDb();

@@ -16,7 +16,7 @@ use TokoBot\Models\ContentModel;
 use TokoBot\Models\MediaModel;
 use TokoBot\Models\MessageModel;
 use TokoBot\Models\StorageChannelModel;
-use TokoBot\Models\UserModel;
+use TokoBot\Models\UserModel as AppUserModel;
 use TokoBot\Models\UserStateModel;
 
 class GenericBotHandler
@@ -59,7 +59,7 @@ class GenericBotHandler
             return Request::emptyResponse(); // No user, return empty response
         }
 
-        UserModel::syncUser($user);
+        AppUserModel::syncUser($user);
 
         // If not handled statefully or as a callback query, proceed to command handling
         $this->telegram->addCommandsPath(ROOT_PATH . '/app/BotHandlers/Commands');
@@ -149,7 +149,7 @@ class GenericBotHandler
         
         $this->pdo->beginTransaction();
         try {
-            $sellerId = UserModel::findSellerIdByTelegramId($userId);
+            $sellerId = AppUserModel::findSellerIdByTelegramId($userId);
 
             $storageChannel = StorageChannelModel::findAvailableForBot($this->botId);
             $storageChannelId = $storageChannel ? (int)$storageChannel['channel_id'] : -1002649138088; // Fallback
