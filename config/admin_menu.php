@@ -44,6 +44,11 @@ return [
                 'name'  => 'Storage Channels',
                 'url'   => '/storage-channels',
                 'roles' => ['admin']
+            ],
+            [
+                'name'  => 'Cache Management',
+                'url'   => '/admin/cache',
+                'roles' => ['admin']
             ]
         ]
     ],

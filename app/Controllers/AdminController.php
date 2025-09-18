@@ -11,6 +11,7 @@ use TokoBot\Models\StorageChannelModel;
 use TokoBot\Models\UserModel;
 
 use Psr
+use TokoBot\Helpers\CacheKeyManager;
 use Psr\SimpleCache\CacheInterface;
 use TokoBot\Core\Container;
 
@@ -31,7 +32,7 @@ class AdminController extends DashmixController
 
     public function dashmixDashboard()
     {
-        $cacheKey = 'dashboard_stats';
+        $cacheKey = CacheKeyManager::forDashboardStats();
         $viewData = $this->cache->get($cacheKey);
 
         if ($viewData === null) {
@@ -366,5 +367,43 @@ class AdminController extends DashmixController
 
         header('Location: /users');
         exit();
+    }
+
+    public function cacheManagement()
+    {
+        $breadcrumbs = [
+            ['name' => 'Dashboard', 'url' => '/dashboard'],
+            ['name' => 'Cache Management']
+        ];
+
+        $viewData = [
+            'apcu_enabled' => extension_loaded('apcu') && apcu_enabled(),
+            'cache_info' => null,
+            'sma_info' => null
+        ];
+
+        if (isset($_GET['action']) && $_GET['action'] === 'clear') {
+            if ($this->cache->clear()) {
+                Session::flash('success_message', 'APCu cache has been cleared successfully!');
+            } else {
+                Session::flash('error_message', 'Failed to clear APCu cache.');
+            }
+            header('Location: /admin/cache');
+            exit();
+        }
+
+        if ($viewData['apcu_enabled']) {
+            $viewData['cache_info'] = apcu_cache_info();
+            $viewData['sma_info'] = apcu_sma_info();
+        }
+
+        $this->renderDashmix(
+            VIEWS_PATH . '/admin/cache_management.php',
+            'Cache Management',
+            'Monitor and manage the application cache (APCu).',
+            [],
+            $breadcrumbs,
+            $viewData
+        );
     }
 }

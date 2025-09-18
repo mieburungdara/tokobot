@@ -30,6 +30,9 @@ return FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
                 $r->addRoute('GET', '/storage-channels/edit/{id:\d+}', ['TokoBot\Controllers\AdminController', 'editStorageChannel', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
                 $r->addRoute('POST', '/storage-channels/edit/{id:\d+}', ['TokoBot\Controllers\AdminController', 'editStorageChannel', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
                 $r->addRoute('POST', '/storage-channels/delete/{id:\d+}', ['TokoBot\Controllers\AdminController', 'deleteStorageChannel', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+
+                // Cache Management
+                $r->addRoute('GET', '/admin/cache', ['TokoBot\Controllers\AdminController', 'cacheManagement', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
             
                 // Member routes
                 $r->addRoute('GET', '/member', ['TokoBot\Controllers\MemberController', 'index', ['middleware' => ['AuthMiddleware']]]);    
