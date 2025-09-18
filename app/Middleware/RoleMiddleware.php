@@ -29,9 +29,8 @@ class RoleMiddleware extends Middleware
                 'required_role' => $this->requiredRole,
                 'is_authenticated' => Auth::check()
             ]);
-            // Redirect to an unauthorized page or show an error
-            http_response_code(403);
-            echo "Unauthorized: You do not have the required role.";
+            $errorController = new \TokoBot\Controllers\ErrorController();
+            $errorController->forbidden();
             exit();
         }
         return $next();

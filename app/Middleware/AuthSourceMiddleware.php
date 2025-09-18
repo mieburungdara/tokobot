@@ -27,8 +27,8 @@ class AuthSourceMiddleware extends Middleware
                 'current_auth_source' => $currentAuthSource,
                 'required_sources' => $this->requiredSources
             ]);
-            http_response_code(403);
-            require_once VIEWS_PATH . '/errors/403.php';
+            $errorController = new \TokoBot\Controllers\ErrorController();
+            $errorController->forbidden();
             exit();
         }
         return $next();
