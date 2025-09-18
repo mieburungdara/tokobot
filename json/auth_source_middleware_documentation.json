@@ -1,0 +1,27 @@
+{
+  "middleware_name": "AuthSourceMiddleware",
+  "description": "Ensures that the authenticated user's session originated from a specific authentication source (e.g., 'miniapp' or 'xoradmin'). This is used to restrict access to pages based on how the user logged in.",
+  "constructor": {
+    "parameters": [
+      {
+        "name": "requiredSource",
+        "type": "string",
+        "description": "The required authentication source string (e.g., 'miniapp', 'xoradmin')."
+      }
+    ]
+  },
+  "methods": [
+    {
+      "name": "handle",
+      "description": "Processes the request. If the `auth_source` in the session does not match the `requiredSource`, it returns a 403 Forbidden error and exits. Otherwise, it calls the next handler in the pipeline.",
+      "parameters": [
+        {
+          "name": "next",
+          "type": "callable",
+          "description": "The next middleware or request handler in the pipeline."
+        }
+      ],
+      "returns": "mixed"
+    }
+  ]
+}
