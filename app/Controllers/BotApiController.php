@@ -181,8 +181,9 @@ PHP;
                 throw new BotNotFoundException('Bot token not found for ID: ' . $id);
             }
 
-            $telegram = new Telegram($token, 'TokoBot');
-                        $response = Request::deleteWebhook([]);
+            // Create Telegram API object. The username is not required for this action.
+            $telegram = new Telegram($token);
+            $response = Request::deleteWebhook([]);
 
             if (!$response->isOk()) {
                 throw new TelegramException($response->getDescription());

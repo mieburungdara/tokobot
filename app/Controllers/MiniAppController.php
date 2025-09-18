@@ -5,6 +5,7 @@ namespace TokoBot\Controllers;
 use TokoBot\Helpers\Logger;
 use TokoBot\Helpers\Session;
 use TokoBot\Helpers\Database;
+use TokoBot\Models\Bot;
 
 class MiniAppController extends DashmixController
 {
@@ -14,17 +15,11 @@ class MiniAppController extends DashmixController
      */
     public function start(int $bot_id)
     {
-        // Verifikasi apakah bot ada dan punya token.
-        $botsFile = CONFIG_PATH . '/tbots.php';
-        $botTokens = file_exists($botsFile) ? require $botsFile : [];
-
-        if (!isset($botTokens[$bot_id])) {
-            // Jika bot tidak ditemukan, tampilkan halaman error.
+        if (!$this->findAndValidateBotToken($bot_id)) {
             http_response_code(404);
             require_once VIEWS_PATH . '/miniapp/invalid_bot.php';
             return;
         }
-
         // Jika bot valid, render halaman start yang akan me-redirect ke halaman app.
         $this->renderDashmix(
             VIEWS_PATH . '/miniapp/auth.php',
@@ -40,16 +35,11 @@ class MiniAppController extends DashmixController
     public function app(int $bot_id)
     {
         // Langkah 1: Verifikasi apakah bot ada dan punya token.
-        $botsFile = CONFIG_PATH . '/tbots.php';
-        $botTokens = file_exists($botsFile) ? require $botsFile : [];
-
-        if (!isset($botTokens[$bot_id])) {
-            // Jika bot tidak ditemukan, tampilkan halaman error.
+        if (!$this->findAndValidateBotToken($bot_id)) {
             http_response_code(404);
             require_once VIEWS_PATH . '/miniapp/invalid_bot.php';
             return;
         }
-
         // Langkah 2: Jika bot valid, siapkan template dan render.
         $dm = $this->container->get('template');
         $dm->page_scripts = ['https://telegram.org/js/telegram-web-app.js'];
@@ -92,8 +82,7 @@ class MiniAppController extends DashmixController
             return;
         }
 
-        $botToken = \TokoBot\Models\Bot::findTokenById((int)$bot_id);
-
+        $botToken = $this->findAndValidateBotToken((int)$bot_id);
         if (!$botToken) {
             http_response_code(404);
             echo json_encode(['status' => 'error', 'message' => 'Bot configuration not found.']);
@@ -201,5 +190,17 @@ class MiniAppController extends DashmixController
         $calculatedHash = hash_hmac('sha256', $dataCheckString, $secretKey);
 
         return $calculatedHash === $hash;
+    }
+
+    /**
+     * Finds a bot's token by its ID using the Bot model.
+     * This centralizes the logic for fetching and validating the bot's existence.
+     *
+     * @param int $botId The ID of the bot.
+     * @return string|null The bot token if found, otherwise null.
+     */
+    private function findAndValidateBotToken(int $botId): ?string
+    {
+        return Bot::findTokenById($botId);
     }
 }
