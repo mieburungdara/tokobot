@@ -24,6 +24,11 @@ class AuthController extends BaseController
             Session::set('user_id', -1); // Dummy user ID for xoradmin
             Session::set('user_role', 'admin');
             Session::set('auth_source', 'xoradmin'); // Set authentication source
+            Logger::channel('auth')->info('AuthController: User logged in.', [
+                'user_id' => Session::get('user_id'),
+                'user_role' => Session::get('user_role'),
+                'auth_source' => Session::get('auth_source')
+            ]);
             header('Location: /dashboard');
             exit();
         } else {
