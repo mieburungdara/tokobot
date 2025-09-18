@@ -9,64 +9,63 @@ use Longman\TelegramBot\Exception\TelegramException;
 use TokoBot\Helpers\Logger;
 
 class BotApiController extends BaseController
+ {
+private function getBotToken(int $botId): ?string
 {
-    private function getBotToken(int $botId): ?string
-    {
-        return \TokoBot\Models\Bot::findTokenById($botId);
-    }
+       return \TokoBot\Models\Bot::findTokenById($botId);
+}
 
-    private function sendJsonResponse(array $data, int $statusCode = 200)
-    {
-        header('Content-Type: application/json');
-        http_response_code($statusCode);
-        echo json_encode($data);
-        exit();
-    }
+private function sendJsonResponse(array $data, int $statusCode = 200)
+{
+    header('Content-Type: application/json');
+    http_response_code($statusCode);
+    echo json_encode($data);
+    exit();
+}
 
-    public function getWebhookInfo($id)
-    {
-        try {
-            $token = $this->getBotToken($id);
-            if (!$token) {
-                throw new BotNotFoundException('Bot token not found for ID: ' . $id);
-            }
-
-            $telegram = new Telegram($token, 'TokoBot');
-            $response = Request::getWebhookInfo();
-
-            if (!$response->isOk()) {
-                throw new TelegramException($response->getDescription());
-            }
-
-            $result = $response->getResult();
-
-            if ($result === null) {
-                $this->sendJsonResponse([]);
-            } else {
-                $dataToSend = method_exists($result, 'toArray') ? $result->toArray() : (array) $result;
-
-                $cleanData = [
-                    'bot_username' => $dataToSend['bot_username'] ?? null,
-                    'webhook_info' => $dataToSend['raw_data'] ?? [],
-                ];
-
-                // Kirim $cleanData ke response JSON
-                $this->sendJsonResponse($dataToSend['raw_data'] ?? []);
-            }
-
-        } catch (BotNotFoundException $e) {
-            Logger::channel('telegram')->warning($e->getMessage());
-            $this->sendJsonResponse(['error' => $e->getMessage()], 404);
-        } catch (TelegramException $e) {
-            Logger::channel('telegram')->error('Get webhook info failed', ['bot_id' => $id, 'error' => $e->getMessage()]);
-            $this->sendJsonResponse(['error' => $e->getMessage()], 502);
-        } catch (\Exception $e) {
-            Logger::channel('app')->error('An unexpected error occurred in getWebhookInfo', ['bot_id' => $id, 'error' => $e->getMessage()]);
-            $this->sendJsonResponse(['error' => 'An unexpected error occurred.'], 500);
+public function getWebhookInfo($id)
+{
+    try {
+        $token = $this->getBotToken($id);
+        if (!$token) {
+            throw new BotNotFoundException('Bot token not found for ID: ' . $id);
         }
-    }
 
-    public function setWebhook($id)
+        $telegram = new Telegram($token, 'TokoBot');
+        $response = Request::getWebhookInfo();
+
+        if (!$response->isOk()) {
+            throw new TelegramException($response->getDescription());
+        }
+
+        $result = $response->getResult();
+
+        if ($result === null) {
+            $this->sendJsonResponse([]);
+        } else {
+            $dataToSend = method_exists($result, 'toArray') ? $result->toArray() : (array) $result;
+
+            $cleanData = [
+                'bot_username' => $dataToSend['bot_username'] ?? null,
+                'webhook_info' => $dataToSend['raw_data'] ?? [],
+            ];
+
+            // Kirim $cleanData ke response JSON
+            $this->sendJsonResponse($dataToSend['raw_data'] ?? []);
+        }
+    } catch (BotNotFoundException $e) {
+        Logger::channel('telegram')->warning($e->getMessage());
+        $this->sendJsonResponse(['error' => $e->getMessage()], 404);
+    } catch (TelegramException $e) {
+        Logger::channel('telegram')->error('Get webhook info failed', ['bot_id' => $id, 'error' => $e->getMessage()]);
+        $this->sendJsonResponse(['error' => $e->getMessage()], 502);
+    } catch (\Exception $e) {
+        Logger::channel('app')->error('An unexpected error occurred in getWebhookInfo', ['bot_id' => $id, 'error' => $e->getMessage()]);
+        $this->sendJsonResponse(['error' => 'An unexpected error occurred.'], 500);
+    }
+}
+
+    function setWebhook($id)
     {
         Logger::channel('app')->info('setWebhook called for bot ID: ' . $id);
         $webhookUrl = $_POST['url'] ?? '';
@@ -120,6 +119,9 @@ try {
     Logger::channel('app')->debug('Bot ID before GenericBotHandler instantiation', ['botId' => \$botId, 'type' => gettype(\$botId)]);
     \$handler = new GenericBotHandler(\$botId, \$telegram);
     \$handler->handle();
+    // Pastikan Telegram mendapat respons sukses
+    http_response_code(200);
+    echo 'OK';
 
 } catch (TelegramException \$e) {
     Logger::channel('telegram')->error('Telegram API Exception', ['error' => \$e->getMessage()]);
@@ -155,7 +157,7 @@ PHP;
         }
     }
 
-    public function deleteWebhook($id)
+    function deleteWebhook($id)
     {
         try {
             $token = $this->getBotToken($id);
