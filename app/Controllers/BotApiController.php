@@ -201,7 +201,10 @@ PHP;
 
             // Create Telegram API object. The username is not required for this action.
             $telegram = new Telegram($token);
-            $response = Request::deleteWebhook([]);
+            
+            // Delete the webhook and explicitly drop any pending updates.
+            // This will solve the issue of the pending count increasing.
+            $response = Request::deleteWebhook(['drop_pending_updates' => true]);
 
             if (!$response->isOk()) {
                 throw new TelegramException($response->getDescription());
