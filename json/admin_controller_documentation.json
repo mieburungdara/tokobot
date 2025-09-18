@@ -111,20 +111,6 @@
       "returns": "Redirects to `/storage-channels` with a success or error message."
     },
     {
-      "name": "migrations",
-      "description": "Displays the current status of database migrations and provides an interface to run pending migrations.",
-      "route": "GET /migrations",
-      "parameters": [],
-      "returns": "Renders `views/admin/migrations.php` with migration status and Phinx output."
-    },
-    {
-      "name": "runMigrations",
-      "description": "Executes pending database migrations.",
-      "route": "POST /migrations/run",
-      "parameters": [],
-      "returns": "Redirects to `/migrations` with a success or error message."
-    },
-    {
       "name": "updateUserRole",
       "description": "Updates the role of a specific user.",
       "route": "POST /users/update-role",

@@ -44,11 +44,6 @@ return [
                 'name'  => 'Storage Channels',
                 'url'   => '/storage-channels',
                 'roles' => ['admin']
-            ],
-            [
-                'name'  => 'Database Migrations',
-                'url'   => '/migrations',
-                'roles' => ['admin']
             ]
         ]
     ],
