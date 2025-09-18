@@ -4,6 +4,7 @@ node_modules/
 logs/*.log
 !logs/.gitignore
 config/tbots.php
+public/tbot
 
 # Local configuration file
 config/local.php

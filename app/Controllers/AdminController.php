@@ -220,6 +220,141 @@ class AdminController extends DashmixController
         );
     }
 
+    public function storageChannels()
+    {
+        $breadcrumbs = [
+            ['name' => 'Dashboard', 'url' => '/dashboard'],
+            ['name' => 'Storage Channels']
+        ];
+
+        $pdo = \TokoBot\Helpers\Database::getInstance();
+        $stmt = $pdo->query("SELECT id, bot_id, channel_id, last_used_at FROM bot_storage_channels ORDER BY bot_id ASC, id ASC");
+        $storageChannels = $stmt->fetchAll();
+
+        $this->renderDashmix(
+            VIEWS_PATH . '/admin/storage_channels.php',
+            'Storage Channel Management',
+            'Manage Telegram storage channels for bots.',
+            [],
+            $breadcrumbs,
+            ['storageChannels' => $storageChannels]
+        );
+    }
+
+    public function addStorageChannel()
+    {
+        $breadcrumbs = [
+            ['name' => 'Dashboard', 'url' => '/dashboard'],
+            ['name' => 'Storage Channels', 'url' => '/storage-channels'],
+            ['name' => 'Add']
+        ];
+
+        $pdo = \TokoBot\Helpers\Database::getInstance();
+        $stmt = $pdo->query("SELECT id, username FROM tbots ORDER BY username ASC");
+        $bots = $stmt->fetchAll();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $botId = $_POST['bot_id'] ?? null;
+            $channelId = $_POST['channel_id'] ?? null;
+
+            if (empty($botId) || empty($channelId)) {
+                \TokoBot\Helpers\Session::flash('error_message', 'Bot ID and Channel ID cannot be empty.');
+                header('Location: /storage-channels/add');
+                exit();
+            }
+
+            try {
+                $stmt = $pdo->prepare("INSERT INTO bot_storage_channels (bot_id, channel_id) VALUES (?, ?)");
+                $stmt->execute([$botId, $channelId]);
+                \TokoBot\Helpers\Session::flash('success_message', 'Storage channel added successfully!');
+            } catch (\PDOException $e) {
+                \TokoBot\Helpers\Session::flash('error_message', 'Failed to add storage channel: ' . $e->getMessage());
+            }
+
+            header('Location: /storage-channels');
+            exit();
+        }
+
+        $this->renderDashmix(
+            VIEWS_PATH . '/admin/storage_channel_form.php',
+            'Add Storage Channel',
+            'Add a new Telegram storage channel.',
+            [],
+            $breadcrumbs,
+            ['bots' => $bots]
+        );
+    }
+
+    public function editStorageChannel($id)
+    {
+        $breadcrumbs = [
+            ['name' => 'Dashboard', 'url' => '/dashboard'],
+            ['name' => 'Storage Channels', 'url' => '/storage-channels'],
+            ['name' => 'Edit']
+        ];
+
+        $pdo = \TokoBot\Helpers\Database::getInstance();
+        $stmt = $pdo->prepare("SELECT id, bot_id, channel_id FROM bot_storage_channels WHERE id = ?");
+        $stmt->execute([$id]);
+        $channel = $stmt->fetch();
+
+        if (!$channel) {
+            \TokoBot\Helpers\Session::flash('error_message', 'Storage channel not found.');
+            header('Location: /storage-channels');
+            exit();
+        }
+
+        $stmt = $pdo->query("SELECT id, username FROM tbots ORDER BY username ASC");
+        $bots = $stmt->fetchAll();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $botId = $_POST['bot_id'] ?? null;
+            $channelId = $_POST['channel_id'] ?? null;
+
+            if (empty($botId) || empty($channelId)) {
+                \TokoBot\Helpers\Session::flash('error_message', 'Bot ID and Channel ID cannot be empty.');
+                header('Location: /storage-channels/edit/' . $id);
+                exit();
+            }
+
+            try {
+                $stmt = $pdo->prepare("UPDATE bot_storage_channels SET bot_id = ?, channel_id = ? WHERE id = ?");
+                $stmt->execute([$botId, $channelId, $id]);
+                \TokoBot\Helpers\Session::flash('success_message', 'Storage channel updated successfully!');
+            } catch (\PDOException $e) {
+                \TokoBot\Helpers\Session::flash('error_message', 'Failed to update storage channel: ' . $e->getMessage());
+            }
+
+            header('Location: /storage-channels');
+            exit();
+        }
+
+        $this->renderDashmix(
+            VIEWS_PATH . '/admin/storage_channel_form.php',
+            'Edit Storage Channel',
+            'Edit an existing Telegram storage channel.',
+            [],
+            $breadcrumbs,
+            ['channel' => $channel, 'bots' => $bots, 'formAction' => '/storage-channels/edit/' . $id]
+        );
+    }
+
+    public function deleteStorageChannel($id)
+    {
+        $pdo = \TokoBot\Helpers\Database::getInstance();
+
+        try {
+            $stmt = $pdo->prepare("DELETE FROM bot_storage_channels WHERE id = ?");
+            $stmt->execute([$id]);
+            \TokoBot\Helpers\Session::flash('success_message', 'Storage channel deleted successfully!');
+        } catch (\PDOException $e) {
+            \TokoBot\Helpers\Session::flash('error_message', 'Failed to delete storage channel: ' . $e->getMessage());
+        }
+
+        header('Location: /storage-channels');
+        exit();
+    }
+
     public function addBot()
     {
         $token = $_POST['token'] ?? '';

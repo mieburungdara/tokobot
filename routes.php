@@ -19,6 +19,14 @@ return FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
         $r->addRoute('GET', '/bot-management', ['TokoBot\Controllers\AdminController', 'manageBots', ['middleware' => [['RoleMiddleware', 'admin']]]]);
         $r->addRoute('POST', '/bot-management', ['TokoBot\Controllers\AdminController', 'addBot', ['middleware' => [['RoleMiddleware', 'admin']]]]);
         $r->addRoute('POST', '/bot-management/{id:\d+}/delete', ['TokoBot\Controllers\AdminController', 'deleteBot', ['middleware' => [['RoleMiddleware', 'admin']]]]);
+
+        // Storage Channel Management
+        $r->addRoute('GET', '/storage-channels', ['TokoBot\Controllers\AdminController', 'storageChannels', ['middleware' => [['RoleMiddleware', 'admin']]]]);
+        $r->addRoute('GET', '/storage-channels/add', ['TokoBot\Controllers\AdminController', 'addStorageChannel', ['middleware' => [['RoleMiddleware', 'admin']]]]);
+        $r->addRoute('POST', '/storage-channels/add', ['TokoBot\Controllers\AdminController', 'addStorageChannel', ['middleware' => [['RoleMiddleware', 'admin']]]]);
+        $r->addRoute('GET', '/storage-channels/edit/{id:\d+}', ['TokoBot\Controllers\AdminController', 'editStorageChannel', ['middleware' => [['RoleMiddleware', 'admin']]]]);
+        $r->addRoute('POST', '/storage-channels/edit/{id:\d+}', ['TokoBot\Controllers\AdminController', 'editStorageChannel', ['middleware' => [['RoleMiddleware', 'admin']]]]);
+        $r->addRoute('POST', '/storage-channels/delete/{id:\d+}', ['TokoBot\Controllers\AdminController', 'deleteStorageChannel', ['middleware' => [['RoleMiddleware', 'admin']]]]);
     
         // Member routes
         $r->addRoute('GET', '/member', ['TokoBot\Controllers\MemberController', 'index', ['middleware' => ['AuthMiddleware']]]);
