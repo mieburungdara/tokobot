@@ -22,7 +22,7 @@ class UserStateModel extends BaseModel
             $stmt = $pdo->prepare("SELECT * FROM user_states WHERE telegram_id = ?");
             $stmt->execute([$telegramId]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOExceptiabase $e) {
+        } catch (\PDOException $e) {
             throw new DatabaseException("Error finding user state: " . $e->getMessage(), (int)$e->getCode(), $e);
         }
     }
@@ -43,7 +43,7 @@ class UserStateModel extends BaseModel
                     ON DUPLICATE KEY UPDATE state = VALUES(state), context = VALUES(context)";
             $stmt = $pdo->prepare($sql);
             return $stmt->execute([$telegramId, $state, json_encode($context)]);
-        } catch (PDOExceptiabase $e) {
+        } catch (\PDOException $e) {
             throw new DatabaseException("Error updating user state: " . $e->getMessage(), (int)$e->getCode(), $e);
         }
     }
@@ -60,7 +60,7 @@ class UserStateModel extends BaseModel
             $pdo = self::getDb();
             $stmt = $pdo->prepare("DELETE FROM user_states WHERE telegram_id = ?");
             return $stmt->execute([$telegramId]);
-        } catch (PDOExceptiabase $e) {
+        } catch (\PDOException $e) {
             throw new DatabaseException("Error clearing user state: " . $e->getMessage(), (int)$e->getCode(), $e);
         }
     }

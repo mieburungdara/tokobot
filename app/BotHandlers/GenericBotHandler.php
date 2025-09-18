@@ -12,6 +12,12 @@ use Longman\TelegramBot\Entities\Message;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Entities\CallbackQuery;
 use Longman\TelegramBot\Exception\TelegramException;
+use TokoBot\Models\ContentModel;
+use TokoBot\Models\MediaModel;
+use TokoBot\Models\MessageModel;
+use TokoBot\Models\StorageChannelModel;
+use TokoBot\Models\UserModel;
+use TokoBot\Models\UserStateModel;
 
 class GenericBotHandler
 {
