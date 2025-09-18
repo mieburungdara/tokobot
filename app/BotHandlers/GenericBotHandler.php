@@ -60,11 +60,14 @@ class GenericBotHandler
         
         $response = $this->telegram->handle();
 
+        if ($response === false) {
+            return Request::emptyResponse();
+        }
+
+        /** @var \Longman\TelegramBot\Entities\ServerResponse $response */
         if ($response instanceof ServerResponse) {
             return $response;
         }
-
-        return Request::emptyResponse();
     }
 
 

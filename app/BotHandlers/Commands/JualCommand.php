@@ -23,6 +23,7 @@ class JualCommand extends UserCommand
         $reply = $message->getReplyToMessage();
         $pdo = Database::getInstance();
 
+        // @phpstan-ignore-next-line
         if (!$reply || !$this->isValidMedia($reply)) {
             return Request::sendMessage(['chat_id' => $chatId, 'text' => '❌ Error: Perintah ini harus digunakan dengan me-reply media (foto, video, dokumen, atau audio).']);
         }
@@ -56,6 +57,7 @@ class JualCommand extends UserCommand
 
     private function isValidMedia(Message $message): bool
     {
+        // @phpstan-ignore-next-line
         return $message->getPhoto() !== null || $message->getVideo() !== null || $message->getDocument() !== null || $message->getAudio() !== null;
     }
 

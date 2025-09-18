@@ -54,13 +54,7 @@ class MiniAppController extends DashmixController
         $dm = $this->container->get('template');
         $dm->page_scripts = ['https://telegram.org/js/telegram-web-app.js'];
 
-        $this->renderDashmix(
-            VIEWS_PATH . '/miniapp/index.php',      // File konten
-            'TokoBot Mini App',                   // Judul Halaman
-            'Welcome to TokoBot Mini App',        // Deskripsi Halaman
-            [],                                   // Navigasi (gunakan default)
-            [['name' => 'Mini App']],             // Breadcrumbs
-            $pdo = Database::getInstance();
+        $pdo = Database::getInstance();
         $telegramId = Session::get('user_id');
         $sellerId = null;
         if ($telegramId) {
