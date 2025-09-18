@@ -111,6 +111,8 @@ if (!\$botToken) {
 try {
     // Create Telegram API object and handle webhook request
     \$telegram = new Telegram(\$botToken, 'TokoBot');
+    Logger::channel('debug')->debug('Bot ID before GenericBotHandler instantiation', ['botToken' => \$botToken, 'type' => \$telegram]);
+
 
     // Set custom input to be used by our handler
     \$telegram->setCustomInput(file_get_contents('php://input'));
