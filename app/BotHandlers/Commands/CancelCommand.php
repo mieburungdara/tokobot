@@ -10,32 +10,36 @@ use TokoBot\Helpers\Database;
 class CancelCommand extends UserCommand
 {
     protected $name = 'cancel';
-    protected $description = 'Cancel the current operation';
+    protected $description = 'Batalkan proses yang sedang berjalan';
     protected $usage = '/cancel';
     protected $version = '1.0.0';
+    protected $private_only = true;
 
     public function execute(): ServerResponse
     {
         $message = $this->getMessage();
-        $userId = $message->getFrom()->getId();
         $chatId = $message->getChat()->getId();
+        $userId = $message->getFrom()->getId();
 
         $pdo = Database::getInstance();
+
         $stmt = $pdo->prepare("SELECT * FROM user_states WHERE telegram_id = ?");
         $stmt->execute([$userId]);
         $state = $stmt->fetch();
 
-        if ($state) {
-            $deleteStmt = $pdo->prepare("DELETE FROM user_states WHERE telegram_id = ?");
-            $deleteStmt->execute([$userId]);
-            $responseText = 'Proses sebelumnya telah dibatalkan.';
-        } else {
-            $responseText = 'Tidak ada proses yang sedang berjalan untuk dibatalkan.';
+        if (!$state) {
+            return Request::sendMessage(['chat_id' => $chatId, 'text' => 'Tidak ada proses yang sedang berjalan untuk dibatalkan.']);
         }
 
-        return Request::sendMessage([
-            'chat_id' => $chatId,
-            'text'    => $responseText,
-        ]);
+        // Clear user state
+        $this->clearUserState($userId, $pdo);
+
+        return Request::sendMessage(['chat_id' => $chatId, 'text' => '✅ Proses berhasil dibatalkan.']);
+    }
+
+    private function clearUserState(int $userId, \PDO $pdo): void
+    {
+        $stmt = $pdo->prepare("DELETE FROM user_states WHERE telegram_id = ?");
+        $stmt->execute([$userId]);
     }
 }

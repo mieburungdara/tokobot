@@ -28,7 +28,7 @@ class JualCommand extends UserCommand
             return Request::sendMessage(['chat_id' => $chatId, 'text' => '❌ Error: Perintah ini harus digunakan dengan me-reply media (foto, video, dokumen, atau audio).']);
         }
 
-        $sellerId = $this->getOrCreateSellerId($user->getId(), $pdo);
+        $sellerId = $this->getOrCreateSellerId($user->getId(), $pdo, $chatId);
 
         $stmt = $pdo->prepare("SELECT * FROM user_states WHERE telegram_id = ?");
         $stmt->execute([$user->getId()]);
@@ -40,7 +40,7 @@ class JualCommand extends UserCommand
             'message_id' => $reply->getMessageId(),
             'chat_id' => $reply->getChat()->getId(),
             'media_group_id' => $reply->getMediaGroupId(),
-            'raw_media' => json_decode($reply, true)
+            'raw_media' => $reply->getRawData()
         ];
         $context['items'][] = $newItem;
 
@@ -61,7 +61,7 @@ class JualCommand extends UserCommand
         return $message->getPhoto() !== null || $message->getVideo() !== null || $message->getDocument() !== null || $message->getAudio() !== null;
     }
 
-    private function getOrCreateSellerId(int $userId, \PDO $pdo): string
+    private function getOrCreateSellerId(int $userId, \PDO $pdo, int $chatId): string
     {
         $stmt = $pdo->prepare("SELECT seller_id FROM users WHERE telegram_id = ?");
         $stmt->execute([$userId]);
@@ -79,6 +79,8 @@ class JualCommand extends UserCommand
 
         $updateStmt = $pdo->prepare("UPDATE users SET seller_id = ? WHERE telegram_id = ?");
         $updateStmt->execute([$newId, $userId]);
+
+        Request::sendMessage(['chat_id' => $chatId, 'text' => "🎉 Selamat! Anda sekarang adalah penjual. ID Penjual Anda: `{$newId}`. Gunakan ID ini untuk mengelola penjualan Anda."]);
 
         return $newId;
     }

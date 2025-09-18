@@ -84,16 +84,21 @@ class GenericBotHandler
             return false;
         }
 
-        if (is_numeric($text)) {
-            $price = (float) $text;
-            $context = json_decode($state['context'], true);
-            $context['price'] = $price;
+        // Validate price input
+        $price = (float) str_replace(['Rp', '.', ','], ['', '', '.'], $text);
+        if ($price <= 0) {
+            Request::sendMessage(['chat_id' => $chatId, 'text' => '❌ Harga tidak valid. Mohon masukkan angka positif (contoh: 10000 atau 10.000).']);
+            return true;
+        }
 
-            $updateSql = "UPDATE user_states SET state = ?, context = ? WHERE telegram_id = ?";
-            $this->pdo->prepare($updateSql)->execute(['selling_awaiting_confirmation', json_encode($context), $userId]);
+        $context = json_decode($state['context'], true);
+        $context['price'] = $price;
 
-            $itemCount = count($context['items']);
-            $responseText = "Anda akan menjual paket berisi {$itemCount} item dengan harga {$price}. Lanjutkan?";
+        $updateSql = "UPDATE user_states SET state = ?, context = ? WHERE telegram_id = ?";
+        $this->pdo->prepare($updateSql)->execute(['selling_awaiting_confirmation', json_encode($context), $userId]);
+
+        $itemCount = count($context['items']);
+        $responseText = "Anda akan menjual paket berisi {$itemCount} item dengan harga Rp " . number_format($price, 0, ',', '.') . ". Lanjutkan?";
             Request::sendMessage([
                 'chat_id' => $userId,
                 'text' => $responseText,
