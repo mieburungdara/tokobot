@@ -7,15 +7,16 @@
     {
       "name": "GenericBotHandler",
       "path": "app/BotHandlers/GenericBotHandler.php",
-      "purpose": "Acts as the main dispatcher for all incoming bot messages.",
+      "purpose": "Acts as the main dispatcher for all incoming bot messages, including stateful messages and callback queries.",
       "workflow": [
         "Receives an update from Telegram via the bot-specific webhook entry point.",
         "Performs common tasks: user synchronization and message logging.",
-        "Parses the message text to identify a command (e.g., '/login').",
+        "Checks if the message is part of an ongoing stateful conversation (e.g., price input for /jual command).",
+        "If not stateful, parses the message text to identify a command (e.g., '/login').",
         "Looks up the command in its internal `$commands` array to find the corresponding handler class.",
-        "Instantiates the handler class and calls its `handle()` method.",
+        "Instantiates the handler class and calls its `execute()` method.",
+        "Handles callback queries from inline keyboards.",
         "Logs the dispatch action or any warnings if the command/class is not found."
-      ]
     },
     {
       "name": "CommandInterface",
@@ -27,7 +28,7 @@
       "name": "Command Handlers",
       "path": "app/BotHandlers/Commands/",
       "purpose": "Directory containing individual classes for each bot command.",
-      "details": "Each file in this directory should be a class that implements CommandInterface and contains the specific logic for one single command."
+      "details": "Each file in this directory should be a class that extends `Longman\\TelegramBot\\Commands\\UserCommand` and contains the specific logic for one single command. Examples include `JualCommand.php` and `CancelCommand.php`."
     }
   ],
   "how_to_add_a_new_command": {
@@ -39,17 +40,16 @@
       },
       {
         "step": 2,
-        "action": "Implement the `CommandInterface` in the new class.",
-        "example": "`class HelpCommand implements CommandInterface { ... }`"
+        "action": "Extend `Longman\\TelegramBot\\Commands\\UserCommand` in the new class.",
+        "example": "`class HelpCommand extends UserCommand { ... }`"
       },
       {
         "step": 3,
-        "action": "Implement the logic for the command inside the `handle()` method of the new class."
+        "action": "Implement the logic for the command inside the `execute()` method of the new class."
       },
       {
         "step": 4,
-        "action": "Register the new command in the `$commands` array within `GenericBotHandler.php`.",
-        "example": "Add `'/help' => HelpCommand::class,` to the array."
+        "action": "Ensure the command's `$name` property is set correctly (e.g., `$name = 'help';`)."
       }
     ]
   }
