@@ -13,7 +13,7 @@ return [
     [
         'name'  => 'Member Dashboard',
         'icon'  => 'si si-user',
-        'url'   => '/dashboard',
+        'url'   => '/member',
         'roles' => ['member']
     ],
     [

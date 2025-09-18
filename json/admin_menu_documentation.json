@@ -58,5 +58,5 @@
       "roles": "['admin', 'member']"
     }
   ],
-  "notes": "Menu items without a 'roles' key will inherit roles from their parent or be considered publicly accessible if no parent roles are defined. The `Template.php` class handles the rendering and role-based filtering of this menu structure."
+  "notes": "Menu items without a 'roles' key will inherit roles from their parent or be considered publicly accessible if no parent roles are defined. Access to these URLs is now controlled by `AuthSourceMiddleware` in `routes.php`, allowing both MiniApp and XorAdmin authenticated users to access the same set of admin pages."
 }

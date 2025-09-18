@@ -1,12 +1,12 @@
 {
   "middleware_name": "AuthSourceMiddleware",
-  "description": "Ensures that the authenticated user's session originated from a specific authentication source (e.g., 'miniapp' or 'xoradmin'). This is used to restrict access to pages based on how the user logged in.",
+  "description": "Ensures that the authenticated user's session originated from one of the specified authentication sources (e.g., 'miniapp' or 'xoradmin'). This is used to restrict access to pages based on how the user logged in.",
   "constructor": {
     "parameters": [
       {
-        "name": "requiredSource",
-        "type": "string",
-        "description": "The required authentication source string (e.g., 'miniapp', 'xoradmin')."
+        "name": "requiredSources",
+        "type": "array",
+        "description": "An array of required authentication source strings (e.g., ['miniapp', 'xoradmin'])."
       }
     ]
   },
