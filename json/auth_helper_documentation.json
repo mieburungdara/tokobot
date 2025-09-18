@@ -38,7 +38,7 @@
     },
     {
       "name": "logout",
-      "description": "Logs out the current user by destroying the session.",
+      "description": "Logs out the current user by clearing the session.",
       "parameters": [],
       "returns": "void"
     }
