@@ -1,0 +1,128 @@
+{
+  "controller_name": "AdminController",
+  "description": "Handles various administrative functionalities, including user management, settings, reports, bot analytics, bot management, and now storage channel management.",
+  "extends": "DashmixController",
+  "methods": [
+    {
+      "name": "index",
+      "description": "Displays the main admin dashboard.",
+      "route": "GET /dashboard",
+      "parameters": [],
+      "returns": "Renders `views/admin/dashboard.php`."
+    },
+    {
+      "name": "users",
+      "description": "Manages application users, displaying a list of users.",
+      "route": "GET /users",
+      "parameters": [],
+      "returns": "Renders `views/admin/users.php` with user data."
+    },
+    {
+      "name": "settings",
+      "description": "Configures application settings.",
+      "route": "GET /settings",
+      "parameters": [],
+      "returns": "Renders `views/admin/settings.php`."
+    },
+    {
+      "name": "reports",
+      "description": "Views application reports.",
+      "route": "GET /reports",
+      "parameters": [],
+      "returns": "Renders `views/admin/reports.php`."
+    },
+    {
+      "name": "botAnalytics",
+      "description": "Analyzes bot usage and activity, including command usage, active users, and logs.",
+      "route": "GET /analytics",
+      "parameters": [],
+      "returns": "Renders `views/admin/analytics.php` with analytics data."
+    },
+    {
+      "name": "viewLogs",
+      "description": "Provides a log viewer for different application log channels.",
+      "route": "GET /logs",
+      "parameters": [
+        {"name": "log", "type": "string", "description": "(Optional) The log channel to view (e.g., 'app', 'telegram', 'critical'). Defaults to 'app'."},
+        {"name": "action", "type": "string", "description": "(Optional) Action to perform, e.g., 'clear' to clear the log file.", "optional": true}
+      ],
+      "returns": "Renders `views/admin/logs.php` with log content."
+    },
+    {
+      "name": "manageBots",
+      "description": "Manages Telegram bots, displaying a list of configured bots.",
+      "route": "GET /bot-management",
+      "parameters": [],
+      "returns": "Renders `views/admin/tbots.php` with bot data."
+    },
+    {
+      "name": "addBot",
+      "description": "Handles adding a new Telegram bot to the system.",
+      "route": "POST /bot-management",
+      "parameters": [
+        {"name": "token", "type": "string", "description": "The Telegram bot token."}
+      ],
+      "returns": "Redirects to `/bot-management` with a success or error message."
+    },
+    {
+      "name": "deleteBot",
+      "description": "Deletes a Telegram bot from the system (sets token to NULL and removes webhook file).",
+      "route": "POST /bot-management/{id}/delete",
+      "parameters": [
+        {"name": "id", "type": "int", "description": "The ID of the bot to delete."}
+      ],
+      "returns": "Redirects to `/bot-management` with a success or error message."
+    },
+    {
+      "name": "storageChannels",
+      "description": "Displays a list of configured Telegram storage channels.",
+      "route": "GET /storage-channels",
+      "parameters": [],
+      "returns": "Renders `views/admin/storage_channels.php` with storage channel data."
+    },
+    {
+      "name": "addStorageChannel",
+      "description": "Handles adding a new Telegram storage channel.",
+      "routes": ["GET /storage-channels/add", "POST /storage-channels/add"],
+      "parameters": [
+        {"name": "bot_id", "type": "int", "description": "The ID of the bot associated with the storage channel."},
+        {"name": "channel_id", "type": "string", "description": "The Telegram channel ID (e.g., -1001234567890)."}
+      ],
+      "returns": "Renders `views/admin/storage_channel_form.php` for GET requests, redirects to `/storage-channels` for POST requests."
+    },
+    {
+      "name": "editStorageChannel",
+      "description": "Handles editing an existing Telegram storage channel.",
+      "routes": ["GET /storage-channels/edit/{id}", "POST /storage-channels/edit/{id}"],
+      "parameters": [
+        {"name": "id", "type": "int", "description": "The ID of the storage channel to edit."},
+        {"name": "bot_id", "type": "int", "description": "The ID of the bot associated with the storage channel."},
+        {"name": "channel_id", "type": "string", "description": "The Telegram channel ID (e.g., -1001234567890)."}
+      ],
+      "returns": "Renders `views/admin/storage_channel_form.php` for GET requests, redirects to `/storage-channels` for POST requests."
+    },
+    {
+      "name": "deleteStorageChannel",
+      "description": "Deletes a Telegram storage channel.",
+      "route": "POST /storage-channels/delete/{id}",
+      "parameters": [
+        {"name": "id", "type": "int", "description": "The ID of the storage channel to delete."}
+      ],
+      "returns": "Redirects to `/storage-channels` with a success or error message."
+    },
+    {
+      "name": "migrations",
+      "description": "Displays the current status of database migrations and provides an interface to run pending migrations.",
+      "route": "GET /migrations",
+      "parameters": [],
+      "returns": "Renders `views/admin/migrations.php` with migration status and Phinx output."
+    },
+    {
+      "name": "runMigrations",
+      "description": "Executes pending database migrations.",
+      "route": "POST /migrations/run",
+      "parameters": [],
+      "returns": "Redirects to `/migrations` with a success or error message."
+    }
+  ]
+}

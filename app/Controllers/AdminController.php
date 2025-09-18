@@ -7,6 +7,7 @@ use Longman\TelegramBot\Request;
 use Longman\TelegramBot\Telegram;
 use Longman\TelegramBot\Exception\TelegramException;
 use TokoBot\Exceptions\DatabaseException;
+use Symfony\Component\Process\Process;
 
 class AdminController extends DashmixController
 {
@@ -352,6 +353,93 @@ class AdminController extends DashmixController
         }
 
         header('Location: /storage-channels');
+        exit();
+    }
+
+    public function deleteStorageChannel($id)
+    {
+        $pdo = \TokoBot\Helpers\Database::getInstance();
+
+        try {
+            $stmt = $pdo->prepare("DELETE FROM bot_storage_channels WHERE id = ?");
+            $stmt->execute([$id]);
+            \TokoBot\Helpers\Session::flash('success_message', 'Storage channel deleted successfully!');
+        } catch (\PDOException $e) {
+            \TokoBot\Helpers\Session::flash('error_message', 'Failed to delete storage channel: ' . $e->getMessage());
+        }
+
+        header('Location: /storage-channels');
+        exit();
+    }
+
+    public function migrations()
+    {
+        $breadcrumbs = [
+            ['name' => 'Dashboard', 'url' => '/dashboard'],
+            ['name' => 'Database Migrations']
+        ];
+
+        $migrations = [];
+        $status = 'unknown';
+        $output = '';
+
+        try {
+            $process = new \Symfony\Component\Process\Process([ROOT_PATH . '/vendor/bin/phinx', 'status', '-c', ROOT_PATH . '/phinx.php']);
+            $process->run();
+
+            if ($process->isSuccessful()) {
+                $output = $process->getOutput();
+                $status = 'success';
+
+                // Parse Phinx status output
+                $lines = explode("\n", $output);
+                foreach ($lines as $line) {
+                    if (preg_match('/^\s*([0-9]{14})\s*([^\s]+)\s*(up|down)\s*(.*)$/i', $line, $matches)) {
+                        $migrations[] = [
+                            'version' => $matches[1],
+                            'name' => $matches[2],
+                            'status' => $matches[3],
+                            'started' => trim($matches[4])
+                        ];
+                    }
+                }
+            } else {
+                $output = $process->getErrorOutput();
+                $status = 'error';
+                \TokoBot\Helpers\Session::flash('error_message', 'Phinx status command failed: ' . $output);
+            }
+        } catch (\Exception $e) {
+            $output = $e->getMessage();
+            $status = 'error';
+            \TokoBot\Helpers\Session::flash('error_message', 'Error running Phinx status: ' . $output);
+        }
+
+        $this->renderDashmix(
+            VIEWS_PATH . '/admin/migrations.php',
+            'Database Migrations',
+            'Manage and run database migrations.',
+            [],
+            $breadcrumbs,
+            ['migrations' => $migrations, 'phinxOutput' => $output, 'phinxStatus' => $status]
+        );
+    }
+
+    public function runMigrations()
+    {
+        try {
+            $process = new \Symfony\Component\Process\Process([ROOT_PATH . '/vendor/bin/phinx', 'migrate', '-c', ROOT_PATH . '/phinx.php']);
+            $process->run();
+
+            if ($process->isSuccessful()) {
+                \TokoBot\Helpers\Session::flash('success_message', 'Migrations ran successfully: ' . $process->getOutput());
+            } else {
+                \TokoBot\Helpers\Session::flash('error_message', 'Migrations failed: ' . $process->getErrorOutput());
+            }
+        } catch (\Exception $e) {
+            \TokoBot\Helpers\Session::flash('error_message', 'Error running migrations: ' . $e->getMessage());
+        }
+
+        header('Location: /migrations');
         exit();
     }
 
