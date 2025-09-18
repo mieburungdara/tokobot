@@ -1,0 +1,68 @@
+{
+  "helper_name": "Session",
+  "description": "Manages user sessions, providing methods to start, set, get, check existence, remove, and clear session data. Also includes a method to check user roles.",
+  "methods": [
+    {
+      "name": "start",
+      "description": "Starts the PHP session if it hasn't been started already.",
+      "parameters": [],
+      "returns": "void"
+    },
+    {
+      "name": "set",
+      "description": "Sets a session variable.",
+      "parameters": [
+        {"name": "key", "type": "string", "description": "The key of the session variable."},
+        {"name": "value", "type": "mixed", "description": "The value to store in the session variable."}
+      ],
+      "returns": "void"
+    },
+    {
+      "name": "get",
+      "description": "Retrieves a session variable.",
+      "parameters": [
+        {"name": "key", "type": "string", "description": "The key of the session variable."},
+        {"name": "default", "type": "mixed", "description": "(Optional) The default value to return if the key does not exist.", "default": "null"}
+      ],
+      "returns": "mixed"
+    },
+    {
+      "name": "has",
+      "description": "Checks if a session variable exists.",
+      "parameters": [
+        {"name": "key", "type": "string", "description": "The key of the session variable.", "default": "null"}
+      ],
+      "returns": "bool"
+    },
+    {
+      "name": "remove",
+      "description": "Removes a session variable.",
+      "parameters": [
+        {"name": "key", "type": "string", "description": "The key of the session variable.", "default": "null"}
+      ],
+      "returns": "void"
+    },
+    {
+      "name": "flash",
+      "description": "Sets or retrieves a flash message (a session variable that is automatically removed after being read).".",
+      "parameters": [
+        {"name": "key", "type": "string", "description": "The key of the flash message."},n        {"name": "message", "type": "string", "description": "(Optional) The message to set. If null, retrieves the message.", "default": "null"}
+      ],
+      "returns": "string|void"
+    },
+    {
+      "name": "clear",
+      "description": "Clears all session variables and destroys the session.",
+      "parameters": [],
+      "returns": "void"
+    },
+    {
+      "name": "hasRole",
+      "description": "Checks if the logged-in user has a specific role.",
+      "parameters": [
+        {"name": "role", "type": "string", "description": "The role to check for."}
+      ],
+      "returns": "bool"
+    }
+  ]
+}

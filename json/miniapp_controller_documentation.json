@@ -30,7 +30,7 @@
     },
     {
       "name": "authenticate",
-      "description": "API endpoint to securely authenticate a Mini App user. It validates the `initData` string from Telegram using the specific bot's token.",
+      "description": "API endpoint to securely authenticate a Mini App user. It validates the `initData` string from Telegram using the specific bot's token. Upon successful authentication, the user's data and role are stored in the session, accessible via the `Auth` helper.",
       "route": "POST /api/miniapp/auth",
       "parameters": [
         {

@@ -65,6 +65,6 @@ class Auth
      */
     public static function logout(): void
     {
-        Session::destroy();
+        Session::clear();
     }
 }

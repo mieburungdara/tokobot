@@ -1,0 +1,57 @@
+{
+  "system_name": "Middleware System",
+  "description": "A flexible middleware system for processing HTTP requests before they reach the controller. Middleware can perform tasks like authentication, authorization, logging, etc.",
+  "components": [
+    {
+      "name": "Middleware (Abstract Class)",
+      "file": "app/Middleware/Middleware.php",
+      "description": "The base abstract class for all middleware. Defines the `handle` method that all concrete middleware classes must implement.",
+      "methods": [
+        {
+          "name": "handle",
+          "description": "Processes the incoming request. It receives a callable `$next` which represents the next middleware in the pipeline or the final controller action. The middleware should call `$next()` to pass control to the next handler.",
+          "parameters": [
+            {"name": "next", "type": "callable", "description": "The next middleware or request handler in the pipeline."}
+          ],
+          "returns": "mixed"
+        }
+      ]
+    },
+    {
+      "name": "AuthMiddleware",
+      "file": "app/Middleware/AuthMiddleware.php",
+      "description": "Ensures that a user is authenticated before allowing access to a route. If the user is not logged in, it redirects them to the login page.",
+      "methods": [
+        {
+          "name": "handle",
+          "description": "Checks if the user is authenticated using `Auth::check()`. If not, redirects to `/xoradmin` and exits. Otherwise, calls the next handler.",
+          "parameters": [
+            {"name": "next", "type": "callable", "description": "The next middleware or request handler."}
+          ],
+          "returns": "mixed"
+        }
+      ]
+    },
+    {
+      "name": "RoleMiddleware",
+      "file": "app/Middleware/RoleMiddleware.php",
+      "description": "Ensures that the authenticated user has a specific role before allowing access to a route. If the user does not have the required role, it returns a 403 Unauthorized error.",
+      "constructor": {
+        "parameters": [
+          {"name": "requiredRole", "type": "string", "description": "The role string that the user must possess."}
+        ]
+      },
+      "methods": [
+        {
+          "name": "handle",
+          "description": "Checks if the user is authenticated and has the `requiredRole` using `Auth::check()` and `Auth::hasRole()`. If not, returns a 403 error and exits. Otherwise, calls the next handler.",
+          "parameters": [
+            {"name": "next", "type": "callable", "description": "The next middleware or request handler."}
+          ],
+          "returns": "mixed"
+        }
+      ]
+    }
+  ],
+  "usage": "Middleware classes are defined in `app/Middleware/` and are applied to routes in `routes.php` by adding a `middleware` array to the route definition. The `App.php` class handles the execution of the middleware pipeline."
+}

@@ -1,0 +1,46 @@
+{
+  "helper_name": "Auth",
+  "description": "Provides static methods for checking authentication status, retrieving user data, and performing role-based checks.",
+  "methods": [
+    {
+      "name": "check",
+      "description": "Checks if a user is currently logged in.",
+      "parameters": [],
+      "returns": "bool"
+    },
+    {
+      "name": "user",
+      "description": "Retrieves the data of the currently logged-in user.",
+      "parameters": [],
+      "returns": "array|null"
+    },
+    {
+      "name": "id",
+      "description": "Retrieves the ID of the currently logged-in user.",
+      "parameters": [],
+      "returns": "int|null"
+    },
+    {
+      "name": "hasRole",
+      "description": "Checks if the logged-in user has a specific role.",
+      "parameters": [
+        {"name": "role", "type": "string", "description": "The role to check for."}
+      ],
+      "returns": "bool"
+    },
+    {
+      "name": "can",
+      "description": "Checks if the logged-in user has a specific permission. Currently, this is a simplified check that maps directly to roles.",
+      "parameters": [
+        {"name": "permission", "type": "string", "description": "The permission (role) to check for."}
+      ],
+      "returns": "bool"
+    },
+    {
+      "name": "logout",
+      "description": "Logs out the current user by destroying the session.",
+      "parameters": [],
+      "returns": "void"
+    }
+  ]
+}
