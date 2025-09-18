@@ -1,0 +1,36 @@
+{
+  "helper_name": "BotState",
+  "description": "Defines constants for various states a bot user can be in, especially during multi-step processes like selling items. Centralizing these states improves code readability, maintainability, and reduces errors.",
+  "constants": [
+    {
+      "name": "IDLE",
+      "value": "idle",
+      "description": "The default state when a user is not engaged in any specific process."
+    },
+    {
+      "name": "CANCELLED",
+      "value": "cancelled",
+      "description": "Indicates a process has been explicitly cancelled by the user."
+    },
+    {
+      "name": "SELLING_BATCHING_ITEMS",
+      "value": "selling_batching_items",
+      "description": "User is currently in the process of batching items for sale using the /jual command."
+    },
+    {
+      "name": "SELLING_AWAITING_PRICE",
+      "value": "selling_awaiting_price",
+      "description": "User has batched items and the bot is awaiting price input."
+    },
+    {
+      "name": "SELLING_AWAITING_CONFIRMATION",
+      "value": "selling_awaiting_confirmation",
+      "description": "User has provided a price and the bot is awaiting confirmation to finalize the sale."
+    },
+    {
+      "name": "SELLING_FINALIZED",
+      "value": "selling_finalized",
+      "description": "The selling process has been successfully finalized."
+    }
+  ]
+}
