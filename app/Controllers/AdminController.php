@@ -10,8 +10,20 @@ use TokoBot\Models\RoleModel;
 use TokoBot\Models\StorageChannelModel;
 use TokoBot\Models\UserModel;
 
+use Psr
+use Psr\SimpleCache\CacheInterface;
+use TokoBot\Core\Container;
+
 class AdminController extends DashmixController
 {
+    private CacheInterface $cache;
+
+    public function __construct(Container $container)
+    {
+        parent::__construct($container);
+        $this->cache = $container->get(CacheInterface::class);
+    }
+
     public function index()
     {
         $this->dashmixDashboard();
@@ -19,27 +31,35 @@ class AdminController extends DashmixController
 
     public function dashmixDashboard()
     {
-        // Widget Data: Bot Status
-        $totalBots = Bot::countAll();
+        $cacheKey = 'dashboard_stats';
+        $viewData = $this->cache->get($cacheKey);
 
-        $botsFile = CONFIG_PATH . '/tbots.php';
-        $botTokens = file_exists($botsFile) ? require $botsFile : [];
-        $botsWithToken = count($botTokens);
+        if ($viewData === null) {
+            // Widget Data: Bot Status
+            $totalBots = Bot::countAll();
 
-        // Widget Data: Critical Logs
-        $logFile = ROOT_PATH . '/logs/critical.log';
-        $criticalLogs = [];
-        if (file_exists($logFile)) {
-            $fileContent = file_get_contents($logFile);
-            $lines = explode("\n", trim($fileContent));
-            $criticalLogs = array_slice(array_reverse($lines), 0, 5); // Get latest 5 lines
+            $botsFile = CONFIG_PATH . '/tbots.php';
+            $botTokens = file_exists($botsFile) ? require $botsFile : [];
+            $botsWithToken = count($botTokens);
+
+            // Widget Data: Critical Logs
+            $logFile = ROOT_PATH . '/logs/critical.log';
+            $criticalLogs = [];
+            if (file_exists($logFile)) {
+                $fileContent = file_get_contents($logFile);
+                $lines = explode("\n", trim($fileContent));
+                $criticalLogs = array_slice(array_reverse($lines), 0, 5); // Get latest 5 lines
+            }
+
+            $viewData = [
+                'totalBots' => $totalBots,
+                'botsWithToken' => $botsWithToken,
+                'criticalLogs' => $criticalLogs
+            ];
+
+            // Store in cache for 60 seconds
+            $this->cache->set($cacheKey, $viewData, 60);
         }
-
-        $viewData = [
-            'totalBots' => $totalBots,
-            'botsWithToken' => $botsWithToken,
-            'criticalLogs' => $criticalLogs
-        ];
 
         $breadcrumbs = [
             ['name' => 'Dashboard']

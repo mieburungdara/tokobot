@@ -36,6 +36,22 @@ foreach ($templateConfig as $key => $value) {
 // Store the configured template object in the container
 $container->set('template', $dm);
 
+// Register Cache Service (PSR-16)
+use Psr\SimpleCache\CacheInterface;
+use TokoBot\Helpers\ApcuCache;
+
+$container->set(CacheInterface::class, function () {
+    try {
+        return new ApcuCache();
+    } catch (\Exception $e) {
+        // Log the error if APCu is not available
+        Logger::channel('critical')->warning('APCu cache initialization failed: ' . $e->getMessage());
+        // Fallback to a dummy/null cache object if needed, or re-throw.
+        // For now, we let it fail during bootstrap if APCu is expected.
+        throw $e;
+    }
+});
+
 // --- End DI Container Setup ---
 
 // Set global error and exception handlers
