@@ -112,9 +112,15 @@ class BotApiController extends BaseController
     public function setWebhook(int $id)
     {
         Logger::channel('app')->info('setWebhook called for bot ID: ' . $id);
-        $webhookUrl = $_POST['url'] ?? '';
-        if (empty($webhookUrl) || !filter_var($webhookUrl, FILTER_VALIDATE_URL)) {
-            $this->sendJsonResponse(['error' => 'Invalid or empty URL provided.'], 400);
+
+        // The webhook URL is now generated on the server for security and consistency.
+        // The client no longer needs to send it, making the API more robust.
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || ($_SERVER['SERVER_PORT'] ?? 80) == 443 ? "https://" : "http://";
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $webhookUrl = rtrim($protocol . $host, '/') . '/tbot/' . $id . '.php';
+
+        if (!filter_var($webhookUrl, FILTER_VALIDATE_URL)) {
+            $this->sendJsonResponse(['error' => 'Server could not generate a valid webhook URL.'], 500);
         }
 
         $this->handleBotApiAction($id, function (Telegram $telegram) use ($webhookUrl, $id) {

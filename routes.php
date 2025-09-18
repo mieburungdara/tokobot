@@ -52,9 +52,11 @@ return FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
         $r->addRoute('POST', '/api/miniapp/auth', ['TokoBot\Controllers\MiniAppController', 'authenticate']);
 
         // Mini App Admin Dashboard
-        $r->addRoute('GET', '/miniapp/admin', ['TokoBot\Controllers\MiniAppController', 'adminDashboard', ['middleware' => ['AuthMiddleware', ['RoleMiddleware', 'admin']]]]);
-    
-        // API routes
-        $r->addRoute('GET', '/api/tbot/{id:\d+}/webhook', ['TokoBot\Controllers\BotApiController', 'getWebhookInfo']);
-        $r->addRoute('POST', '/api/tbot/{id:\d+}/webhook', ['TokoBot\Controllers\BotApiController', 'setWebhook']);
-        $r->addRoute('DELETE', '/api/tbot/{id:\d+}/webhook', ['TokoBot\Controllers\BotApiController', 'deleteWebhook']);});
+        $r->addRoute('GET', '/miniapp/admin', ['TokoBot\Controllers\MiniAppController', 'adminDashboard', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+
+        // API routes for bot management (requires admin authentication)
+        $adminMiddleware = ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]];
+        $r->addRoute('GET', '/api/tbot/{id:\d+}/webhook', ['TokoBot\Controllers\BotApiController', 'getWebhookInfo', $adminMiddleware]);
+        $r->addRoute('POST', '/api/tbot/{id:\d+}/webhook', ['TokoBot\Controllers\BotApiController', 'setWebhook', $adminMiddleware]);
+        $r->addRoute('DELETE', '/api/tbot/{id:\d+}/webhook', ['TokoBot\Controllers\BotApiController', 'deleteWebhook', $adminMiddleware]);
+});
