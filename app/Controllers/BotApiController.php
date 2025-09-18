@@ -10,88 +10,115 @@ use TokoBot\Helpers\Logger;
 
 class BotApiController extends BaseController
  {
-private function getBotToken(int $botId): ?string
-{
-       return \TokoBot\Models\Bot::findTokenById($botId);
-}
+    /**
+     * Fetches the bot token from the model.
+     * This method is a simple wrapper, allowing for easier extension (e.g., caching) in the future.
+     *
+     * @param int $botId
+     * @return string|null
+     */
+    private function getBotToken(int $botId): ?string
+    {
+        return \TokoBot\Models\Bot::findTokenById($botId);
+    }
 
-private function sendJsonResponse(array $data, int $statusCode = 200)
-{
-    header('Content-Type: application/json');
-    http_response_code($statusCode);
-    echo json_encode($data);
-    exit();
-}
+    /**
+     * Sends a JSON response and terminates the script.
+     *
+     * @param array $data
+     * @param int $statusCode
+     */
+    private function sendJsonResponse(array $data, int $statusCode = 200)
+    {
+        header('Content-Type: application/json');
+        http_response_code($statusCode);
+        echo json_encode($data);
+        exit();
+    }
 
-public function getWebhookInfo($id)
-{
-    try {
-        $token = $this->getBotToken($id);
+    /**
+     * Initializes the Telegram API object for a specific bot.
+     *
+     * @param int $botId The ID of the bot.
+     * @param bool $withUsername Whether to fetch the bot's username.
+     * @return Telegram
+     * @throws BotNotFoundException
+     * @throws TelegramException
+     */
+    private function initializeTelegram(int $botId, bool $withUsername = false): Telegram
+    {
+        $token = $this->getBotToken($botId);
         if (!$token) {
-            throw new BotNotFoundException('Bot token not found for ID: ' . $id);
+            throw new BotNotFoundException('Bot token not found for ID: ' . $botId);
         }
 
-        // Create a temporary Telegram object to make API requests
+        // The longman/telegram-bot library uses a static Telegram instance.
+        // We must first instantiate with the token to make API calls.
         $telegram = new Telegram($token);
 
-        // Get bot info to retrieve the username, which is needed for the Telegram object.
-        $getMeResponse = Request::getMe();
-        if (!$getMeResponse->isOk()) {
-            throw new TelegramException('Failed to get bot info: ' . $getMeResponse->getDescription());
-        }
-        $botUsername = $getMeResponse->getResult()->getUsername();
-
-        // Re-initialize Telegram object with the correct username.
-        $telegram = new Telegram($token, $botUsername);
-        $response = Request::getWebhookInfo();
-
-        if (!$response->isOk()) {
-            throw new TelegramException($response->getDescription());
+        if ($withUsername) {
+            $getMeResponse = Request::getMe();
+            if (!$getMeResponse->isOk()) {
+                throw new TelegramException('Failed to get bot info: ' . $getMeResponse->getDescription());
+            }
+            $botUsername = $getMeResponse->getResult()->getUsername();
+            // Re-initialize to set the username for the static instance.
+            return new Telegram($token, $botUsername);
         }
 
-        $result = $response->getResult(); // This is a WebhookInfo object
-
-        if ($result === null) {
-            $this->sendJsonResponse([]);
-        } else {
-            $this->sendJsonResponse($result->getRawData());
-        }
-    } catch (BotNotFoundException $e) {
-        Logger::channel('telegram')->warning($e->getMessage());
-        $this->sendJsonResponse(['error' => $e->getMessage()], 404);
-    } catch (TelegramException $e) {
-        Logger::channel('telegram')->error('Get webhook info failed', ['bot_id' => $id, 'error' => $e->getMessage()]);
-        $this->sendJsonResponse(['error' => $e->getMessage()], 502);
-    } catch (\Exception $e) {
-        Logger::channel('app')->error('An unexpected error occurred in getWebhookInfo', ['bot_id' => $id, 'error' => $e->getMessage()]);
-        $this->sendJsonResponse(['error' => 'An unexpected error occurred.'], 500);
+        return $telegram;
     }
-}
 
-    function setWebhook($id)
+    /**
+     * A wrapper to execute bot API actions with standardized error handling.
+     *
+     * @param int $botId
+     * @param callable $action The action to perform. It receives the Telegram object.
+     * @param bool $withUsername Whether to initialize the Telegram object with the username.
+     */
+    private function handleBotApiAction(int $botId, callable $action, bool $withUsername = false)
     {
-        
+        try {
+            $telegram = $this->initializeTelegram($botId, $withUsername);
+            $action($telegram);
+        } catch (BotNotFoundException $e) {
+            Logger::channel('telegram')->warning($e->getMessage());
+            $this->sendJsonResponse(['error' => $e->getMessage()], 404);
+        } catch (TelegramException $e) {
+            $context = ['bot_id' => $botId, 'error' => $e->getMessage()];
+            Logger::channel('telegram')->error('Telegram API action failed', $context);
+            $this->sendJsonResponse(['error' => 'Telegram API Error: ' . $e->getMessage()], 502);
+        } catch (\Exception $e) {
+            $context = ['bot_id' => $botId, 'error' => $e->getMessage()];
+            Logger::channel('app')->error('An unexpected error occurred during a bot API action', $context);
+            $this->sendJsonResponse(['error' => 'An unexpected error occurred.'], 500);
+        }
+    }
+
+    public function getWebhookInfo(int $id)
+    {
+        $this->handleBotApiAction($id, function () {
+            $response = Request::getWebhookInfo();
+
+            if (!$response->isOk()) {
+                throw new TelegramException($response->getDescription());
+            }
+
+            $result = $response->getResult();
+            $this->sendJsonResponse($result ? $result->getRawData() : []);
+        });
+    }
+
+    public function setWebhook(int $id)
+    {
         Logger::channel('app')->info('setWebhook called for bot ID: ' . $id);
         $webhookUrl = $_POST['url'] ?? '';
         if (empty($webhookUrl) || !filter_var($webhookUrl, FILTER_VALIDATE_URL)) {
             $this->sendJsonResponse(['error' => 'Invalid or empty URL provided.'], 400);
         }
 
-        try {
-            $token = $this->getBotToken($id);
-            if (!$token) {
-                throw new BotNotFoundException('Bot token not found for ID: ' . $id);
-            }
-
-            // Create a temporary Telegram object to make API requests
-            $telegram = new Telegram($token);
-
-            // Get bot info to retrieve the username
-            $getMeResponse = Request::getMe();
-            if (!$getMeResponse->isOk()) {
-                throw new TelegramException('Failed to get bot info: ' . $getMeResponse->getDescription());
-            }
-            $botUsername = $getMeResponse->getResult()->getUsername();
+        $this->handleBotApiAction($id, function (Telegram $telegram) use ($webhookUrl, $id) {
+            $botUsername = $telegram->getBotUsername();
 
             $webhookFilePath = PUBLIC_PATH . '/tbot/' . $id . '.php';
             $webhookFileDir = dirname($webhookFilePath);
@@ -102,7 +129,9 @@ public function getWebhookInfo($id)
                 }
             }
 
-            // The new template for `longman/telegram-bot`
+            // Use var_export for safer variable injection into the PHP file content.
+            $exportedUsername = var_export($botUsername, true);
+
             $webhookFileContent = <<<PHP
 <?php
 
@@ -145,7 +174,7 @@ if (function_exists('fastcgi_finish_request')) {
 
 try {
     // Create Telegram API object and handle webhook request
-    \$telegram = new Telegram(\$botToken, '{$botUsername}');
+    \$telegram = new Telegram(\$botToken, {$exportedUsername});
     Logger::channel('debug')->debug('Bot ID before GenericBotHandler instantiation', ['botToken' => \$botToken, 'type' => \$telegram]);
 
 
@@ -165,66 +194,35 @@ try {
 PHP;
 
             if (!file_put_contents($webhookFilePath, $webhookFileContent)) {
-                throw new \Exception('Could not write webhook file. Check permissions.');
+                throw new \Exception('Could not write webhook file. Check directory permissions.');
             }
 
-            $telegram = new Telegram($token, $botUsername);
             $response = Request::setWebhook(['url' => $webhookUrl]);
 
             if (!$response->isOk()) {
+                // Clean up the created file if setting the webhook fails.
                 if (file_exists($webhookFilePath)) {
                     unlink($webhookFilePath);
                 }
                 throw new TelegramException($response->getDescription());
             }
 
-            $this->sendJsonResponse(['success' => true, 'message' => 'Webhook set successfully!']);
-        } catch (BotNotFoundException $e) {
-            Logger::channel('telegram')->warning($e->getMessage());
-            $this->sendJsonResponse(['error' => $e->getMessage()], 404);
-        } catch (TelegramException $e) {
-            Logger::channel('telegram')->error('Set webhook failed', ['bot_id' => $id, 'url' => $webhookUrl, 'error' => $e->getMessage()]);
-            $this->sendJsonResponse(['error' => $e->getMessage()], 502);
-        } catch (\Exception $e) {
-            Logger::channel('app')->error('An unexpected error occurred in setWebhook', ['bot_id' => $id, 'error' => $e->getMessage()]);
-            $this->sendJsonResponse(['error' => 'An unexpected error occurred.'], 500);
-        }
+            $this->sendJsonResponse(['success' => true, 'message' => 'Webhook successfully set!']);
+        }, true);
     }
 
-    function deleteWebhook($id)
+    public function deleteWebhook(int $id)
     {
-        try {
-            $token = $this->getBotToken($id);
-            if (!$token) {
-                throw new BotNotFoundException('Bot token not found for ID: ' . $id);
-            }
-
-            // Create Telegram API object. The username is not required for this action.
-            $telegram = new Telegram($token);
-            
+        // @phpstan-ignore closure.unusedUse
+        $this->handleBotApiAction($id, function () use ($id) {
             // Delete the webhook and explicitly drop any pending updates.
-            // This will solve the issue of the pending count increasing.
             $response = Request::deleteWebhook(['drop_pending_updates' => true]);
 
             if (!$response->isOk()) {
                 throw new TelegramException($response->getDescription());
             }
 
-            $webhookFilePath = PUBLIC_PATH . '/tbot/' . $id . '.php';
-            if (file_exists($webhookFilePath)) {
-                unlink($webhookFilePath);
-            }
-
-            $this->sendJsonResponse(['success' => true, 'message' => 'Webhook deleted successfully!']);
-        } catch (BotNotFoundException $e) {
-            Logger::channel('telegram')->warning($e->getMessage());
-            $this->sendJsonResponse(['error' => $e->getMessage()], 404);
-        } catch (TelegramException $e) {
-            Logger::channel('telegram')->error('Delete webhook failed', ['bot_id' => $id, 'error' => $e->getMessage()]);
-            $this->sendJsonResponse(['error' => $e->getMessage()], 502);
-        } catch (\Exception $e) {
-            Logger::channel('app')->error('An unexpected error occurred in deleteWebhook', ['bot_id' => $id, 'error' => $e->getMessage()]);
-            $this->sendJsonResponse(['error' => 'An unexpected error occurred.'], 500);
-        }
+            $this->sendJsonResponse(['success' => true, 'message' => 'Webhook successfully deleted!']);
+        });
     }
 }
