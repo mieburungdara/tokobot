@@ -64,8 +64,14 @@ class AdminController extends DashmixController
         ];
 
         $pdo = \TokoBot\Helpers\Database::getInstance();
-        $stmt = $pdo->query("SELECT telegram_id, username, first_name, role FROM users ORDER BY first_name ASC");
+        
+        // Fetch users with their role names
+        $stmt = $pdo->query("SELECT u.telegram_id, u.username, u.first_name, r.name as role_name FROM users u LEFT JOIN roles r ON u.role_id = r.id ORDER BY u.first_name ASC");
         $users = $stmt->fetchAll();
+
+        // Fetch all available roles
+        $stmtRoles = $pdo->query("SELECT id, name FROM roles ORDER BY name ASC");
+        $roles = $stmtRoles->fetchAll();
 
         $this->renderDashmix(
             VIEWS_PATH . '/admin/users.php',
@@ -73,7 +79,7 @@ class AdminController extends DashmixController
             'Manage all application users.',
             [],
             $breadcrumbs,
-            ['users' => $users]
+            ['users' => $users, 'roles' => $roles]
         );
     }
 
@@ -491,4 +497,38 @@ class AdminController extends DashmixController
         header('Location: /bot-management');
         exit();
     }
+
+    public function updateUserRole()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /users');
+            exit();
+        }
+
+        $telegramId = $_POST['telegram_id'] ?? null;
+        $roleId = $_POST['role_id'] ?? null;
+
+        if (empty($telegramId) || empty($roleId)) {
+            \TokoBot\Helpers\Session::flash('error_message', 'User ID or Role ID is missing.');
+            header('Location: /users');
+            exit();
+        }
+
+        $pdo = \TokoBot\Helpers\Database::getInstance();
+
+        try {
+            $stmt = $pdo->prepare("UPDATE users SET role_id = ? WHERE telegram_id = ?");
+            $stmt->execute([$roleId, $telegramId]);
+            \TokoBot\Helpers\Session::flash('success_message', 'User role updated successfully!');
+        } catch (\PDOException $e) {
+            \TokoBot\Helpers\Session::flash('error_message', 'Failed to update user role: ' . $e->getMessage());
+        }
+
+        header('Location: /users');
+        exit();
+    }
+
+    public function migrations()
+    {
+
 }

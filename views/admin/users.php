@@ -22,7 +22,20 @@
                             (<?php echo htmlspecialchars($user['username']); ?>)
                         </td>
                         <td>
-                            <span class="badge bg-primary"><?php echo htmlspecialchars($user['role']); ?></span>
+                            <form action="/users/update-role" method="POST" class="d-inline-flex align-items-center">
+                                <input type="hidden" name="telegram_id" value="<?php echo htmlspecialchars($user['telegram_id']); ?>">
+                                <select name="role_id" class="form-select form-select-sm me-2">
+                                    <?php foreach ($roles as $role): ?>
+                                        <option value="<?php echo htmlspecialchars($role['id']); ?>"
+                                            <?php echo (isset($user['role_name']) && $user['role_name'] === $role['name']) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars(ucfirst($role['name'])); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-alt-primary" data-bs-toggle="tooltip" title="Update Role">
+                                    <i class="fa fa-save"></i>
+                                </button>
+                            </form>
                         </td>
                         <td class="text-center">
                             <div class="btn-group">

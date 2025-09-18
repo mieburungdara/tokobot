@@ -19,6 +19,9 @@ return FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
                 $r->addRoute('GET', '/bot-management', ['TokoBot\Controllers\AdminController', 'manageBots', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
                 $r->addRoute('POST', '/bot-management', ['TokoBot\Controllers\AdminController', 'addBot', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
                 $r->addRoute('POST', '/bot-management/{id:\d+}/delete', ['TokoBot\Controllers\AdminController', 'deleteBot', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+
+                // User Role Management
+                $r->addRoute('POST', '/users/update-role', ['TokoBot\Controllers\AdminController', 'updateUserRole', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
         
                 // Storage Channel Management
                 $r->addRoute('GET', '/storage-channels', ['TokoBot\Controllers\AdminController', 'storageChannels', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
