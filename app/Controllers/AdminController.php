@@ -345,6 +345,21 @@ class AdminController extends DashmixController
         );
     }
 
+    public function deleteStorageChannel($id)
+    {
+        $pdo = \TokoBot\Helpers\Database::getInstance();
+        try {
+            $stmt = $pdo->prepare("DELETE FROM bot_storage_channels WHERE id = ?");
+            $stmt->execute([$id]);
+            \TokoBot\Helpers\Session::flash('success_message', 'Storage channel deleted successfully!');
+        } catch (\PDOException $e) {
+            \TokoBot\Helpers\Session::flash('error_message', 'Failed to delete storage channel: ' . $e->getMessage());
+        }
+
+        header('Location: /storage-channels');
+        exit();
+    }
+
     public function updateUserRole()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

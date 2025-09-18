@@ -3,7 +3,7 @@
         <div class="block-header block-header-default">
             <h3 class="block-title">Storage Channels</h3>
             <div class="block-options">
-                <a href="/admin/storage-channels/add" class="btn btn-sm btn-primary">
+                <a href="/storage-channels/add" class="btn btn-sm btn-primary">
                     <i class="fa fa-plus me-1"></i> Add Channel
                 </a>
             </div>
@@ -46,10 +46,10 @@
                                 <td><?php echo htmlspecialchars($channel['last_used_at'] ?? 'N/A'); ?></td>
                                 <td>
                                     <div class="btn-group">
-                                        <a href="/admin/storage-channels/edit/<?php echo $channel['id']; ?>" class="btn btn-sm btn-alt-secondary" data-bs-toggle="tooltip" title="Edit">
+                                        <a href="/storage-channels/edit/<?php echo $channel['id']; ?>" class="btn btn-sm btn-alt-secondary" data-bs-toggle="tooltip" title="Edit">
                                             <i class="fa fa-fw fa-pencil-alt"></i>
                                         </a>
-                                        <form action="/admin/storage-channels/delete/<?php echo $channel['id']; ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this channel?');">
+                                        <form action="/storage-channels/delete/<?php echo $channel['id']; ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this channel?');">
                                             <button type="submit" class="btn btn-sm btn-alt-secondary" data-bs-toggle="tooltip" title="Delete">
                                                 <i class="fa fa-fw fa-times"></i>
                                             </button>
