@@ -27,7 +27,7 @@ class CancelCommand extends UserCommand
         $stmt->execute([$userId]);
         $state = $stmt->fetch();
 
-        if (!$state) {
+        if (!$state || $state['state'] === \TokoBot\Helpers\BotState::IDLE) {
             return Request::sendMessage(['chat_id' => $chatId, 'text' => 'Tidak ada proses yang sedang berjalan untuk dibatalkan.']);
         }
 

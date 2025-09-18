@@ -46,7 +46,7 @@ class JualCommand extends UserCommand
 
         $sql = "INSERT INTO user_states (telegram_id, state, context) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE state = VALUES(state), context = VALUES(context)";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$user->getId(), 'selling_batching_items', json_encode($context)]);
+        $stmt->execute([$user->getId(), \TokoBot\Helpers\BotState::SELLING_BATCHING_ITEMS, json_encode($context)]);
 
         $itemCount = count($context['items']);
         $groupCount = count(array_unique(array_column($context['items'], 'media_group_id')));

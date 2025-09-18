@@ -80,7 +80,7 @@ class GenericBotHandler
         $stmt->execute([$userId]);
         $state = $stmt->fetch();
 
-        if (!$state || $state['state'] !== 'selling_batching_items') {
+        if (!$state || $state['state'] !== \TokoBot\Helpers\BotState::SELLING_BATCHING_ITEMS) {
             return false;
         }
 
@@ -95,7 +95,7 @@ class GenericBotHandler
         $context['price'] = $price;
 
         $updateSql = "UPDATE user_states SET state = ?, context = ? WHERE telegram_id = ?";
-        $this->pdo->prepare($updateSql)->execute(['selling_awaiting_confirmation', json_encode($context), $userId]);
+        $this->pdo->prepare($updateSql)->execute([\TokoBot\Helpers\BotState::SELLING_AWAITING_CONFIRMATION, json_encode($context), $userId]);
 
         $itemCount = count($context['items']);
         $responseText = "Anda akan menjual paket berisi {$itemCount} item dengan harga Rp " . number_format($price, 0, ',', '.') . ". Lanjutkan?";
@@ -133,10 +133,9 @@ class GenericBotHandler
                 'text' => '❌ Penjualan dibatalkan.',
                 'reply_markup' => ''
             ]);
-        } elseif ($callbackData === 'jual_confirm') {
-            $stmt = $this->pdo->prepare("SELECT * FROM user_states WHERE telegram_id = ? AND state = 'selling_awaiting_confirmation'");
-            $stmt->execute([$userId]);
-            $state = $stmt->fetch();
+                    } elseif ($callbackData === 'jual_confirm') {
+                        $stmt = $this->pdo->prepare("SELECT * FROM user_states WHERE telegram_id = ? AND state = ?");
+                        $stmt->execute([$userId, \TokoBot\Helpers\BotState::SELLING_AWAITING_CONFIRMATION]);            $state = $stmt->fetch();
 
             if ($state) {
                 Request::editMessageText([
