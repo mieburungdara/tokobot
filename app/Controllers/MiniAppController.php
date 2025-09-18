@@ -153,6 +153,7 @@ class MiniAppController extends DashmixController
                 Session::set('user', $dbUser); // Simpan semua data pengguna dalam satu array
                 Session::set('user_id', $dbUser['telegram_id']);
                 Session::set('user_role', $dbUser['role']); // Gunakan role dari database
+                Session::set('auth_source', 'miniapp'); // Set authentication source
                 Logger::channel('auth')->info('Session created for Mini App user.', ['user_id' => $user['id'], 'role' => $dbUser['role']]);
             } else {
                 // Ini seharusnya tidak terjadi jika sinkronisasi berhasil

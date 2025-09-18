@@ -22,6 +22,7 @@ class AuthController extends BaseController
         if (password_verify($password, $hashedPassword)) { // Verifikasi password dengan aman
             // Password benar, atur session dan alihkan ke dashboard
             Session::set('user_role', 'admin');
+            Session::set('auth_source', 'xoradmin'); // Set authentication source
             header('Location: /dashboard');
             exit();
         } else {

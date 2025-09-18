@@ -295,6 +295,17 @@ class Template {
       $link_icon = isset($node['icon']) ? '<i class="nav-main-link-icon ' . $node['icon'] . '"></i>' . "\n" : '';
       $link_badge = isset($node['badge']) ? '<span class="nav-main-link-badge badge rounded-pill bg-' . (is_array($node['badge']) ? $node['badge'][1] : 'primary') . '">' . (is_array($node['badge']) ? $node['badge'][0] : $node['badge']) . '</span>' . "\n" : '';
       $link_url = isset($node['url']) ? $node['url'] : '#';
+
+      // Prepend auth_source prefix to admin URLs
+      if (isset($node['roles']) && (in_array('admin', $node['roles']) || in_array('member', $node['roles']))) {
+          $authSource = TokoBot\Helpers\Session::get('auth_source');
+          if ($authSource === 'miniapp') {
+              $link_url = '/miniapp/admin' . $link_url;
+          } elseif ($authSource === 'xoradmin') {
+              $link_url = '/xoradmin' . $link_url;
+          }
+      }
+
       $link_sub = isset($node['sub']) && is_array($node['sub']) ? true : false;
       $link_type = isset($node['type']) ? isset($node['type']) : '';
       $sub_active = false;

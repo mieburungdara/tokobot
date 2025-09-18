@@ -1,0 +1,62 @@
+{
+  "file_name": "admin_menu.php",
+  "description": "Defines the structure and content of the admin sidebar navigation menu. Each menu item can specify an icon, name, URL, and an array of roles required to view it.",
+  "structure": [
+    {
+      "name": "Admin Dashboard",
+      "icon": "si si-speedometer",
+      "url": "/dashboard",
+      "roles": "['admin']"
+    },
+    {
+      "name": "Member Dashboard",
+      "icon": "si si-user",
+      "url": "/dashboard",
+      "roles": "['member']"
+    },
+    {
+      "name": "Management",
+      "icon": "si si-puzzle",
+      "roles": "['admin', 'member']",
+      "sub": [
+        {
+          "name": "Users",
+          "url": "/users",
+          "roles": "['admin']"
+        },
+        {
+          "name": "Reports",
+          "url": "/reports",
+          "roles": "(inherits from parent or public if not set)"
+        },
+        {
+          "name": "Bot Management",
+          "url": "/bot-management",
+          "roles": "['admin']"
+        },
+        {
+          "name": "Log Viewer",
+          "url": "/logs",
+          "roles": "['admin']"
+        },
+        {
+          "name": "Storage Channels",
+          "url": "/storage-channels",
+          "roles": "['admin']"
+        },
+        {
+          "name": "Database Migrations",
+          "url": "/migrations",
+          "roles": "['admin']"
+        }
+      ]
+    },
+    {
+      "name": "Settings",
+      "icon": "si si-settings",
+      "url": "/settings",
+      "roles": "['admin', 'member']"
+    }
+  ],
+  "notes": "Menu items without a 'roles' key will inherit roles from their parent or be considered publicly accessible if no parent roles are defined. The `Template.php` class handles the rendering and role-based filtering of this menu structure."
+}
