@@ -21,6 +21,7 @@ require_once ROOT_PATH . '/bootstrap/app.php'; // Include bootstrap/app.php for 
 
 use TokoBot\Helpers\Database;
 
+header('Content-Type: text/plain');
 
 echo "Starting custom database migration...\n\n";
 
