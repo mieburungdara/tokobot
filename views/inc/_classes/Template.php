@@ -270,7 +270,26 @@ class Template {
    * @param   boolean     $nav_horizontal True if the menu is for horizontal view as well
    */
   private function build_nav_array($nav_array, $nav_horizontal) {
+    // Include Auth helper for role checking
+    if (!class_exists('TokoBot\\Helpers\\Auth')) {
+        require_once APP_PATH . '/Helpers/Auth.php';
+    }
+    
     foreach ($nav_array as $node) {
+      // Check if the menu item has roles defined and if the current user has any of those roles
+      if (isset($node['roles'])) {
+        $has_access = false;
+        foreach ($node['roles'] as $required_role) {
+          if (\TokoBot\Helpers\Auth::hasRole($required_role)) {
+            $has_access = true;
+            break;
+          }
+        }
+        if (!$has_access) {
+          continue; // Skip this menu item if user doesn't have required role
+        }
+      }
+
       // Get all vital link info
       $link_name = '<span class="nav-main-link-name">' . (isset($node['name']) ? $node['name'] : '') . '</span>' . "\n";
       $link_icon = isset($node['icon']) ? '<i class="nav-main-link-icon ' . $node['icon'] . '"></i>' . "\n" : '';

@@ -39,6 +39,16 @@ return [
                 'name'  => 'Log Viewer',
                 'url'   => '/logs',
                 'roles' => ['admin']
+            ],
+            [
+                'name'  => 'Storage Channels',
+                'url'   => '/storage-channels',
+                'roles' => ['admin']
+            ],
+            [
+                'name'  => 'Database Migrations',
+                'url'   => '/migrations',
+                'roles' => ['admin']
             ]
         ]
     ],
