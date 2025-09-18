@@ -58,16 +58,13 @@ class GenericBotHandler
         // If not handled statefully or as a callback query, proceed to command handling
         $this->telegram->addCommandsPath(ROOT_PATH . '/app/BotHandlers/Commands');
         
-        $response = $this->telegram->handle();
+        // The handle() method in the library executes the command and returns a boolean.
+        // We call it for its side-effect (running the command) and ignore the return value.
+        $this->telegram->handle();
 
-        if ($response === false) {
-            return Request::emptyResponse();
-        }
-
-        /** @var \Longman\TelegramBot\Entities\ServerResponse $response */
-        if ($response instanceof ServerResponse) {
-            return $response;
-        }
+        // We must return a ServerResponse to satisfy the method's return type hint.
+        // The actual HTTP response to Telegram has already been handled by the webhook template.
+        return Request::emptyResponse();
     }
 
 
