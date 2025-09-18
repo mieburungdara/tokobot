@@ -3,6 +3,7 @@
 namespace TokoBot\Controllers;
 
 use TokoBot\Helpers\Session;
+use TokoBot\Helpers\Logger;
 
 class DashboardController extends BaseController
 {
