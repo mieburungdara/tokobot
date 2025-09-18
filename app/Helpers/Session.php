@@ -60,6 +60,12 @@ class Session
      */
     public static function hasRole(string $role): bool
     {
-        return self::get('user_role') === $role;
+        $currentUserRole = self::get('user_role');
+        Logger::channel('auth')->info('Session::hasRole: Comparing roles.', [
+            'current_user_role_in_session' => $currentUserRole,
+            'role_being_checked' => $role,
+            'comparison_result' => ($currentUserRole === $role)
+        ]);
+        return $currentUserRole === $role;
     }
 }

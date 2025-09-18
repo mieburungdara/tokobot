@@ -42,6 +42,11 @@ class Auth
      */
     public static function hasRole(string $role): bool
     {
+        $sessionRole = Session::get('user_role');
+        Logger::channel('auth')->info('Auth::hasRole: Checking role.', [
+            'session_role' => $sessionRole,
+            'required_role' => $role
+        ]);
         return Session::hasRole($role);
     }
 
