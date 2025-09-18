@@ -122,6 +122,27 @@ if (!\$botToken) {
     exit("Bot configuration not found for ID: " . \$botId);
 }
 
+// --- Acknowledge the request to Telegram immediately ---
+// This prevents Telegram from re-sending the same update if processing takes a long time.
+// It tells Telegram "I got it, thank you!" and then we process the update in the background.
+if (function_exists('fastcgi_finish_request')) {
+    // This is the cleanest way for PHP-FPM setups (like Nginx).
+    http_response_code(200);
+    header('Content-Length: 0');
+    header('Connection: close');
+    fastcgi_finish_request();
+} else {
+    // Fallback for other server APIs (e.g., Apache with mod_php).
+    ignore_user_abort(true);
+    set_time_limit(0); // Disable script timeout
+    ob_start();
+    http_response_code(200);
+    header('Content-Length: 0');
+    header('Connection: close');
+    ob_end_flush();
+    flush();
+}
+
 try {
     // Create Telegram API object and handle webhook request
     \$telegram = new Telegram(\$botToken, '{$botUsername}');
@@ -134,10 +155,7 @@ try {
     // Pass the bot ID and Telegram object to our custom handler
     Logger::channel('app')->debug('Bot ID before GenericBotHandler instantiation', ['botId' => \$botId, 'type' => gettype(\$botId)]);
     \$handler = new GenericBotHandler(\$botId, \$telegram);
-    \$handler->handle();
-    // Pastikan Telegram mendapat respons sukses
-    http_response_code(200);
-    echo 'OK';
+    \$handler->handle(); // The library will handle sending the response to Telegram.
 
 } catch (TelegramException \$e) {
     Logger::channel('telegram')->error('Telegram API Exception', ['error' => \$e->getMessage()]);
