@@ -4,8 +4,9 @@ namespace TokoBot\Controllers;
 
 use TokoBot\Helpers\Logger;
 use TokoBot\Helpers\Session;
-use TokoBot\Helpers\Database;
 use TokoBot\Models\Bot;
+use TokoBot\Models\BotUserModel;
+use TokoBot\Models\UserModel;
 
 class MiniAppController extends DashmixController
 {
@@ -44,14 +45,8 @@ class MiniAppController extends DashmixController
         $dm = $this->container->get('template');
         $dm->page_scripts = ['https://telegram.org/js/telegram-web-app.js'];
 
-        $pdo = Database::getInstance();
         $telegramId = Session::get('user_id');
-        $sellerId = null;
-        if ($telegramId) {
-            $stmt = $pdo->prepare("SELECT seller_id FROM users WHERE telegram_id = ?");
-            $stmt->execute([$telegramId]);
-            $sellerId = $stmt->fetchColumn();
-        }
+        $sellerId = $telegramId ? UserModel::findSellerIdByTelegramId($telegramId) : null;
 
         $this->renderDashmix(
             VIEWS_PATH . '/miniapp/index.php',      // File konten
@@ -105,37 +100,11 @@ class MiniAppController extends DashmixController
 
         // Sinkronisasi data pengguna ke database (opsional, tapi sangat direkomendasikan)
         try {
-            $pdo = \TokoBot\Helpers\Database::getInstance();
-            $sql = "INSERT INTO users (telegram_id, username, first_name, last_name, photo_url, language_code, last_activity_at) "
-                 . "VALUES (?, ?, ?, ?, ?, ?, NOW()) "
-                 . "ON DUPLICATE KEY UPDATE username = VALUES(username), "
-                 . "first_name = VALUES(first_name), last_name = VALUES(last_name), photo_url = VALUES(photo_url), "
-                 . "language_code = VALUES(language_code), "
-                 . "last_activity_at = NOW()";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                $user['id'],
-                $user['username'] ?? null,
-                $user['first_name'],
-                $user['last_name'] ?? null,
-                $user['photo_url'] ?? null,
-                $user['language_code'] ?? 'en'
-            ]);
-
-            // Catat interaksi di tabel relasi bot_user. 
-            $sqlBotUser = "INSERT INTO bot_user (bot_id, user_id, allows_write_to_pm) VALUES (?, ?, ?) "
-                        . "ON DUPLICATE KEY UPDATE last_accessed_at = NOW(), allows_write_to_pm = VALUES(allows_write_to_pm)";
-            $stmtBotUser = $pdo->prepare($sqlBotUser);
-            $stmtBotUser->execute([
-                $bot_id, 
-                $user['id'],
-                isset($user['allows_write_to_pm']) && $user['allows_write_to_pm'] ? 1 : 0
-            ]);
+            UserModel::syncFromTelegram($user);
+            BotUserModel::syncInteraction($bot_id, $user['id'], isset($user['allows_write_to_pm']) && $user['allows_write_to_pm']);
 
             // Setelah sinkronisasi, ambil data lengkap pengguna dari DB untuk membuat sesi
-            $stmt = $pdo->prepare("SELECT * FROM users WHERE telegram_id = ?");
-            $stmt->execute([$user['id']]);
-            $dbUser = $stmt->fetch();
+            $dbUser = UserModel::findByTelegramId($user['id']);
 
             if ($dbUser) {
                 // Buat sesi lengkap untuk pengguna

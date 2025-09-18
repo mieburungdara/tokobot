@@ -53,7 +53,7 @@ class GenericBotHandler
             return Request::emptyResponse(); // No user, return empty response
         }
 
-        $this->syncUser($user);
+        UserModel::syncUser($user);
 
         // If not handled statefully or as a callback query, proceed to command handling
         $this->telegram->addCommandsPath(ROOT_PATH . '/app/BotHandlers/Commands');
@@ -72,26 +72,20 @@ class GenericBotHandler
     {
         $userId = $message->getFrom()->getId();
         $text = $message->getText();
-        $chatId = $message->getChat()->getId();
 
-        $stmt = $this->pdo->prepare("SELECT * FROM user_states WHERE telegram_id = ?");
-        $stmt->execute([$userId]);
-        $state = $stmt->fetch();
+        $state = UserStateModel::findByTelegramId($userId);
 
         if (!$state || $state['state'] !== \TokoBot\Helpers\BotState::SELLING_BATCHING_ITEMS) {
             return false;
         }
 
-        // Attempt to parse price
         $price = (float) str_replace(['Rp', '.', ','], ['', '', '.'], $text);
 
-        // If price is valid (numeric and positive), process it
         if ($price > 0) {
             $context = json_decode($state['context'], true);
             $context['price'] = $price;
 
-            $updateSql = "UPDATE user_states SET state = ?, context = ? WHERE telegram_id = ?";
-            $this->pdo->prepare($updateSql)->execute([\TokoBot\Helpers\BotState::SELLING_AWAITING_CONFIRMATION, json_encode($context), $userId]);
+            UserStateModel::updateState($userId, \TokoBot\Helpers\BotState::SELLING_AWAITING_CONFIRMATION, $context);
 
             $itemCount = count($context['items']);
             $responseText = "Anda akan menjual paket berisi {$itemCount} item dengan harga Rp " . number_format($price, 0, ',', '.') . ". Lanjutkan?";
@@ -103,7 +97,6 @@ class GenericBotHandler
             return true; // Message was handled as price
         }
 
-        // If the text is not a valid price and not a command, reply with helper text
         if (is_string($text) && strlen($text) > 0 && $text[0] !== '/') {
             Request::sendMessage(['chat_id' => $userId, 'text' => "Saya menunggu harga (angka) atau perintah /cancel."]);
             return true;
@@ -121,18 +114,17 @@ class GenericBotHandler
         Request::answerCallbackQuery(['callback_query_id' => $callbackQuery->getId()]);
 
         if ($callbackData === 'jual_cancel') {
-            $this->pdo->prepare("DELETE FROM user_states WHERE telegram_id = ?")->execute([$userId]);
+            UserStateModel::clearState($userId);
             Request::editMessageText([
                 'chat_id' => $message->getChat()->getId(),
                 'message_id' => $message->getMessageId(),
                 'text' => '❌ Penjualan dibatalkan.',
                 'reply_markup' => ''
             ]);
-                    } elseif ($callbackData === 'jual_confirm') {
-                        $stmt = $this->pdo->prepare("SELECT * FROM user_states WHERE telegram_id = ? AND state = ?");
-                        $stmt->execute([$userId, \TokoBot\Helpers\BotState::SELLING_AWAITING_CONFIRMATION]);            $state = $stmt->fetch();
+        } elseif ($callbackData === 'jual_confirm') {
+            $state = UserStateModel::findByTelegramId($userId);
 
-            if ($state) {
+            if ($state && $state['state'] === \TokoBot\Helpers\BotState::SELLING_AWAITING_CONFIRMATION) {
                 Request::editMessageText([
                     'chat_id' => $message->getChat()->getId(),
                     'message_id' => $message->getMessageId(),
@@ -151,12 +143,10 @@ class GenericBotHandler
         
         $this->pdo->beginTransaction();
         try {
-            $sellerId = $this->pdo->query("SELECT seller_id FROM users WHERE telegram_id = {$userId}")->fetchColumn();
+            $sellerId = UserModel::findSellerIdByTelegramId($userId);
 
-            $channelStmt = $this->pdo->prepare("SELECT * FROM bot_storage_channels WHERE bot_id = ? ORDER BY last_used_at ASC LIMIT 1");
-            $channelStmt->execute([$this->botId]);
-            $storageChannel = $channelStmt->fetch();
-            $storageChannelId = $storageChannel ? (int)$storageChannel['channel_id'] : -1002649138088;
+            $storageChannel = StorageChannelModel::findAvailableForBot($this->botId);
+            $storageChannelId = $storageChannel ? (int)$storageChannel['channel_id'] : -1002649138088; // Fallback
 
             $copiedMessageIds = [];
             foreach ($context['items'] as $item) {
@@ -174,17 +164,10 @@ class GenericBotHandler
                 throw new \Exception('Failed to copy all messages.');
             }
 
-            $countStmt = $this->pdo->prepare("SELECT COUNT(*) FROM contents WHERE seller_telegram_id = ?");
-            $countStmt->execute([$userId]);
-            $newCount = $countStmt->fetchColumn() + 1;
+            $newCount = ContentModel::countBySeller($userId) + 1;
             $contentUid = $sellerId . '_' . str_pad((string)$newCount, 4, '0', STR_PAD_LEFT);
 
-            $contentSql = "INSERT INTO contents (content_uid, seller_telegram_id, price, status, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW())";
-            $this->pdo->prepare($contentSql)->execute([$contentUid, $userId, $context['price'], 'available']);
-            $contentId = $this->pdo->lastInsertId();
-
-            $mediaSql = "INSERT INTO media (content_id, file_type, file_unique_id, file_size, width, height, duration, original_message_id, original_media_group_id, backup_channel_id, backup_message_id, raw_telegram_metadata) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $mediaStmt = $this->pdo->prepare($mediaSql);
+            $contentId = ContentModel::createContent($contentUid, $userId, $context['price']);
 
             foreach ($context['items'] as $index => $item) {
                 $raw = $item['raw_media'];
@@ -192,20 +175,30 @@ class GenericBotHandler
                 $mediaData = $raw[$mediaType];
                 $file = is_array($mediaData) ? end($mediaData) : $mediaData;
 
-                $mediaStmt->execute([
-                    $contentId, $mediaType, $file['file_unique_id'], $file['file_size'] ?? null, $file['width'] ?? null, $file['height'] ?? null, $file['duration'] ?? null,
-                    $item['message_id'], $item['media_group_id'], $storageChannelId, $copiedMessageIds[$index], json_encode($raw)
+                MediaModel::createMedia([
+                    'content_id' => $contentId,
+                    'file_type' => $mediaType,
+                    'file_unique_id' => $file['file_unique_id'],
+                    'file_size' => $file['file_size'] ?? null,
+                    'width' => $file['width'] ?? null,
+                    'height' => $file['height'] ?? null,
+                    'duration' => $file['duration'] ?? null,
+                    'original_message_id' => $item['message_id'],
+                    'original_media_group_id' => $item['media_group_id'],
+                    'backup_channel_id' => $storageChannelId,
+                    'backup_message_id' => $copiedMessageIds[$index],
+                    'raw_telegram_metadata' => json_encode($raw)
                 ]);
             }
 
             if ($storageChannel) {
-                $this->pdo->prepare("UPDATE bot_storage_channels SET last_used_at = NOW() WHERE id = ?")->execute([$storageChannel['id']]);
+                StorageChannelModel::updateLastUsed($storageChannel['id']);
             }
 
             $this->pdo->commit();
 
             Request::sendMessage(['chat_id' => $userId, 'text' => "✅ Penjualan berhasil disimpan!\nNomor Konten: {$contentUid}"]);
-            $this->pdo->prepare("DELETE FROM user_states WHERE telegram_id = ?")->execute([$userId]);
+            UserStateModel::clearState($userId);
 
         } catch (\Exception $e) {
             $this->pdo->rollBack();
@@ -214,16 +207,17 @@ class GenericBotHandler
         }
     }
 
-    private function syncUser(User $user): void
-    {
-        $sql = "INSERT INTO users (telegram_id, username, first_name, last_name, last_activity_at) VALUES (?, ?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE username = VALUES(username), first_name = VALUES(first_name), last_name = VALUES(last_name), last_activity_at = NOW()";
-        $this->pdo->prepare($sql)->execute([$user->getId(), $user->getUsername(), $user->getFirstName(), $user->getLastName()]);
-    }
-
     private function logMessage(Update $update): void
     {
         $message = $update->getMessage();
-        $sql = "INSERT INTO messages (id, message_id, user_id, chat_id, bot_id, text, raw_update) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE message_id = VALUES(message_id), user_id = VALUES(user_id), chat_id = VALUES(chat_id), bot_id = VALUES(bot_id), text = VALUES(text), raw_update = VALUES(raw_update)";
-        $this->pdo->prepare($sql)->execute([$update->getUpdateId(), $message->getMessageId(), $message->getFrom()->getId(), $message->getChat()->getId(), $this->botId, $message->getText(), json_encode($update->getRawData())]);
+        MessageModel::logMessage([
+            'id' => $update->getUpdateId(),
+            'message_id' => $message->getMessageId(),
+            'user_id' => $message->getFrom()->getId(),
+            'chat_id' => $message->getChat()->getId(),
+            'bot_id' => $this->botId,
+            'text' => $message->getText(),
+            'raw_update' => json_encode($update->getRawData())
+        ]);
     }
 }

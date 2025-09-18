@@ -10,14 +10,28 @@ abstract class BaseModel
 {
     protected PDO $db;
     protected string $table;
+    private static ?PDO $pdo_instance = null;
 
     public function __construct()
     {
-        $this->db = Database::getInstance();
+        $this->db = self::getDb();
         // Table name should be set in the child class, or derived from class name
         if (empty($this->table)) {
             $this->table = $this->deriveTableName();
         }
+    }
+
+    /**
+     * Get the cached PDO instance.
+     *
+     * @return PDO
+     */
+    protected static function getDb(): PDO
+    {
+        if (self::$pdo_instance === null) {
+            self::$pdo_instance = Database::getInstance();
+        }
+        return self::$pdo_instance;
     }
 
     /**

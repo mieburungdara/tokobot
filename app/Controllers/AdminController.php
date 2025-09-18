@@ -3,11 +3,12 @@
 namespace TokoBot\Controllers;
 
 use TokoBot\Helpers\Logger;
-use Longman\TelegramBot\Request;
-use Longman\TelegramBot\Telegram;
-use Longman\TelegramBot\Exception\TelegramException;
-use TokoBot\Exceptions\DatabaseException;
-use Symfony\Component\Process\Process;
+use TokoBot\Helpers\Session;
+use TokoBot\Models\Bot;
+use TokoBot\Models\MessageModel;
+use TokoBot\Models\RoleModel;
+use TokoBot\Models\StorageChannelModel;
+use TokoBot\Models\UserModel;
 
 class AdminController extends DashmixController
 {
@@ -19,9 +20,7 @@ class AdminController extends DashmixController
     public function dashmixDashboard()
     {
         // Widget Data: Bot Status
-        $pdo = \TokoBot\Helpers\Database::getInstance();
-        $stmt = $pdo->query("SELECT count(*) FROM tbots");
-        $totalBots = $stmt->fetchColumn();
+        $totalBots = Bot::countAll();
 
         $botsFile = CONFIG_PATH . '/tbots.php';
         $botTokens = file_exists($botsFile) ? require $botsFile : [];
@@ -63,14 +62,8 @@ class AdminController extends DashmixController
             ['name' => 'Users']
         ];
 
-        $pdo = \TokoBot\Helpers\Database::getInstance();
-        // Fetch users with their role names
-        $stmt = $pdo->query("SELECT u.telegram_id, u.username, u.first_name, r.name as role_name FROM users u LEFT JOIN roles r ON u.role_id = r.id ORDER BY u.first_name ASC");
-        $users = $stmt->fetchAll();
-
-        // Fetch all available roles
-        $stmtRoles = $pdo->query("SELECT id, name FROM roles ORDER BY name ASC");
-        $roles = $stmtRoles->fetchAll();
+        $users = UserModel::getAllWithRoles();
+        $roles = RoleModel::getAllSortedByName();
 
         $this->renderDashmix(
             VIEWS_PATH . '/admin/users.php',
@@ -121,16 +114,6 @@ class AdminController extends DashmixController
             ['name' => 'Bot Analytics']
         ];
 
-        $pdo = \TokoBot\Helpers\Database::getInstance();
-
-        // Command Usage
-        $commandUsageStmt = $pdo->query("SELECT text, count(*) as command_count FROM messages WHERE text LIKE '/%' GROUP BY text ORDER BY command_count DESC LIMIT 10");
-        $commandUsage = $commandUsageStmt->fetchAll();
-
-        // Active Users
-        $activeUsersStmt = $pdo->query("SELECT username, first_name, last_activity_at FROM users WHERE last_activity_at IS NOT NULL ORDER BY last_activity_at DESC LIMIT 10");
-        $activeUsers = $activeUsersStmt->fetchAll();
-
         // Bot Errors
         $appLogFile = ROOT_PATH . '/logs/app.log';
         $telegramLogFile = ROOT_PATH . '/logs/telegram.log';
@@ -138,8 +121,8 @@ class AdminController extends DashmixController
         $telegramLogs = file_exists($telegramLogFile) ? array_slice(array_reverse(explode("\n", trim(file_get_contents($telegramLogFile)))), 0, 5) : [];
 
         $viewData = [
-            'commandUsage' => $commandUsage,
-            'activeUsers' => $activeUsers,
+            'commandUsage' => MessageModel::getCommandUsageStats(),
+            'activeUsers' => UserModel::getRecentlyActiveUsers(),
             'appLogs' => $appLogs,
             'telegramLogs' => $telegramLogs,
         ];
@@ -211,18 +194,13 @@ class AdminController extends DashmixController
             ['name' => 'Bot Management']
         ];
 
-        // Load bots from the database
-        $pdo = \TokoBot\Helpers\Database::getInstance();
-        $stmt = $pdo->query("SELECT id, username, first_name, token IS NOT NULL as has_token FROM tbots ORDER BY first_name ASC");
-        $tbots = $stmt->fetchAll();
-
         $this->renderDashmix(
             VIEWS_PATH . '/admin/tbots.php',
             'Bot Management',
             'Manage your Telegram bots.',
             [],
             $breadcrumbs,
-            ['bots' => $tbots] // Pass bots data to the view
+            ['bots' => Bot::findAllWithTokenStatus()] // Pass bots data to the view
         );
     }
 
@@ -233,17 +211,13 @@ class AdminController extends DashmixController
             ['name' => 'Storage Channels']
         ];
 
-        $pdo = \TokoBot\Helpers\Database::getInstance();
-        $stmt = $pdo->query("SELECT id, bot_id, channel_id, last_used_at FROM bot_storage_channels ORDER BY bot_id ASC, id ASC");
-        $storageChannels = $stmt->fetchAll();
-
         $this->renderDashmix(
             VIEWS_PATH . '/admin/storage_channels.php',
             'Storage Channel Management',
             'Manage Telegram storage channels for bots.',
             [],
             $breadcrumbs,
-            ['storageChannels' => $storageChannels]
+            ['storageChannels' => StorageChannelModel::getAllSorted()]
         );
     }
 
@@ -255,26 +229,21 @@ class AdminController extends DashmixController
             ['name' => 'Add']
         ];
 
-        $pdo = \TokoBot\Helpers\Database::getInstance();
-        $stmt = $pdo->query("SELECT id, username FROM tbots ORDER BY username ASC");
-        $bots = $stmt->fetchAll();
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $botId = $_POST['bot_id'] ?? null;
             $channelId = $_POST['channel_id'] ?? null;
 
             if (empty($botId) || empty($channelId)) {
-                \TokoBot\Helpers\Session::flash('error_message', 'Bot ID and Channel ID cannot be empty.');
+                Session::flash('error_message', 'Bot ID and Channel ID cannot be empty.');
                 header('Location: /storage-channels/add');
                 exit();
             }
 
             try {
-                $stmt = $pdo->prepare("INSERT INTO bot_storage_channels (bot_id, channel_id) VALUES (?, ?)");
-                $stmt->execute([$botId, $channelId]);
-                \TokoBot\Helpers\Session::flash('success_message', 'Storage channel added successfully!');
-            } catch (\PDOException $e) {
-                \TokoBot\Helpers\Session::flash('error_message', 'Failed to add storage channel: ' . $e->getMessage());
+                (new StorageChannelModel())->create(['bot_id' => $botId, 'channel_id' => $channelId]);
+                Session::flash('success_message', 'Storage channel added successfully!');
+            } catch (\Exception $e) {
+                Session::flash('error_message', 'Failed to add storage channel: ' . $e->getMessage());
             }
 
             header('Location: /storage-channels');
@@ -287,7 +256,7 @@ class AdminController extends DashmixController
             'Add a new Telegram storage channel.',
             [],
             $breadcrumbs,
-            ['bots' => $bots]
+            ['bots' => Bot::findAllForSelection()]
         );
     }
 
@@ -299,36 +268,30 @@ class AdminController extends DashmixController
             ['name' => 'Edit']
         ];
 
-        $pdo = \TokoBot\Helpers\Database::getInstance();
-        $stmt = $pdo->prepare("SELECT id, bot_id, channel_id FROM bot_storage_channels WHERE id = ?");
-        $stmt->execute([$id]);
-        $channel = $stmt->fetch();
+        $storageChannelModel = new StorageChannelModel();
+        $channel = $storageChannelModel->find($id);
 
         if (!$channel) {
-            \TokoBot\Helpers\Session::flash('error_message', 'Storage channel not found.');
+            Session::flash('error_message', 'Storage channel not found.');
             header('Location: /storage-channels');
             exit();
         }
-
-        $stmt = $pdo->query("SELECT id, username FROM tbots ORDER BY username ASC");
-        $bots = $stmt->fetchAll();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $botId = $_POST['bot_id'] ?? null;
             $channelId = $_POST['channel_id'] ?? null;
 
             if (empty($botId) || empty($channelId)) {
-                \TokoBot\Helpers\Session::flash('error_message', 'Bot ID and Channel ID cannot be empty.');
+                Session::flash('error_message', 'Bot ID and Channel ID cannot be empty.');
                 header('Location: /storage-channels/edit/' . $id);
                 exit();
             }
 
             try {
-                $stmt = $pdo->prepare("UPDATE bot_storage_channels SET bot_id = ?, channel_id = ? WHERE id = ?");
-                $stmt->execute([$botId, $channelId, $id]);
-                \TokoBot\Helpers\Session::flash('success_message', 'Storage channel updated successfully!');
-            } catch (\PDOException $e) {
-                \TokoBot\Helpers\Session::flash('error_message', 'Failed to update storage channel: ' . $e->getMessage());
+                $storageChannelModel->update($id, ['bot_id' => $botId, 'channel_id' => $channelId]);
+                Session::flash('success_message', 'Storage channel updated successfully!');
+            } catch (\Exception $e) {
+                Session::flash('error_message', 'Failed to update storage channel: ' . $e->getMessage());
             }
 
             header('Location: /storage-channels');
@@ -341,19 +304,17 @@ class AdminController extends DashmixController
             'Edit an existing Telegram storage channel.',
             [],
             $breadcrumbs,
-            ['channel' => $channel, 'bots' => $bots, 'formAction' => '/storage-channels/edit/' . $id]
+            ['channel' => $channel, 'bots' => Bot::findAllForSelection(), 'formAction' => '/storage-channels/edit/' . $id]
         );
     }
 
     public function deleteStorageChannel($id)
     {
-        $pdo = \TokoBot\Helpers\Database::getInstance();
         try {
-            $stmt = $pdo->prepare("DELETE FROM bot_storage_channels WHERE id = ?");
-            $stmt->execute([$id]);
-            \TokoBot\Helpers\Session::flash('success_message', 'Storage channel deleted successfully!');
-        } catch (\PDOException $e) {
-            \TokoBot\Helpers\Session::flash('error_message', 'Failed to delete storage channel: ' . $e->getMessage());
+            (new StorageChannelModel())->delete($id);
+            Session::flash('success_message', 'Storage channel deleted successfully!');
+        } catch (\Exception $e) {
+            Session::flash('error_message', 'Failed to delete storage channel: ' . $e->getMessage());
         }
 
         header('Location: /storage-channels');
@@ -371,19 +332,16 @@ class AdminController extends DashmixController
         $roleId = $_POST['role_id'] ?? null;
 
         if (empty($telegramId) || empty($roleId)) {
-            \TokoBot\Helpers\Session::flash('error_message', 'User ID or Role ID is missing.');
+            Session::flash('error_message', 'User ID or Role ID is missing.');
             header('Location: /users');
             exit();
         }
 
-        $pdo = \TokoBot\Helpers\Database::getInstance();
-
         try {
-            $stmt = $pdo->prepare("UPDATE users SET role_id = ? WHERE telegram_id = ?");
-            $stmt->execute([$roleId, $telegramId]);
-            \TokoBot\Helpers\Session::flash('success_message', 'User role updated successfully!');
-        } catch (\PDOException $e) {
-            \TokoBot\Helpers\Session::flash('error_message', 'Failed to update user role: ' . $e->getMessage());
+            UserModel::updateRoleByTelegramId($telegramId, $roleId);
+            Session::flash('success_message', 'User role updated successfully!');
+        } catch (\Exception $e) {
+            Session::flash('error_message', 'Failed to update user role: ' . $e->getMessage());
         }
 
         header('Location: /users');
