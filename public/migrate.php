@@ -17,7 +17,6 @@ require_once ROOT_PATH . '/bootstrap/app.php'; // Include bootstrap/app.php for 
 
 use TokoBot\Helpers\Database;
 
-header('Content-Type: text/plain');
 
 echo "Starting custom database migration...\n\n";
 
@@ -35,7 +34,8 @@ try {
             `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    ");
+    "
+    );
     echo "'roles' table created or already exists.\n\n";
 
     // --- Migration 2: Add role_id to users table and set foreign key ---
@@ -101,14 +101,12 @@ try {
             $pdo->exec("UPDATE `users` SET `role_id` = {$adminRoleId} WHERE `role` = 'admin' AND (`role_id` IS NULL OR `role_id` = {$memberRoleId});");
             echo "Users with string role 'admin' updated to admin role_id.\n";
         }
-
     } else {
         echo "'member' role not found in roles table. Skipping default role assignment for users.\n";
     }
     echo "User role assignment complete.\n\n";
 
     echo "Custom migration finished successfully!\n";
-
 } catch (\PDOException $e) {
     echo "Database Error: " . $e->getMessage() . "\n";
     echo "SQLSTATE: " . $e->getCode() . "\n";
@@ -117,5 +115,3 @@ try {
     echo "General Error: " . $e->getMessage() . "\n";
     echo "Trace:\n" . $e->getTraceAsString() . "\n";
 }
-
-
