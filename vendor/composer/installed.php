@@ -3,7 +3,7 @@
         'name' => 'tokobot/tokobot',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '7ab8204d69a7db1f055ead03ca8a80d13dcbc0cd',
+        'reference' => '48317beb82e2e03834bb307ca148252f55d1cbad',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -603,6 +603,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'symfony/process' => array(
+            'pretty_version' => 'v6.4.25',
+            'version' => '6.4.25.0',
+            'reference' => '6be2f0c9ab3428587c07bed03aa9e3d1b823c6c8',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../symfony/process',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'symfony/service-contracts' => array(
             'pretty_version' => 'v3.6.0',
             'version' => '3.6.0.0',
@@ -633,7 +642,7 @@
         'tokobot/tokobot' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '7ab8204d69a7db1f055ead03ca8a80d13dcbc0cd',
+            'reference' => '48317beb82e2e03834bb307ca148252f55d1cbad',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
