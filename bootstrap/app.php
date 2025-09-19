@@ -18,6 +18,7 @@ $providers = [
     TokoBot\Core\ServiceProviders\RoutingServiceProvider::class,
     TokoBot\Core\ServiceProviders\CacheServiceProvider::class,
     TokoBot\Core\ServiceProviders\TemplateServiceProvider::class,
+    TokoBot\Core\ServiceProviders\AuthorizationServiceProvider::class,
 ];
 
 // --- DI Container Setup ---

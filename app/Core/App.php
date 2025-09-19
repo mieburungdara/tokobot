@@ -76,10 +76,11 @@ class App
                         if (is_array($middlewareDef)) {
                             $middlewareClass = 'TokoBot\\Middleware\\' . $middlewareDef[0];
                             $middlewareArgs = array_slice($middlewareDef, 1);
+                            // This path is complex to autowire, so we leave it for now.
                             $middlewares[] = new $middlewareClass(...$middlewareArgs);
                         } else {
                             $middlewareClass = 'TokoBot\\Middleware\\' . $middlewareDef;
-                            $middlewares[] = new $middlewareClass();
+                            $middlewares[] = $this->container->build($middlewareClass);
                         }
                     }
                     // Remove middleware definitions from handler to avoid passing them to controller

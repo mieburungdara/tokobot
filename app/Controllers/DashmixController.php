@@ -2,8 +2,20 @@
 
 namespace TokoBot\Controllers;
 
+use TokoBot\Core\Container;
+use TokoBot\Helpers\Auth;
+use TokoBot\Services\AuthorizationService;
+
 class DashmixController extends BaseController
 {
+    protected AuthorizationService $authService;
+
+    public function __construct(Container $container)
+    {
+        parent::__construct($container);
+        $this->authService = $container->get(AuthorizationService::class);
+    }
+
     protected function renderDashmix(
         $viewPath,
         $pageTitle = 'Dashboard',
@@ -62,27 +74,14 @@ class DashmixController extends BaseController
     {
         $filtered = [];
         foreach ($nav as $item) {
-            $isAllowed = false;
-
-            // Jika item punya definisi 'roles'
-            if (isset($item['roles'])) {
-                // Cek apakah peran pengguna ada di dalam daftar yang diizinkan
-                if (in_array($userRole, $item['roles'])) {
-                    $isAllowed = true;
-                }
-            } else {
-                // Jika item TIDAK punya definisi 'roles'
-                // Anggap item ini bisa dilihat oleh semua pengguna YANG SUDAH LOGIN,
-                // tetapi tidak oleh 'guest'.
-                if ($userRole !== 'guest') {
-                    $isAllowed = true;
-                }
-            }
+            // If the item has specific roles defined, check against them.
+            // Otherwise, assume it's visible to any authenticated user.
+            $isAllowed = isset($item['roles']) ? $this->authService->any($item['roles']) : Auth::check();
 
             if ($isAllowed) {
-                // Jika item punya submenu, filter juga submenu tersebut
+                // If the item has a submenu, filter it recursively as well.
                 if (isset($item['sub']) && is_array($item['sub'])) {
-                    $item['sub'] = $this->filterNavByRole($item['sub'], $userRole);
+                    $item['sub'] = $this->filterNavByRole($item['sub'], $userRole); // Pass userRole for consistency, though it's not used in the new logic
                 }
                 $filtered[] = $item;
             }
