@@ -59,9 +59,12 @@ class RouteLoader
      */
     private function processFile(string $filePath): void
     {
-        // This is a simplified way to get the class name from a file path.
-        // It assumes a PSR-4 structure matching the filesystem.
-        $class = 'TokoBot' . str_replace(['.php', '/'], '', str_replace(ROOT_PATH . '/app', '', $filePath));
+        // Convert filesystem path to a PSR-4 class name
+        $class = str_replace(
+            [ROOT_PATH . '/app/', '/', '.php'],
+            ['TokoBot\\', '\\', ''],
+            $filePath
+        );
 
         if (!class_exists($class)) {
             return;
