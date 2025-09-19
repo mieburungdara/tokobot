@@ -51,16 +51,21 @@ class Auth
     }
 
     /**
-     * Checks if the logged-in user has a specific permission (simplified to role for now).
+     * Checks if the logged-in user has a specific permission.
      *
      * @param string $permission
      * @return bool
      */
     public static function can(string $permission): bool
     {
-        // For now, we'll treat permissions as roles.
-        // In a full ACL, this would check against assigned permissions.
-        return self::hasRole($permission);
+        try {
+            $authService = \TokoBot\Core\App::getContainer()->get(\TokoBot\Services\AuthorizationService::class);
+            return $authService->can($permission);
+        } catch (\Exception $e) {
+            // If the service is not available, deny permission and log the error.
+            Logger::channel('critical')->error('Could not resolve AuthorizationService in Auth::can', ['error' => $e->getMessage()]);
+            return false;
+        }
     }
 
     /**

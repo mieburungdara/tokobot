@@ -13,5 +13,7 @@ $container = require_once __DIR__ . '/../bootstrap/app.php';
 // Create the application instance
 $app = new \TokoBot\Core\App($container);
 
-// Run the application
+// Make the container globally accessible for helpers, etc.
+\TokoBot\Core\App::setContainer($container);
+
 $app->run();

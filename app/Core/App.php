@@ -7,11 +7,22 @@ use FastRoute\Dispatcher;
 
 class App
 {
+    private static Container $containerInstance;
     private Container $container;
 
     public function __construct(Container $container)
     {
         $this->container = $container;
+    }
+
+    public static function setContainer(Container $container): void
+    {
+        self::$containerInstance = $container;
+    }
+
+    public static function getContainer(): Container
+    {
+        return self::$containerInstance;
     }
 
     public function run()
