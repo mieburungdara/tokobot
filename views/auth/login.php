@@ -22,13 +22,20 @@
                 </div>
                 <div class="row g-0 justify-content-center">
                   <div class="col-sm-8 col-xl-6">
+                    <?php
+                        $errors = TokoBot\Helpers\Session::flash('validation_errors');
+                        $old = TokoBot\Helpers\Session::flash('old_input');
+                    ?>
                     <form action="/xoradmin" method="POST">
                       <?php if (isset($error) && $error): ?>
-                        <div class="alert alert-danger text-center mb-3"><?php echo $error; ?></div>
+                        <div class="alert alert-danger text-center mb-3"><?= $error ?></div>
                       <?php endif; ?>
                       <div class="py-3">
                         <div class="mb-4">
-                          <input type="password" class="form-control form-control-lg form-control-alt" id="password" name="password" placeholder="Password" autofocus>
+                          <input type="password" class="form-control form-control-lg form-control-alt <?= isset($errors['password']) ? 'is-invalid' : '' ?>" id="password" name="password" placeholder="Password" autofocus>
+                          <?php if (isset($errors['password'])) : ?>
+                            <div class="invalid-feedback"><?= $errors['password'][0] ?></div>
+                          <?php endif; ?>
                         </div>
                       </div>
                       <div class="mb-4">

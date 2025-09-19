@@ -3,6 +3,8 @@
 namespace TokoBot\Controllers;
 
 use TokoBot\Core\Routing\Route;
+use TokoBot\Core\Validation\Validate;
+use TokoBot\Http\Requests\LoginRequest;
 use TokoBot\Helpers\Session;
 use TokoBot\Helpers\Logger;
 
@@ -16,6 +18,7 @@ class AuthController extends BaseController
     }
 
     #[Route('/xoradmin', method: 'POST')]
+    #[Validate(LoginRequest::class)]
     public function handleLogin()
     {
         $password = $_POST['password'] ?? '';

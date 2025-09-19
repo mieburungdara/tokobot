@@ -42,6 +42,33 @@ class App
                 $handler = $routeInfo[1];
                 $vars = $routeInfo[2];
 
+                // --- Automatic Validation Handling ---
+                if (is_array($handler) && count($handler) >= 2) {
+                    $controllerClass = $handler[0];
+                    $methodName = $handler[1];
+
+                    try {
+                        $reflectionMethod = new \ReflectionMethod($controllerClass, $methodName);
+                        $attributes = $reflectionMethod->getAttributes(\TokoBot\Core\Validation\Validate::class);
+
+                        if (count($attributes) > 0) {
+                            $validationAttribute = $attributes[0]->newInstance();
+                            $formRequestClass = $validationAttribute->formRequestClass;
+
+                            if (class_exists($formRequestClass)) {
+                                /** @var \TokoBot\Core\Validation\FormRequest $formRequest */
+                                $formRequest = new $formRequestClass();
+                                if (!$formRequest->validate()) {
+                                    $formRequest->redirectBack(); // This will exit
+                                }
+                            }
+                        }
+                    } catch (\ReflectionException $e) {
+                        // Method doesn't exist, let it fail later
+                    }
+                }
+                // --- End Automatic Validation ---
+
                 $middlewares = [];
                 if (isset($handler[2]['middleware'])) {
                     $middlewareDefinitions = $handler[2]['middleware'];

@@ -33,17 +33,20 @@ class Session
         }
     }
 
-    public static function flash($key, $message = null)
+    public static function flash($key, $value = null)
     {
-        self::start(); // Ensure session is started
+        self::start();
 
-        if ($message) {
-            self::set('flash_' . $key, $message);
+        $sessionKey = 'flash_' . $key;
+
+        if ($value !== null) {
+            self::set($sessionKey, $value);
         } else {
-            $flashMessage = self::get('flash_' . $key);
-            self::remove('flash_' . $key);
-            return $flashMessage;
+            $flashValue = self::get($sessionKey);
+            self::remove($sessionKey);
+            return $flashValue;
         }
+        return null; // Only returns a value when getting
     }
 
     public static function clear()
