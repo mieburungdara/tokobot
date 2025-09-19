@@ -4819,7 +4819,6 @@
         "phpunit/phpunit",
         "psr/clock",
         "psr/container",
-        "psr/simple-cache",
         "robmorgan/phinx",
         "sebastian/cli-parser",
         "sebastian/code-unit",

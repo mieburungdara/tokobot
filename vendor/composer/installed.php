@@ -3,7 +3,7 @@
         'name' => 'tokobot/tokobot',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'c088ff444d2b74512b257651ab6d4303a1bfc4aa',
+        'reference' => '9d8d66da503d8299c3df6367356f115ba300e1e1',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -349,7 +349,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../psr/simple-cache',
             'aliases' => array(),
-            'dev_requirement' => true,
+            'dev_requirement' => false,
         ),
         'ralouphie/getallheaders' => array(
             'pretty_version' => '3.0.3',
@@ -642,7 +642,7 @@
         'tokobot/tokobot' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'c088ff444d2b74512b257651ab6d4303a1bfc4aa',
+            'reference' => '9d8d66da503d8299c3df6367356f115ba300e1e1',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
