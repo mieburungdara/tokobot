@@ -35,21 +35,30 @@ class AuthorizationService
 
         try {
             $pdo = Database::getInstance();
-            $rolesData = $pdo->query("SELECT id, name FROM roles")->fetchAll(\PDO::FETCH_ASSOC);
-            $rolePermissionsData = $pdo->query("SELECT r.name as role_name, p.name as permission_name FROM role_permissions rp JOIN roles r ON rp.role_id = r.id JOIN permissions p ON rp.permission_id = p.id")->fetchAll(\PDO::FETCH_ASSOC);
+            $query = "
+                SELECT
+                    r.id, r.name,
+                    GROUP_CONCAT(p.name SEPARATOR ',') as permissions
+                FROM
+                    roles r
+                LEFT JOIN
+                    role_permissions rp ON r.id = rp.role_id
+                LEFT JOIN
+                    permissions p ON rp.permission_id = p.id
+                GROUP BY
+                    r.id, r.name
+            ";
+            $rolesData = $pdo->query($query)->fetchAll(\PDO::FETCH_ASSOC);
 
             foreach ($rolesData as $role) {
-                $this->roles[$role['name']] = $role;
-                $this->permissionsByRole[$role['name']] = [];
+                $this->roles[$role['name']] = ['id' => $role['id'], 'name' => $role['name']];
+                $this->permissionsByRole[$role['name']] = $role['permissions'] ? explode(',', $role['permissions']) : [];
             }
 
-            foreach ($rolePermissionsData as $rp) {
-                $this->permissionsByRole[$rp['role_name']][] = $rp['permission_name'];
-            }
-
+            // Handle inheritance
             $rolesConfig = require CONFIG_PATH . '/roles.php';
             foreach ($rolesConfig as $roleName => $config) {
-                if (!empty($config['inherits'])) {
+                if (isset($this->permissionsByRole[$roleName]) && !empty($config['inherits'])) {
                     foreach ($config['inherits'] as $parentRole) {
                         if (isset($this->permissionsByRole[$parentRole])) {
                             $this->permissionsByRole[$roleName] = array_merge(
@@ -59,7 +68,9 @@ class AuthorizationService
                         }
                     }
                 }
-                $this->permissionsByRole[$roleName] = array_unique($this->permissionsByRole[$roleName]);
+                if (isset($this->permissionsByRole[$roleName])) {
+                    $this->permissionsByRole[$roleName] = array_unique($this->permissionsByRole[$roleName]);
+                }
             }
 
             // Store the processed data in cache
