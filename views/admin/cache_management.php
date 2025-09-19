@@ -54,9 +54,39 @@ $this->inc('views/inc/header.php', $viewData);
                         <h3 class="block-title">Cache Actions</h3>
                     </div>
                     <div class="block-content">
-                        <a href="/admin/cache?action=clear" class="btn btn-danger" onclick="return confirm('Are you sure you want to clear the entire APCu cache? This may temporarily slow down the application.');">
-                            <i class="fa fa-trash me-1"></i> Clear APCu Cache
-                        </a>
+                        <form action="/admin/cache" method="POST" onsubmit="return confirm('Are you sure you want to clear the entire APCu cache? This may temporarily slow down the application.');">
+                            <input type="hidden" name="action" value="clear">
+                            <input type="hidden" name="csrf_token" value="<?= $viewData['csrf_token'] ?>">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fa fa-trash me-1"></i> Clear APCu Cache
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Memory Chart -->
+            <div class="col-md-6">
+                <div class="block block-rounded">
+                    <div class="block-header block-header-default">
+                        <h3 class="block-title">Memory Usage</h3>
+                    </div>
+                    <div class="block-content">
+                        <canvas id="memory-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hit/Miss Chart -->
+            <div class="col-md-6">
+                <div class="block block-rounded">
+                    <div class="block-header block-header-default">
+                        <h3 class="block-title">Hit/Miss Ratio</h3>
+                    </div>
+                    <div class="block-content">
+                        <canvas id="hit-miss-chart"></canvas>
                     </div>
                 </div>
             </div>
@@ -193,5 +223,62 @@ $this->inc('views/inc/header.php', $viewData);
         </div>
     <?php endif; ?>
 </div>
+
+<?php ob_start(); ?>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        <?php if ($viewData['apcu_enabled']): ?>
+        // Memory Chart
+        const memoryCtx = document.getElementById('memory-chart');
+        const memoryData = {
+            labels: [
+                'Used Memory',
+                'Free Memory'
+            ],
+            datasets: [{
+                data: [
+                    <?= $viewData['sma_info']['seg_size'] - $viewData['sma_info']['avail_mem'] ?>,
+                    <?= $viewData['sma_info']['avail_mem'] ?>
+                ],
+                backgroundColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(54, 162, 235)'
+                ],
+                hoverOffset: 4
+            }]
+        };
+        new Chart(memoryCtx, {
+            type: 'doughnut',
+            data: memoryData,
+        });
+
+        // Hit/Miss Chart
+        const hitMissCtx = document.getElementById('hit-miss-chart');
+        const hitMissData = {
+            labels: [
+                'Hits',
+                'Misses'
+            ],
+            datasets: [{
+                data: [
+                    <?= $viewData['cache_info']['num_hits'] ?>,
+                    <?= $viewData['cache_info']['num_misses'] ?>
+                ],
+                backgroundColor: [
+                    'rgb(75, 192, 192)',
+                    'rgb(255, 205, 86)'
+                ],
+                hoverOffset: 4
+            }]
+        };
+        new Chart(hitMissCtx, {
+            type: 'doughnut',
+            data: hitMissData,
+        });
+        <?php endif; ?>
+    });
+</script>
+<?php $this->addScript(ob_get_clean()); ?>
 
 <?php $this->inc('views/inc/footer.php'); ?>

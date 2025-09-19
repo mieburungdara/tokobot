@@ -68,4 +68,38 @@ class Session
         ]);
         return $currentUserRole === $role;
     }
+
+    /**
+     * Generate a CSRF token, store it in the session, and return it.
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public static function generateCsrfToken(): string
+    {
+        self::start();
+        $token = bin2hex(random_bytes(32));
+        self::set('csrf_token', $token);
+        return $token;
+    }
+
+    /**
+     * Validate a CSRF token against the one stored in the session.
+     *
+     * @param string|null $token The token from the request.
+     * @return bool
+     */
+    public static function validateCsrfToken(?string $token): bool
+    {
+        self::start();
+        $sessionToken = self::get('csrf_token');
+        if (!$token || !$sessionToken) {
+            return false;
+        }
+
+        // Use hash_equals for timing-attack-safe comparison
+        $isValid = hash_equals($sessionToken, $token);
+        self::remove('csrf_token'); // One-time use token
+        return $isValid;
+    }
 }

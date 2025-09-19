@@ -19,10 +19,10 @@ class AdminController extends DashmixController
 {
     private CacheInterface $cache;
 
-    public function __construct(Container $container)
+    public function __construct(Container $container, CacheInterface $cache)
     {
         parent::__construct($container);
-        $this->cache = $container->get(CacheInterface::class);
+        $this->cache = $cache;
     }
 
     public function index()
@@ -376,21 +376,27 @@ class AdminController extends DashmixController
             ['name' => 'Cache Management']
         ];
 
-        $viewData = [
-            'apcu_enabled' => extension_loaded('apcu') && apcu_enabled(),
-            'cache_info' => null,
-            'sma_info' => null
-        ];
-
-        if (isset($_GET['action']) && $_GET['action'] === 'clear') {
-            if ($this->cache->clear()) {
-                Session::flash('success_message', 'APCu cache has been cleared successfully!');
+        // Handle POST request for clearing cache
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'clear') {
+            if (Session::validateCsrfToken($_POST['csrf_token'] ?? null)) {
+                if ($this->cache->clear()) {
+                    Session::flash('success_message', 'APCu cache has been cleared successfully!');
+                } else {
+                    Session::flash('error_message', 'Failed to clear APCu cache.');
+                }
             } else {
-                Session::flash('error_message', 'Failed to clear APCu cache.');
+                Session::flash('error_message', 'Invalid CSRF token. Action aborted.');
             }
             header('Location: /admin/cache');
             exit();
         }
+
+        $viewData = [
+            'apcu_enabled' => extension_loaded('apcu') && apcu_enabled(),
+            'cache_info' => null,
+            'sma_info' => null,
+            'csrf_token' => Session::generateCsrfToken()
+        ];
 
         if ($viewData['apcu_enabled']) {
             $viewData['cache_info'] = apcu_cache_info();

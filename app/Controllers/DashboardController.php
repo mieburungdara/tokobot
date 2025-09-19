@@ -20,7 +20,8 @@ class DashboardController extends BaseController
         // Arahkan ke controller yang sesuai berdasarkan peran.
         if ($userRole === 'admin') {
             // Panggil method dashboard dari AdminController
-            $adminController = new AdminController($this->container);
+            $cache = $this->container->get(\Psr\SimpleCache\CacheInterface::class);
+            $adminController = new AdminController($this->container, $cache);
             return $adminController->dashmixDashboard();
         } else {
             // Panggil method dashboard dari MemberController
