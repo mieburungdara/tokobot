@@ -2,10 +2,13 @@
 
 namespace TokoBot\Controllers;
 
+use TokoBot\Core\Routing\Route;
 use TokoBot\Helpers\Session;
 
 class HomeController extends BaseController
 {
+    #[Route('/')]
+    #[Route('/home')]
     public function index()
     {
         // If user is already logged in, redirect to dashboard

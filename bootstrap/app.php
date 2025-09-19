@@ -12,10 +12,14 @@ define('PUBLIC_PATH', ROOT_PATH . '/public');
 require_once ROOT_PATH . '/vendor/autoload.php';
 
 use TokoBot\Core\Container;
-use TokoBot\Helpers\Logger;
-use TokoBot\Helpers\Session;
+use TokoBot\Core\Routing\RouteLoader;
 
 // --- Start DI Container Setup ---
+
+// Create the Route Dispatcher from Attributes
+$loader = new RouteLoader([APP_PATH . '/Controllers']);
+$dispatcher = $loader->register();
+$container->set('dispatcher', $dispatcher);
 
 // Require the Template class since it's not namespaced and autoloaded
 require_once VIEWS_PATH . '/inc/_classes/Template.php';

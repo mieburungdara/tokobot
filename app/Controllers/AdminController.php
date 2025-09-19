@@ -2,6 +2,7 @@
 
 namespace TokoBot\Controllers;
 
+use TokoBot\Core\Routing\Route;
 use TokoBot\Helpers\Logger;
 use TokoBot\Helpers\Session;
 use TokoBot\Models\Bot;
@@ -9,8 +10,6 @@ use TokoBot\Models\MessageModel;
 use TokoBot\Models\RoleModel;
 use TokoBot\Models\StorageChannelModel;
 use TokoBot\Models\UserModel;
-
-use Psr
 use TokoBot\Helpers\CacheKeyManager;
 use Psr\SimpleCache\CacheInterface;
 use TokoBot\Core\Container;
@@ -30,6 +29,7 @@ class AdminController extends DashmixController
         $this->dashmixDashboard();
     }
 
+    #[Route('/admin/dashboard', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
     public function dashmixDashboard()
     {
         $cacheKey = CacheKeyManager::forDashboardStats();
@@ -76,6 +76,7 @@ class AdminController extends DashmixController
         );
     }
 
+    #[Route('/users', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
     public function users()
     {
         $breadcrumbs = [
@@ -96,6 +97,7 @@ class AdminController extends DashmixController
         );
     }
 
+    #[Route('/settings', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
     public function settings()
     {
         $breadcrumbs = [
@@ -112,6 +114,7 @@ class AdminController extends DashmixController
         );
     }
 
+    #[Route('/reports', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
     public function reports()
     {
         $breadcrumbs = [
@@ -128,6 +131,7 @@ class AdminController extends DashmixController
         );
     }
 
+    #[Route('/analytics', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
     public function botAnalytics()
     {
         $breadcrumbs = [
@@ -158,6 +162,7 @@ class AdminController extends DashmixController
         );
     }
 
+    #[Route('/logs', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
     public function viewLogs()
     {
         $logChannel = $_GET['log'] ?? 'app';
@@ -208,6 +213,7 @@ class AdminController extends DashmixController
         );
     }
 
+    #[Route('/bot-management', method: 'GET', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
     public function manageBots()
     {
         $breadcrumbs = [
@@ -225,6 +231,7 @@ class AdminController extends DashmixController
         );
     }
 
+    #[Route('/storage-channels', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
     public function storageChannels()
     {
         $breadcrumbs = [
@@ -242,6 +249,8 @@ class AdminController extends DashmixController
         );
     }
 
+    #[Route('/storage-channels/add', method: 'GET', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
+    #[Route('/storage-channels/add', method: 'POST', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
     public function addStorageChannel()
     {
         $breadcrumbs = [
@@ -281,6 +290,8 @@ class AdminController extends DashmixController
         );
     }
 
+    #[Route('/storage-channels/edit/{id:\d+}', method: 'GET', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
+    #[Route('/storage-channels/edit/{id:\d+}', method: 'POST', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
     public function editStorageChannel($id)
     {
         $breadcrumbs = [
@@ -329,6 +340,7 @@ class AdminController extends DashmixController
         );
     }
 
+    #[Route('/storage-channels/delete/{id:\d+}', method: 'POST', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
     public function deleteStorageChannel($id)
     {
         try {
@@ -342,6 +354,7 @@ class AdminController extends DashmixController
         exit();
     }
 
+    #[Route('/users/update-role', method: 'POST', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
     public function updateUserRole()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -369,6 +382,7 @@ class AdminController extends DashmixController
         exit();
     }
 
+    #[Route('/admin/cache', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
     public function cacheManagement()
     {
         $breadcrumbs = [

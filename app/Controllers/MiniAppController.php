@@ -2,6 +2,7 @@
 
 namespace TokoBot\Controllers;
 
+use TokoBot\Core\Routing\Route;
 use TokoBot\Helpers\Logger;
 use TokoBot\Helpers\Session;
 use TokoBot\Models\Bot;
@@ -14,6 +15,7 @@ class MiniAppController extends DashmixController
      * Halaman verifikasi awal untuk Mini App.
      * @param int $bot_id ID bot yang didapat dari URL.
      */
+    #[Route('/miniapp/start/{bot_id:\d+}')]
     public function start(int $bot_id)
     {
         if (!$this->findAndValidateBotToken($bot_id)) {
@@ -33,6 +35,7 @@ class MiniAppController extends DashmixController
      * Menampilkan halaman utama Mini App setelah verifikasi.
      * @param int $bot_id ID bot yang didapat dari URL.
      */
+    #[Route('/miniapp/app/{bot_id:\d+}')]
     public function app(int $bot_id)
     {
         // Langkah 1: Verifikasi apakah bot ada dan punya token.
@@ -62,6 +65,7 @@ class MiniAppController extends DashmixController
      * Endpoint API untuk otentikasi pengguna Mini App.
      * Menerima initData dari frontend, memvalidasinya, dan mengembalikan data user.
      */
+    #[Route('/api/miniapp/auth', method: 'POST')]
     public function authenticate()
     {
         header('Content-Type: application/json');

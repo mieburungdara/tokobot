@@ -2,17 +2,20 @@
 
 namespace TokoBot\Controllers;
 
+use TokoBot\Core\Routing\Route;
 use TokoBot\Helpers\Session;
 use TokoBot\Helpers\Logger;
 
 class AuthController extends BaseController
 {
+    #[Route('/xoradmin', method: 'GET')]
     public function showLoginForm($error = null)
     {
         // Render halaman login, teruskan pesan error jika ada
         require_once VIEWS_PATH . '/auth/login.php';
     }
 
+    #[Route('/xoradmin', method: 'POST')]
     public function handleLogin()
     {
         $password = $_POST['password'] ?? '';
@@ -37,6 +40,7 @@ class AuthController extends BaseController
         }
     }
 
+    #[Route('/logout', method: 'GET')]
     public function logout()
     {
         Session::clear();

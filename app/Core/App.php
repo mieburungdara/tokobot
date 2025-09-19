@@ -16,9 +16,7 @@ class App
 
     public function run()
     {
-        // Include routes and role definitions
-        $dispatcher = require_once ROOT_PATH . '/routes.php';
-        $handlerRoles = require_once CONFIG_PATH . '/roles.php';
+        $dispatcher = $this->container->get('dispatcher');
 
         // Fetch method and URI
         $httpMethod = $_SERVER['REQUEST_METHOD'];

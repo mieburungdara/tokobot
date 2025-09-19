@@ -2,8 +2,11 @@
 
 namespace TokoBot\Controllers;
 
+use TokoBot\Core\Routing\Route;
+
 class PageController extends DashmixController
 {
+    #[Route('/support')]
     public function support()
     {
         $breadcrumbs = [['name' => 'Support']];
@@ -16,6 +19,7 @@ class PageController extends DashmixController
         );
     }
 
+    #[Route('/contact')]
     public function contact()
     {
         $breadcrumbs = [['name' => 'Contact']];
