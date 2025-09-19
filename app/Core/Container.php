@@ -35,7 +35,7 @@ class Container
      * @return object
      * @throws \Exception
      */
-    public function build(string $className): object
+    public function build(string $className, array $predefinedParams = []): object
     {
         $reflectionClass = new \ReflectionClass($className);
 
@@ -46,7 +46,6 @@ class Container
         $constructor = $reflectionClass->getConstructor();
 
         if ($constructor === null) {
-            // No constructor, just create a new instance
             return new $className();
         }
 
@@ -54,24 +53,23 @@ class Container
         $dependencies = [];
 
         foreach ($parameters as $parameter) {
+            $paramName = $parameter->getName();
             $type = $parameter->getType();
 
-            if ($type && !$type->isBuiltin()) {
+            if (array_key_exists($paramName, $predefinedParams)) {
+                // Use the predefined parameter value
+                $dependencies[] = $predefinedParams[$paramName];
+            } elseif ($type && !$type->isBuiltin()) {
                 $dependencyClassName = $type->getName();
-                // Check if the dependency is the container itself
                 if ($dependencyClassName === self::class) {
                     $dependencies[] = $this;
                 } else {
-                    // Get the dependency from the container
                     $dependencies[] = $this->get($dependencyClassName);
                 }
+            } elseif ($parameter->isDefaultValueAvailable()) {
+                $dependencies[] = $parameter->getDefaultValue();
             } else {
-                // Cannot resolve built-in types (string, int, etc.) without default value
-                if ($parameter->isDefaultValueAvailable()) {
-                    $dependencies[] = $parameter->getDefaultValue();
-                } else {
-                    throw new \Exception("Cannot resolve primitive parameter '{$parameter->getName()}' in class {$className}");
-                }
+                throw new \Exception("Cannot resolve parameter '{$paramName}' in class {$className}");
             }
         }
 

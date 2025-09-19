@@ -76,7 +76,7 @@ class AdminController extends DashmixController
         );
     }
 
-    #[Route('/users', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
+    #[Route('/users', middleware: ['AuthMiddleware', ['PermissionMiddleware', 'manage_users']])]
     public function users()
     {
         $breadcrumbs = [

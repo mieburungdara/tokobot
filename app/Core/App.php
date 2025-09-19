@@ -75,9 +75,19 @@ class App
                     foreach ($middlewareDefinitions as $middlewareDef) {
                         if (is_array($middlewareDef)) {
                             $middlewareClass = 'TokoBot\\Middleware\\' . $middlewareDef[0];
-                            $middlewareArgs = array_slice($middlewareDef, 1);
-                            // This path is complex to autowire, so we leave it for now.
-                            $middlewares[] = new $middlewareClass(...$middlewareArgs);
+                            $constructorArgs = array_slice($middlewareDef, 1);
+
+                            // Use reflection to map constructor arguments by position
+                            $reflectionMethod = new \ReflectionMethod($middlewareClass, '__construct');
+                            $params = $reflectionMethod->getParameters();
+
+                            $predefinedParams = [];
+                            foreach ($constructorArgs as $index => $arg) {
+                                if (isset($params[$index])) {
+                                    $predefinedParams[$params[$index]->getName()] = $arg;
+                                }
+                            }
+                            $middlewares[] = $this->container->build($middlewareClass, $predefinedParams);
                         } else {
                             $middlewareClass = 'TokoBot\\Middleware\\' . $middlewareDef;
                             $middlewares[] = $this->container->build($middlewareClass);
