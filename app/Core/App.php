@@ -75,7 +75,7 @@ class App
                             $controllerClass = $handler[0];
                             $method = $handler[1];
 
-                            $controller = new $controllerClass($this->container);
+                            $controller = $this->container->build($controllerClass);
 
                             return call_user_func_array([$controller, $method], $vars);
                         } else {
