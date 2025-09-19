@@ -71,6 +71,12 @@ class AdminController extends DashmixController
             // Invalidate the authorization cache
             $this->cache->delete('auth_data');
 
+            // Log the audit trail
+            Logger::channel('auth')->info('Permissions updated by user', [
+                'user_id' => Session::get('user_id'),
+                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
+
             Session::flash('success_message', 'Permissions updated successfully!');
         } catch (\Exception $e) {
             Session::flash('error_message', 'Error updating permissions: ' . $e->getMessage());
