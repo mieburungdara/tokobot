@@ -17,7 +17,7 @@ class MemberController extends DashmixController
     /**
      * Menampilkan dashboard utama untuk member.
      */
-    #[Route('/member/dashboard', middleware: [['RoleMiddleware', 'member'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
+    #[Route('/member/dashboard', middleware: ['AuthMiddleware', ['PermissionMiddleware', 'view_dashboard']])]
     public function dashmixDashboard()
     {
         $userId = \TokoBot\Helpers\Session::get('user_id');

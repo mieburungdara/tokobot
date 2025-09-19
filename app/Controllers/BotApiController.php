@@ -96,7 +96,7 @@ class BotApiController extends BaseController
         }
     }
 
-    #[Route('/api/tbot/{id:\d+}/webhook', method: 'GET', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
+    #[Route('/api/tbot/{id:\d+}/webhook', method: 'GET', middleware: ['AuthMiddleware', ['PermissionMiddleware', 'manage_bots']])]
     public function getWebhookInfo(int $id)
     {
         $this->handleBotApiAction($id, function () {
@@ -111,7 +111,7 @@ class BotApiController extends BaseController
         });
     }
 
-    #[Route('/api/tbot/{id:\d+}/webhook', method: 'POST', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
+    #[Route('/api/tbot/{id:\d+}/webhook', method: 'POST', middleware: ['AuthMiddleware', ['PermissionMiddleware', 'manage_bots']])]
     public function setWebhook(int $id)
     {
         Logger::channel('app')->info('setWebhook called for bot ID: ' . $id);
@@ -220,7 +220,7 @@ PHP;
         }, true);
     }
 
-    #[Route('/api/tbot/{id:\d+}/webhook', method: 'DELETE', middleware: [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]])]
+    #[Route('/api/tbot/{id:\d+}/webhook', method: 'DELETE', middleware: ['AuthMiddleware', ['PermissionMiddleware', 'manage_bots']])]
     public function deleteWebhook(int $id)
     {
         // @phpstan-ignore closure.unusedUse
