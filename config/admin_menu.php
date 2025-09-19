@@ -27,6 +27,11 @@ return [
                 'roles' => ['admin'] // Dibuat spesifik untuk admin
             ],
             [
+                'name'  => 'Permissions',
+                'url'   => '/admin/permissions',
+                'roles' => ['admin']
+            ],
+            [
                 'name'  => 'Reports',
                 'url'   => '/reports' // Tanpa 'roles', jadi ikut parent
             ],

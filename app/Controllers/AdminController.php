@@ -11,6 +11,7 @@ use TokoBot\Models\RoleModel;
 use TokoBot\Models\StorageChannelModel;
 use TokoBot\Models\UserModel;
 use TokoBot\Helpers\CacheKeyManager;
+use TokoBot\Models\PermissionModel;
 use Psr\SimpleCache\CacheInterface;
 use TokoBot\Core\Container;
 
@@ -22,6 +23,57 @@ class AdminController extends DashmixController
     {
         parent::__construct($container);
         $this->cache = $cache;
+    }
+
+    #[Route('/admin/permissions', method: 'GET', middleware: ['AuthMiddleware', ['PermissionMiddleware', 'manage_roles']])]
+    public function permissionManager()
+    {
+        $breadcrumbs = [
+            ['name' => 'Dashboard', 'url' => '/admin/dashboard'],
+            ['name' => 'Permission Management']
+        ];
+
+        $viewData = [
+            'roles' => RoleModel::getAllWithPermissions(),
+            'permissions' => PermissionModel::getAllSortedByName(),
+            'csrf_token' => Session::generateCsrfToken()
+        ];
+
+        $this->renderDashmix(
+            VIEWS_PATH . '/admin/permissions.php',
+            'Permission Management',
+            'Manage role-permission assignments.',
+            [],
+            $breadcrumbs,
+            $viewData
+        );
+    }
+
+    #[Route('/admin/permissions', method: 'POST', middleware: ['AuthMiddleware', ['PermissionMiddleware', 'manage_roles']])]
+    public function updatePermissions()
+    {
+        if (!Session::validateCsrfToken($_POST['csrf_token'] ?? null)) {
+            Session::flash('error_message', 'Invalid CSRF token.');
+            header('Location: /admin/permissions');
+            exit();
+        }
+
+        $permissions = $_POST['permissions'] ?? [];
+        $allRoles = RoleModel::getAllSortedByName();
+
+        try {
+            foreach ($allRoles as $role) {
+                $roleId = $role['id'];
+                $assignedPermissions = array_keys($permissions[$roleId] ?? []);
+                RoleModel::syncPermissions($roleId, $assignedPermissions);
+            }
+            Session::flash('success_message', 'Permissions updated successfully!');
+        } catch (\Exception $e) {
+            Session::flash('error_message', 'Error updating permissions: ' . $e->getMessage());
+        }
+
+        header('Location: /admin/permissions');
+        exit();
     }
 
     public function index()
