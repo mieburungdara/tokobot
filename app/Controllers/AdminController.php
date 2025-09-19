@@ -67,6 +67,10 @@ class AdminController extends DashmixController
                 $assignedPermissions = array_keys($permissions[$roleId] ?? []);
                 RoleModel::syncPermissions($roleId, $assignedPermissions);
             }
+            
+            // Invalidate the authorization cache
+            $this->cache->delete('auth_data');
+
             Session::flash('success_message', 'Permissions updated successfully!');
         } catch (\Exception $e) {
             Session::flash('error_message', 'Error updating permissions: ' . $e->getMessage());

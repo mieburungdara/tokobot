@@ -4,6 +4,7 @@ namespace TokoBot\Services;
 
 use TokoBot\Helpers\Database;
 use TokoBot\Helpers\Session;
+use Psr\SimpleCache\CacheInterface;
 
 class AuthorizationService
 {
@@ -13,17 +14,28 @@ class AuthorizationService
     /** @var array<string, array<string>> */
     private array $permissionsByRole = [];
 
-    public function __construct()
+    private CacheInterface $cache;
+
+    public function __construct(CacheInterface $cache)
     {
-        $this->loadRolesAndPermissionsFromDb();
+        $this->cache = $cache;
+        $this->loadRolesAndPermissions();
     }
 
-    private function loadRolesAndPermissionsFromDb(): void
+    private function loadRolesAndPermissions(): void
     {
+        $cacheKey = 'auth_data';
+        $cachedData = $this->cache->get($cacheKey);
+
+        if ($cachedData !== null) {
+            $this->roles = $cachedData['roles'];
+            $this->permissionsByRole = $cachedData['permissionsByRole'];
+            return;
+        }
+
         try {
             $pdo = Database::getInstance();
             $rolesData = $pdo->query("SELECT id, name FROM roles")->fetchAll(\PDO::FETCH_ASSOC);
-            $permissionsData = $pdo->query("SELECT id, name FROM permissions")->fetchAll(\PDO::FETCH_ASSOC);
             $rolePermissionsData = $pdo->query("SELECT r.name as role_name, p.name as permission_name FROM role_permissions rp JOIN roles r ON rp.role_id = r.id JOIN permissions p ON rp.permission_id = p.id")->fetchAll(\PDO::FETCH_ASSOC);
 
             foreach ($rolesData as $role) {
@@ -35,7 +47,6 @@ class AuthorizationService
                 $this->permissionsByRole[$rp['role_name']][] = $rp['permission_name'];
             }
 
-            // Handle inheritance - this is a simple, single-level inheritance
             $rolesConfig = require CONFIG_PATH . '/roles.php';
             foreach ($rolesConfig as $roleName => $config) {
                 if (!empty($config['inherits'])) {
@@ -51,8 +62,13 @@ class AuthorizationService
                 $this->permissionsByRole[$roleName] = array_unique($this->permissionsByRole[$roleName]);
             }
 
+            // Store the processed data in cache
+            $this->cache->set($cacheKey, [
+                'roles' => $this->roles,
+                'permissionsByRole' => $this->permissionsByRole
+            ]);
+
         } catch (\Exception $e) {
-            // If DB fails, service will have no permissions. Potentially log this.
             $this->roles = [];
             $this->permissionsByRole = [];
         }
