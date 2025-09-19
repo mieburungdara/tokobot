@@ -7,13 +7,13 @@ return [
     [
         'name'  => 'Admin Dashboard',
         'icon'  => 'si si-speedometer',
-        'url'   => '/dashboard',
+        'url'   => '/admin/dashboard',
         'roles' => ['admin']
     ],
     [
         'name'  => 'Member Dashboard',
         'icon'  => 'si si-user',
-        'url'   => '/member',
+        'url'   => '/member/dashboard',
         'roles' => ['member']
     ],
     [

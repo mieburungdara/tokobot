@@ -6,12 +6,18 @@ return FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
         // Home route
         $r->addRoute('GET', '/', ['TokoBot\\Controllers\\HomeController', 'index']);
         $r->addRoute('GET', '/home', ['TokoBot\\Controllers\\HomeController', 'index']);
-    
-                // Main Dashboard (handled by the new DashboardController)
-                $r->addRoute('GET', '/dashboard', ['TokoBot\Controllers\DashboardController', 'index', ['middleware' => ['AuthMiddleware', ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
-        
-                // Other Admin routes (without '/admin' prefix)
-                $r->addRoute('GET', '/users', ['TokoBot\Controllers\AdminController', 'users', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+
+        // --- Dashboard & Role-Specific Routes ---
+
+        // This route acts as a gatekeeper, redirecting users based on their role.
+        $r->addRoute('GET', '/dashboard', [function(){}, ['middleware' => ['AuthMiddleware', 'DashboardRedirectMiddleware']]]);
+
+        // Specific dashboard routes
+        $r->addRoute('GET', '/admin/dashboard', ['TokoBot\Controllers\AdminController', 'dashmixDashboard', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+        $r->addRoute('GET', '/member/dashboard', ['TokoBot\Controllers\MemberController', 'dashmixDashboard', ['middleware' => [['RoleMiddleware', 'member'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
+
+        // Other Admin routes (without '/admin' prefix)
+        $r->addRoute('GET', '/users', ['TokoBot\Controllers\AdminController', 'users', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
                 $r->addRoute('GET', '/settings', ['TokoBot\Controllers\AdminController', 'settings', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
                 $r->addRoute('GET', '/reports', ['TokoBot\Controllers\AdminController', 'reports', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
                 $r->addRoute('GET', '/analytics', ['TokoBot\Controllers\AdminController', 'botAnalytics', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
@@ -34,10 +40,7 @@ return FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
                 // Cache Management
                 $r->addRoute('GET', '/admin/cache', ['TokoBot\Controllers\AdminController', 'cacheManagement', ['middleware' => [['RoleMiddleware', 'admin'], ['AuthSourceMiddleware', ['miniapp', 'xoradmin']]]]]);
             
-                // Member routes
-                $r->addRoute('GET', '/member', ['TokoBot\Controllers\MemberController', 'index', ['middleware' => ['AuthMiddleware']]]);    
-        // Add more member routes here, e.g.,
-        // $r->addRoute('GET', '/member/{id}', ['TokoBot\Controllers\MemberController', 'show']);
+
     
         // Auth routes
         $r->addRoute('GET', '/xoradmin', ['TokoBot\Controllers\AuthController', 'showLoginForm']);
